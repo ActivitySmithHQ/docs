@@ -1,0 +1,184 @@
+---
+title: "Node"
+description: "ActivitySmith Node SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+icon: "node"
+og:title: "Node SDK | ActivitySmith"
+og:description: "ActivitySmith Node SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+---
+
+import InstallationNode from "/snippets/installation/js.mdx";
+
+## Installation
+
+To install the ActivitySmith Node SDK, you can use npm:
+
+<InstallationNode />
+
+## Usage
+
+1. Get an API key from [ActivitySmith](https://activitysmith.com)
+2. Set the API key as an environment variable named `ACTIVITYSMITH_API_KEY` or pass it as `accessToken` to the `Configuration` class.
+
+Here's an example of how to use the SDK with error handling:
+
+```js Node
+import {
+  Configuration,
+  LiveActivitiesApi,
+  NotificationsApi,
+  ResponseError,
+} from "activitysmith/generated";
+
+const config = new Configuration({
+  accessToken: process.env.ACTIVITYSMITH_API_KEY,
+});
+
+const notifications = new NotificationsApi(config);
+const liveActivities = new LiveActivitiesApi(config);
+
+try {
+  const push = await notifications.sendPushNotification({
+    pushNotificationRequest: {
+      title: "Build Failed",
+      message: "CI pipeline failed on main branch",
+    },
+  });
+
+  const start = await liveActivities.startLiveActivity({
+    liveActivityStartRequest: {
+      contentState: {
+        title: "ActivitySmith API Deployment",
+        subtitle: "start",
+        numberOfSteps: 4,
+        currentStep: 1,
+        type: "segmented_progress",
+        color: "yellow",
+      },
+    },
+  });
+
+  const activityId = start.activityId;
+
+  await liveActivities.updateLiveActivity({
+    liveActivityUpdateRequest: {
+      activityId,
+      contentState: {
+        title: "ActivitySmith API Deployment",
+        subtitle: "npm i & pm2",
+        currentStep: 3,
+      },
+    },
+  });
+
+  await liveActivities.endLiveActivity({
+    liveActivityEndRequest: {
+      activityId,
+      contentState: {
+        title: "ActivitySmith API Deployment",
+        subtitle: "done",
+        currentStep: 4,
+        autoDismissMinutes: 3,
+      },
+    },
+  });
+
+  console.log("Push sent:", push.success);
+} catch (error) {
+  if (error instanceof ResponseError) {
+    const body = await error.response.json();
+    console.error("ActivitySmith API error:", body);
+  } else {
+    console.error(error);
+  }
+}
+```
+
+### Send a Push Notification
+
+Use `NotificationsApi.sendPushNotification` with a `pushNotificationRequest`. `title` is required; `message` and `subtitle` are optional.
+
+```js Node
+const response = await notifications.sendPushNotification({
+  pushNotificationRequest: {
+    title: "Build Failed",
+    message: "CI pipeline failed on main branch",
+  },
+});
+
+console.log(response.devicesNotified, response.timestamp);
+```
+
+### Start a Live Activity
+
+Use `LiveActivitiesApi.startLiveActivity` with a `contentState` payload. For the segmented progress type, `title`, `numberOfSteps`, `currentStep`, and `type` are required. Use camelCase fields in the SDK (`numberOfSteps`, `currentStep`, `stepColor`, `autoDismissMinutes`).
+
+```js Node
+const start = await liveActivities.startLiveActivity({
+  liveActivityStartRequest: {
+    contentState: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "start",
+      numberOfSteps: 4,
+      currentStep: 1,
+      type: "segmented_progress",
+      color: "yellow",
+    },
+  },
+});
+
+const activityId = start.activityId;
+```
+
+### Update a Live Activity
+
+Use `LiveActivitiesApi.updateLiveActivity` with the `activityId` you received from `startLiveActivity`.
+
+```js Node
+await liveActivities.updateLiveActivity({
+  liveActivityUpdateRequest: {
+    activityId,
+    contentState: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "npm i & pm2",
+      currentStep: 3,
+    },
+  },
+});
+```
+
+### End a Live Activity
+
+Use `LiveActivitiesApi.endLiveActivity` with the `activityId`. You can optionally control how long the ended Live Activity stays visible using `autoDismissMinutes` (default `3`, `0` for immediate dismissal).
+
+```js Node
+await liveActivities.endLiveActivity({
+  liveActivityEndRequest: {
+    activityId,
+    contentState: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "done",
+      currentStep: 4,
+      autoDismissMinutes: 3,
+    },
+  },
+});
+```
+
+## Error Handling
+
+The SDK throws a `ResponseError` for non-2xx responses. You can inspect the API error body via `error.response.json()`:
+
+```js Node
+try {
+  await notifications.sendPushNotification({
+    pushNotificationRequest: { title: "Hello" },
+  });
+} catch (error) {
+  if (error instanceof ResponseError) {
+    const body = await error.response.json();
+    console.error(body);
+  } else {
+    console.error(error);
+  }
+}
+```

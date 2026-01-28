@@ -1,0 +1,9 @@
+```js Node
+# npm install activitysmith
+
+import { Configuration, LiveActivitiesApi, NotificationsApi } from "activitysmith/generated";
+
+const config = new Configuration({ accessToken: "YOUR-API-KEY" });
+const notifications = new NotificationsApi(config);
+const liveActivities = new LiveActivitiesApi(config);
+```

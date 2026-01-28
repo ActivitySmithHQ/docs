@@ -1,0 +1,115 @@
+---
+title: "CLI"
+description: "ActivitySmith CLI lets you send push notifications and manage Live Activities from the terminal."
+icon: "terminal"
+og:title: "CLI | ActivitySmith"
+og:description: "ActivitySmith CLI lets you send push notifications and manage Live Activities from the terminal."
+---
+
+import InstallationCLI from "/snippets/installation/cli.mdx";
+
+## Installation
+
+Install the ActivitySmith CLI globally using npm:
+
+<InstallationCLI />
+
+## Authentication
+
+Set your API key as an environment variable before running commands:
+
+```bash CLI
+export ACTIVITYSMITH_API_KEY="YOUR-API-KEY"
+```
+
+Verify authentication:
+
+```bash CLI
+activitysmith --status
+```
+
+## Quickstart
+
+Send a push notification:
+
+```bash CLI
+activitysmith push-notification \
+  --title "Build Failed 🚨" \
+  --message "CI pipeline failed on main branch"
+```
+
+## Commands
+
+### Push Notification
+
+Sends a push notification to every paired device in your account.
+
+```bash CLI
+activitysmith push-notification \
+  --title "Build Failed 🚨" \
+  --message "CI pipeline failed on main branch" \
+  --subtitle "main"
+```
+
+### Live Activity: Start
+
+Start a Live Activity and get back an `activity_id` for updates.
+
+```bash CLI
+activitysmith live-activity start \
+  --title "ActivitySmith API Deployment" \
+  --subtitle "start" \
+  --number-of-steps 4 \
+  --current-step 1 \
+  --type segmented_progress \
+  --color yellow
+```
+
+### Live Activity: Update
+
+Update an existing Live Activity using its `activity_id`.
+
+```bash CLI
+activitysmith live-activity update \
+  --activity-id "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW" \
+  --title "ActivitySmith API Deployment" \
+  --subtitle "npm i & pm2" \
+  --current-step 3
+```
+
+### Live Activity: End
+
+End a Live Activity and optionally control its dismissal timing.
+
+```bash CLI
+activitysmith live-activity end \
+  --activity-id "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW" \
+  --title "ActivitySmith API Deployment" \
+  --subtitle "done" \
+  --current-step 4 \
+  --auto-dismiss-minutes 3
+```
+
+## Raw JSON Payloads
+
+If you prefer, pass the full JSON body exactly as the API expects.
+
+```bash CLI
+activitysmith push-notification \
+  --json '{"title":"Build Failed 🚨","message":"CI pipeline failed on main branch"}'
+```
+
+```bash CLI
+activitysmith live-activity start \
+  --json '{"content_state":{"title":"ActivitySmith API Deployment","subtitle":"start","number_of_steps":4,"current_step":1,"type":"segmented_progress","color":"yellow"}}'
+```
+
+You can also read JSON from a file using `@`:
+
+```bash CLI
+activitysmith live-activity update --json @payload.json
+```
+
+## Error Handling
+
+The CLI exits non-zero on non-2xx responses and prints the API error body (for example, rate limit or Live Activity limit errors).

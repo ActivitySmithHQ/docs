@@ -44,7 +44,7 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Using API",
             "pages": ["api-reference/introduction"]
           },
           {
