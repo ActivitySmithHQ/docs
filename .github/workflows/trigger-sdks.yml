@@ -1,0 +1,25 @@
+name: Trigger SDK regeneration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - api-reference/openapi.json
+      - openapi/**
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch SDK tooling workflow
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.REPO_DISPATCH_TOKEN }}
+          repository: ActivitySmithHQ/sdk-tooling
+          event-type: openapi-updated
+          client-payload: |
+            {
+              "openapi_repo": "${{ github.repository }}",
+              "openapi_ref": "${{ github.sha }}",
+              "openapi_path": "openapi.json"
+            }
