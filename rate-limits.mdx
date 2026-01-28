@@ -1,0 +1,28 @@
+---
+title: "Rate Limits"
+description: "Rate limits for API requests"
+og:title: "Rate Limits | ActivitySmith"
+og:description: "Rate limits for API requests"
+---
+
+## Concurrent Live Activities Limits
+
+Concurrent Live Activities represent how many live activities ActivitySmith can process for you at the same time.
+Number of concurrent live activities is limited to 4. This limit mimics the number of concurrent live activities that can be processed by the iOS. If you exceed this limit, additional live activities will be ignored until resources become available.
+
+In the future, we will allow you to increase this limit by upgrading to a paid plan.
+
+If you require higher concurrency limits, please contact us at [adam@activitysmith.com](mailto:adam@activitysmith.com).
+
+## API Rate Limits
+
+Rate limits are measured in requests per minute and are primarily in place to prevent abuse. When configured correctly, your real bottleneck will be concurrent live activities.
+
+**Shared account limit**: 60 requests per minute across these endpoints:
+
+- `POST /push-notification`
+- `POST /live-activity/start`
+- `POST /live-activity/update`
+- `POST /live-activity/end`
+
+These rate limits are enforced to ensure fair usage and availability of the API for all users. If you require higher limits, please contact us at [adam@activitysmith.com](mailto:adam@activitysmith.com).

@@ -1,0 +1,66 @@
+/* Style the Sign Up navbar link as an orange button */
+li.navbar-link a[href*="activitysmith.com/app/signup"] {
+  background-color: #000;
+  color: #fff;
+}
+
+li.navbar-link a[href*="activitysmith.com/app/signup"]:hover {
+  background-color: #1f1f1f;
+  color: #fff;
+}
+
+/* Dark mode adjustments */
+.dark li.navbar-link a[href*="activitysmith.com/app/signup"] {
+  background-color: #fff;
+  color: #000;
+}
+
+.dark li.navbar-link a[href*="activitysmith.com/app/signup"]:hover {
+  background-color: #ddd;
+  color: #000;
+}
+
+/* Move Sign Up button to the right */
+li.navbar-link:has(a[href*="activitysmith.com/app/signup"]) {
+  order: 99;
+}
+
+.hero-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  align-items: flex-end;
+  margin: 24px 0 8px;
+}
+
+.hero-image {
+  height: auto;
+  width: auto;
+  max-height: 280px;
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+}
+
+.image {
+  margin: 0 auto;
+  height: auto;
+  width: auto;
+  max-height: 268px;
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+}
+
+@media (min-width: 720px) {
+  .hero-images {
+    flex-wrap: nowrap;
+  }
+}
+
+@media (max-width: 719px) {
+  .hero-images {
+    gap: 0px;
+  }
+}

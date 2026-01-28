@@ -1,97 +1,183 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Quickstart"
+description: "Send Live Activities and push notifications to your iOS devices from any backend"
+og:title: "Quickstart | ActivitySmith"
+og:description: "ActivitySmith Send Live Activities and push notifications to your iOS devices from any backend"
 ---
 
-## Setting up
+<div className="hero-images">
+  <img
+    className="hero-image"
+    src="https://cdn.activitysmith.com/printkit/live-activities.png"
+    alt="ActivitySmith Live Activities"
+  />
+  <img
+    className="hero-image"
+    src="https://cdn.activitysmith.com/printkit/notifications-cut.png"
+    alt="ActivitySmith Push Notifications"
+  />
+</div>
 
-Get your documentation site up and running in minutes.
+## Welcome to ActivitySmith
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+[ActivitySmith](https://activitysmith.com) is API service that lets you trigger and update Live Activities and send push notifications directly from your own infrastructure. Pair your iOS device(s), authenticate with an API key, and send real-time alerts from any backend, cron, agent, or automation. Without building or maintaining your own iOS app or dealing directly with APNs.
 
-## Make it yours
+## How to use it?
 
-Design a docs site that looks great and empowers your users.
+We provide an easy to use API. You can download the iOS app from the [App Store](https://apps.apple.com/app/id6752254835).
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+Check out the following resources to get started:
 
-## Create beautiful pages
+- **API**: [Documentation](https://activitysmith.com/docs/api-reference/introduction)
+- **SDKs**: [Python](https://activitysmith.com/docs/sdks/python), [Node](https://activitysmith.com/docs/sdks/node), [CLI](https://activitysmith.com/docs/sdks/cli)
+- **Others**: [Zapier](https://zapier.com/apps/firecrawl/integrations), [Pabbly Connect](https://www.pabbly.com/connect/integrations/firecrawl/)
 
-Everything you need to create world-class documentation.
+Want an SDK or Integration? Let us know at [adam@activitysmith.com](mailto:adam@activitysmith.com).
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+### API Key
 
-## Need inspiration?
+To use the API, you need to sign up on [ActivitySmith](https://activitysmith.com/) and get an API key.
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+### Features
+
+- [**Push Notifications**](#push-notifications): send a push notifications to all of your paired devices.
+- [**Live Activities**](#live-activities): start, update and end a Live Activity on your lock screen or dynamic island.
+
+### Powerful Capabilities
+
+- **Glanceable observability**: monitor real-time system state and long-running operations directly on your lock screen or dynamic island.
+- **The hard stuff**: APNs(Apple Push Notification service), certificates, orchestration
+- **Customizability**: adapt the experience to fit your unique needs.
+- **Works with any backend**: use with any backend, cron, agent, automation or AI tool.
+- **iOS app**: ready to use native iOS app for your iPhone or iPad. No need to build your own.
+
+## Push Notifications
+
+To send a push notification, use the `push-notification` endpoint. It takes the title and message as parameters and sends a push notification to all of your paired devices.
+
+<img className="image" src="https://cdn.activitysmith.com/printkit/notification.png" alt="Push Notification" />
+
+```bash
+curl -X POST https://activitysmith.com/api/push-notification \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Build Failed 🚨",
+    "message": "CI pipeline failed on main branch"
+  }'
+```
+
+**Response**
+
+```json
+{
+  "success": true,
+  "devices_notified": 3,
+  "users_notified": 1,
+  "timestamp": "2025-08-12T12:00:00.000Z"
+}
+```
+
+## Live Activities
+
+### /start endpoint
+
+To start a Live Activity, use the `live-activity/start` endpoint. It takes a `content_state` payload and starts a Live Activity on your lock screen or dynamic island. For a segmented progress activity, include `title`, `current_step`, `type`, and `number_of_steps`.
+
+<img className="image" src="https://cdn.activitysmith.com/printkit/live-activity-start.png" alt="Live Activity Start" />
+
+```bash
+curl -X POST https://activitysmith.com/api/live-activity/start \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content_state": {
+      "title": "ActivitySmith API Deployment",
+      "subtitle": "start",
+      "number_of_steps": 4,
+      "current_step": 1,
+      "type": "segmented_progress",
+      "color": "yellow"
+    }
+  }'
+```
+
+### Response
+
+It returns a `activity_id` that you can use to update or end the Live Activity.
+
+```json
+{
+  "success": true,
+  "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+  "devices_notified": 2,
+  "users_notified": 1,
+  "timestamp": "2026-01-28T09:57:22.929Z"
+}
+```
+
+### /update endpoint
+
+To update the Live Activity, call `live-activity/update` with the `activity_id` and a `content_state` payload (minimum: `title`, `current_step`).
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/printkit/live-activity-update.png"
+  alt="Live Activity Update"
+/>
+
+```bash
+curl -X POST https://activitysmith.com/api/live-activity/update \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+    "content_state": {
+      "title": "ActivitySmith API Deployment",
+      "subtitle": "npm i & pm2",
+      "current_step": 3
+    }
+  }'
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+  "devices_notified": 2,
+  "timestamp": "2026-01-28T09:57:26.056Z"
+}
+```
+
+### /end endpoint
+
+To end the Live Activity, call `live-activity/end` with the `activity_id` and the content state.
+
+<img className="image" src="https://cdn.activitysmith.com/printkit/live-activity-end.png" alt="Live Activity End" />
+
+```bash
+curl -X POST https://activitysmith.com/api/live-activity/end \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+    "content_state": {
+      "title": "ActivitySmith API Deployment",
+      "subtitle": "done",
+      "current_step": 4
+    }
+  }'
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+  "devices_notified": 2,
+  "timestamp": "2026-01-28T09:57:29.258Z"
+}
+```

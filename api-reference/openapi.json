@@ -1,16 +1,13 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
+    "title": "ActivitySmith API",
+    "description": "Send push notifications and Live Activities to your own devices via a single API key.",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://activitysmith.com/api"
     }
   ],
   "security": [
@@ -18,77 +15,73 @@
       "bearerAuth": []
     }
   ],
+  "tags": [
+    {
+      "name": "Notifications"
+    },
+    {
+      "name": "Live Activities"
+    }
+  ],
   "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+    "/push-notification": {
+      "post": {
+        "tags": ["Notifications"],
+        "summary": "Send a push notification",
+        "description": "Sends a push notification to every paired device in your account.",
+        "operationId": "sendPushNotification",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PushNotificationRequest" },
+              "examples": {
+                "default": {
+                  "value": {
+                    "title": "Build Failed 🚨",
+                    "message": "CI pipeline failed on main branch"
+                  }
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Push notification sent",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                "schema": { "$ref": "#/components/schemas/PushNotificationResponse" },
+                "examples": {
+                  "default": {
+                    "value": {
+                      "success": true,
+                      "devices_notified": 3,
+                      "users_notified": 1,
+                      "timestamp": "2025-08-12T12:00:00.000Z"
+                    }
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Unexpected error",
+          "429": {
+            "description": "Rate limit exceeded",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/RateLimitError" },
+                    { "$ref": "#/components/schemas/LiveActivityLimitError" }
+                  ]
+                },
+                "examples": {
+                  "rate_limited": {
+                    "value": {
+                      "error": "Rate limit exceeded",
+                      "message": "Too many requests, please try again later."
+                    }
+                  }
                 }
               }
             }
@@ -96,121 +89,407 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+    "/live-activity/start": {
       "post": {
-        "description": "Information about a new plant added to the store",
+        "tags": ["Live Activities"],
+        "summary": "Start a Live Activity",
+        "description": "Starts a Live Activity on all registered devices and returns an activity_id.",
+        "operationId": "startLiveActivity",
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+              "schema": { "$ref": "#/components/schemas/LiveActivityStartRequest" },
+              "examples": {
+                "default": {
+                  "value": {
+                    "content_state": {
+                      "title": "ActivitySmith API Deployment",
+                      "subtitle": "start",
+                      "number_of_steps": 4,
+                      "current_step": 1,
+                      "type": "segmented_progress",
+                      "color": "yellow"
+                    }
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "Live Activity started",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LiveActivityStartResponse" },
+                "examples": {
+                  "default": {
+                    "value": {
+                      "success": true,
+                      "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                      "devices_notified": 2,
+                      "users_notified": 1,
+                      "timestamp": "2026-01-28T09:57:22.929Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RateLimitError" },
+                "examples": {
+                  "rate_limited": {
+                    "value": {
+                      "error": "Rate limit exceeded",
+                      "message": "Too many requests, please try again later."
+                    }
+                  },
+                  "concurrent_live_activity_limit_reached": {
+                    "value": {
+                      "error": "Live Activity limit reached",
+                      "message": "Only 4 concurrent Live Activities are allowed per account",
+                      "limit": 4,
+                      "active": 4
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live-activity/update": {
+      "post": {
+        "tags": ["Live Activities"],
+        "summary": "Update a Live Activity",
+        "description": "Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued.",
+        "operationId": "updateLiveActivity",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LiveActivityUpdateRequest" },
+              "examples": {
+                "default": {
+                  "value": {
+                    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                    "content_state": {
+                      "title": "ActivitySmith API Deployment",
+                      "subtitle": "npm i & pm2",
+                      "current_step": 3
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Live Activity updated (or queued)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LiveActivityUpdateResponse" },
+                "examples": {
+                  "sent": {
+                    "value": {
+                      "success": true,
+                      "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                      "devices_notified": 2,
+                      "devices_queued": 0,
+                      "timestamp": "2026-01-28T09:57:26.056Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RateLimitError" },
+                "examples": {
+                  "rate_limited": {
+                    "value": {
+                      "error": "Rate limit exceeded",
+                      "message": "Too many requests, please try again later."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live-activity/end": {
+      "post": {
+        "tags": ["Live Activities"],
+        "summary": "End a Live Activity",
+        "description": "Ends a Live Activity and archives its lifecycle.",
+        "operationId": "endLiveActivity",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LiveActivityEndRequest" },
+              "examples": {
+                "default": {
+                  "value": {
+                    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                    "content_state": {
+                      "title": "ActivitySmith API Deployment",
+                      "subtitle": "done",
+                      "current_step": 4,
+                      "auto_dismiss_minutes": 3
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Live Activity ended",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LiveActivityEndResponse" },
+                "examples": {
+                  "default": {
+                    "value": {
+                      "success": true,
+                      "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                      "devices_notified": 2,
+                      "devices_queued": 0,
+                      "timestamp": "2026-01-28T09:57:29.258Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RateLimitError" },
+                "examples": {
+                  "rate_limited": {
+                    "value": {
+                      "error": "Rate limit exceeded",
+                      "message": "Too many requests, please try again later."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
   },
   "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "Use your ActivitySmith API key. Example: Authorization: Bearer <API_KEY>"
+      }
+    },
+    "schemas": {
+      "ContentStateStart": {
+        "type": "object",
+        "description": "Start payload requires title, number_of_steps, current_step, and type.",
+        "required": ["title", "number_of_steps", "current_step", "type"],
+        "properties": {
+          "title": { "type": "string" },
+          "subtitle": { "type": "string" },
+          "number_of_steps": { "type": "integer", "minimum": 1 },
+          "current_step": { "type": "integer", "minimum": 1 },
+          "type": {
+            "type": "string",
+            "enum": ["segmented_progress"]
+          },
+          "color": {
+            "type": "string",
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "description": "Optional. Accent color for the Live Activity. Defaults to blue.",
+            "default": "blue"
+          },
+          "step_color": {
+            "type": "string",
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "description": "Optional. Overrides color for the current step."
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContentStateUpdate": {
+        "type": "object",
+        "description": "Update payload. Required fields are title and current_step. number_of_steps is optional.",
+        "required": ["title", "current_step"],
+        "properties": {
+          "title": { "type": "string" },
+          "subtitle": { "type": "string" },
+          "number_of_steps": { "type": "integer", "minimum": 1 },
+          "current_step": { "type": "integer", "minimum": 1 },
+          "color": {
+            "type": "string",
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "description": "Optional. Accent color for the Live Activity. Defaults to blue.",
+            "default": "blue"
+          },
+          "step_color": {
+            "type": "string",
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "description": "Optional. Overrides color for the current step."
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContentStateEnd": {
+        "type": "object",
+        "description": "End payload. Required fields are title and current_step. number_of_steps is optional.",
+        "required": ["title", "current_step"],
+        "properties": {
+          "title": { "type": "string" },
+          "subtitle": { "type": "string" },
+          "number_of_steps": { "type": "integer", "minimum": 1 },
+          "current_step": { "type": "integer", "minimum": 1 },
+          "color": {
+            "type": "string",
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "description": "Optional. Accent color for the Live Activity. Defaults to blue.",
+            "default": "blue"
+          },
+          "step_color": {
+            "type": "string",
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "description": "Optional. Overrides color for the current step."
+          },
+          "auto_dismiss_minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Optional. Minutes before the ended Live Activity is dismissed. Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live Activities after ~4 hours max.",
+            "default": 3
+          }
+        },
+        "additionalProperties": false
+      },
+      "PushNotificationRequest": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": { "type": "string" },
+          "message": { "type": "string" },
+          "subtitle": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "PushNotificationResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "devices_notified": { "type": "integer" },
+          "users_notified": { "type": "integer" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["success", "timestamp"],
+        "additionalProperties": false
+      },
+      "LiveActivityStartRequest": {
+        "type": "object",
+        "required": ["content_state"],
+        "properties": {
+          "content_state": { "$ref": "#/components/schemas/ContentStateStart" }
+        },
+        "additionalProperties": false
+      },
+      "LiveActivityStartResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "devices_notified": { "type": "integer" },
+          "users_notified": { "type": "integer" },
+          "activity_id": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["success", "activity_id", "timestamp"],
+        "additionalProperties": false
+      },
+      "RateLimitError": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "required": ["error", "message"],
+        "additionalProperties": false
+      },
+      "LiveActivityLimitError": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" },
+          "limit": { "type": "integer" },
+          "active": {
+            "type": "integer",
+            "description": "Current number of active Live Activities."
+          }
+        },
+        "required": ["error", "message", "limit", "active"],
+        "additionalProperties": false
+      },
+      "LiveActivityUpdateRequest": {
+        "type": "object",
+        "required": ["activity_id", "content_state"],
+        "properties": {
+          "activity_id": { "type": "string" },
+          "content_state": { "$ref": "#/components/schemas/ContentStateUpdate" }
+        },
+        "additionalProperties": false
+      },
+      "LiveActivityUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "activity_id": { "type": "string" },
+          "devices_queued": { "type": "integer" },
+          "devices_notified": { "type": "integer" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["success", "activity_id", "timestamp"],
+        "additionalProperties": false
+      },
+      "LiveActivityEndRequest": {
+        "type": "object",
+        "required": ["activity_id", "content_state"],
+        "properties": {
+          "activity_id": { "type": "string" },
+          "content_state": { "$ref": "#/components/schemas/ContentStateEnd" }
+        },
+        "additionalProperties": false
+      },
+      "LiveActivityEndResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "activity_id": { "type": "string" },
+          "devices_queued": { "type": "integer" },
+          "devices_notified": { "type": "integer" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["success", "activity_id", "timestamp"],
+        "additionalProperties": false
       }
     }
   }
