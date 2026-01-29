@@ -12,21 +12,21 @@
   ],
   "security": [
     {
-      "bearerAuth": []
+      "apiKeyAuth": []
     }
   ],
   "tags": [
     {
-      "name": "Notifications"
+      "name": "PushNotifications"
     },
     {
-      "name": "Live Activities"
+      "name": "LiveActivities"
     }
   ],
   "paths": {
     "/push-notification": {
       "post": {
-        "tags": ["Notifications"],
+        "tags": ["PushNotifications"],
         "summary": "Send a push notification",
         "description": "Sends a push notification to every paired device in your account.",
         "operationId": "sendPushNotification",
@@ -91,7 +91,7 @@
     },
     "/live-activity/start": {
       "post": {
-        "tags": ["Live Activities"],
+        "tags": ["LiveActivities"],
         "summary": "Start a Live Activity",
         "description": "Starts a Live Activity on all registered devices and returns an activity_id.",
         "operationId": "startLiveActivity",
@@ -166,7 +166,7 @@
     },
     "/live-activity/update": {
       "post": {
-        "tags": ["Live Activities"],
+        "tags": ["LiveActivities"],
         "summary": "Update a Live Activity",
         "description": "Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued.",
         "operationId": "updateLiveActivity",
@@ -231,7 +231,7 @@
     },
     "/live-activity/end": {
       "post": {
-        "tags": ["Live Activities"],
+        "tags": ["LiveActivities"],
         "summary": "End a Live Activity",
         "description": "Ends a Live Activity and archives its lifecycle.",
         "operationId": "endLiveActivity",
@@ -298,7 +298,7 @@
   },
   "components": {
     "securitySchemes": {
-      "bearerAuth": {
+      "apiKeyAuth": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "API Key",
