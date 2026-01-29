@@ -79,7 +79,7 @@
   },
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "https://cdn.activitysmith.com/logo/logo-wide.svg",
+    "dark": "/logo/dark.svg",
     "href": "https://activitysmith.com"
   },
   "navbar": {
@@ -101,6 +101,13 @@
     "socials": {
       "x": "https://x.com/ActivitySmithHQ",
       "github": "https://github.com/activitySmithHQ"
+    }
+  },
+  "seo": {
+    "metatags": {
+      "canonical": "https://activitysmith.com/docs",
+      "og:locale": "en_US",
+      "twitter:site": "@ActivitySmithHQ"
     }
   }
 }
