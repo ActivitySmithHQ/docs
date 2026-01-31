@@ -18,8 +18,8 @@
             "pages": ["index", "rate-limits"]
           },
           {
-            "group": "Features",
-            "pages": ["essentials/settings", "essentials/navigation"]
+            "group": " ",
+            "pages": ["https://activitysmith.com/docs/llms-full.txt", "https://activitysmith.com/app/dashboard"]
           }
         ]
       },
@@ -95,7 +95,7 @@
     ]
   },
   "contextual": {
-    "options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp", "cursor", "vscode"]
+    "options": ["copy", "view", "chatgpt", "claude", "cursor"]
   },
   "footer": {
     "socials": {
