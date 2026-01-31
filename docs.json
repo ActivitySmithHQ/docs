@@ -33,6 +33,10 @@
           {
             "group": "Official",
             "pages": ["sdks/node", "sdks/python", "sdks/cli"]
+          },
+          {
+            "group": " ",
+            "pages": ["https://activitysmith.com/docs/llms-full.txt", "https://activitysmith.com/app/dashboard"]
           }
         ]
       },
@@ -58,6 +62,10 @@
               "api-reference/endpoint/live-activity-update",
               "api-reference/endpoint/live-activity-end"
             ]
+          },
+          {
+            "group": " ",
+            "pages": ["https://activitysmith.com/docs/llms-full.txt", "https://activitysmith.com/app/dashboard"]
           }
         ]
       }
