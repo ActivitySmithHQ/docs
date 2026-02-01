@@ -25,12 +25,14 @@ Here's an example of how to use the SDK with error handling:
 import os
 from activitysmith import ActivitySmith
 
-client = ActivitySmith(api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY"))
+activitysmith = ActivitySmith(api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY"))
 
 try:
-    response = client.send_push_notification(
-        title="Build Failed 🚨",
-        message="CI pipeline failed on main branch",
+    response = activitysmith.notifications.send_push_notification(
+        push_notification_request={
+            "title": "Build Failed 🚨",
+            "message": "CI pipeline failed on main branch",
+        }
     )
     print("Notified:", response.devices_notified)
 except Exception as err:
@@ -39,12 +41,14 @@ except Exception as err:
 
 ### Send a Push Notification
 
-Use `send_push_notification` to notify every paired device in your account.
+Use `activitysmith.notifications.send_push_notification` with a `push_notification_request` payload. `title` is required; `message` and `subtitle` are optional.
 
 ```python Python
-response = client.send_push_notification(
-    title="Build Failed 🚨",
-    message="CI pipeline failed on main branch",
+response = activitysmith.notifications.send_push_notification(
+    push_notification_request={
+        "title": "Build Failed 🚨",
+        "message": "CI pipeline failed on main branch",
+    }
 )
 
 print(response.success)
@@ -53,17 +57,19 @@ print(response.devices_notified)
 
 ### Start a Live Activity
 
-Start a Live Activity with `start_live_activity`. For a segmented progress activity, include `title`, `number_of_steps`, `current_step`, and `type`.
+Start a Live Activity with `activitysmith.live_activities.start_live_activity`. For a segmented progress activity, include `title`, `number_of_steps`, `current_step`, and `type`.
 
 ```python Python
-start = client.start_live_activity(
-    content_state={
-        "title": "ActivitySmith API Deployment",
-        "subtitle": "start",
-        "number_of_steps": 4,
-        "current_step": 1,
-        "type": "segmented_progress",
-        "color": "yellow",
+start = activitysmith.live_activities.start_live_activity(
+    live_activity_start_request={
+        "content_state": {
+            "title": "ActivitySmith API Deployment",
+            "subtitle": "start",
+            "number_of_steps": 4,
+            "current_step": 1,
+            "type": "segmented_progress",
+            "color": "yellow",
+        }
     }
 )
 
@@ -72,15 +78,17 @@ activity_id = start.activity_id
 
 ### Update a Live Activity
 
-Update a Live Activity with `update_live_activity`. The `content_state` requires at least `title` and `current_step`.
+Update a Live Activity with `activitysmith.live_activities.update_live_activity`. The `content_state` requires at least `title` and `current_step`.
 
 ```python Python
-update = client.update_live_activity(
-    activity_id=activity_id,
-    content_state={
-        "title": "ActivitySmith API Deployment",
-        "subtitle": "npm i & pm2",
-        "current_step": 3,
+update = activitysmith.live_activities.update_live_activity(
+    live_activity_update_request={
+        "activity_id": activity_id,
+        "content_state": {
+            "title": "ActivitySmith API Deployment",
+            "subtitle": "npm i & pm2",
+            "current_step": 3,
+        }
     }
 )
 
@@ -89,16 +97,18 @@ print(update.devices_notified)
 
 ### End a Live Activity
 
-End a Live Activity with `end_live_activity`. You can optionally set `auto_dismiss_minutes` in the `content_state`.
+End a Live Activity with `activitysmith.live_activities.end_live_activity`. You can optionally set `auto_dismiss_minutes` in the `content_state`.
 
 ```python Python
-end = client.end_live_activity(
-    activity_id=activity_id,
-    content_state={
-        "title": "ActivitySmith API Deployment",
-        "subtitle": "done",
-        "current_step": 4,
-        "auto_dismiss_minutes": 3,
+end = activitysmith.live_activities.end_live_activity(
+    live_activity_end_request={
+        "activity_id": activity_id,
+        "content_state": {
+            "title": "ActivitySmith API Deployment",
+            "subtitle": "done",
+            "current_step": 4,
+            "auto_dismiss_minutes": 3,
+        }
     }
 )
 
