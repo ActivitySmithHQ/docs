@@ -18,8 +18,8 @@
             "pages": ["index", "rate-limits"]
           },
           {
-            "group": " ",
-            "pages": ["https://activitysmith.com/docs/llms-full.txt", "https://activitysmith.com/app/dashboard"]
+            "group": "Resources",
+            "pages": ["llms-full.txt"]
           }
         ]
       },
@@ -35,8 +35,8 @@
             "pages": ["sdks/node", "sdks/python", "sdks/cli"]
           },
           {
-            "group": " ",
-            "pages": ["https://activitysmith.com/docs/llms-full.txt", "https://activitysmith.com/app/dashboard"]
+            "group": "Resources",
+            "pages": ["llms-full.txt"]
           }
         ]
       },
@@ -64,8 +64,8 @@
             ]
           },
           {
-            "group": " ",
-            "pages": ["/docs/llms-full.txt", "/app/dashboard"]
+            "group": "Resources",
+            "pages": ["llms-full.txt"]
           }
         ]
       }
