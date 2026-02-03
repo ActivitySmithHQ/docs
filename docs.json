@@ -32,7 +32,7 @@
           },
           {
             "group": "Official",
-            "pages": ["sdks/node", "sdks/python"]
+            "pages": ["sdks/node", "sdks/python", "sdks/cli"]
           },
           {
             "group": " ",
