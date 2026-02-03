@@ -60,6 +60,18 @@ activitysmith activity start \
   --content-state '{"title":"ActivitySmith API Deployment","subtitle":"start","numberOfSteps":4,"currentStep":1,"type":"segmented_progress","color":"yellow"}'
 ```
 
+Or use flags:
+
+```bash CLI
+activitysmith activity start \
+  --title "ActivitySmith API Deployment" \
+  --subtitle "start" \
+  --number-of-steps 4 \
+  --current-step 1 \
+  --type segmented_progress \
+  --color yellow
+```
+
 ### Live Activity: Update
 
 Update an existing Live Activity using its `activityId`.
@@ -70,6 +82,16 @@ activitysmith activity update \
   --content-state '{"title":"ActivitySmith API Deployment","subtitle":"npm i & pm2","currentStep":3}'
 ```
 
+Or use flags:
+
+```bash CLI
+activitysmith activity update \
+  --activity-id "<activityId>" \
+  --title "ActivitySmith API Deployment" \
+  --subtitle "npm i & pm2" \
+  --current-step 3
+```
+
 ### Live Activity: End
 
 End a Live Activity and optionally control its dismissal timing.
@@ -78,6 +100,17 @@ End a Live Activity and optionally control its dismissal timing.
 activitysmith activity end \
   --activity-id "<activityId>" \
   --content-state '{"title":"ActivitySmith API Deployment","subtitle":"done","currentStep":4,"autoDismissMinutes":3}'
+```
+
+Or use flags:
+
+```bash CLI
+activitysmith activity end \
+  --activity-id "<activityId>" \
+  --title "ActivitySmith API Deployment" \
+  --subtitle "done" \
+  --current-step 4 \
+  --auto-dismiss-minutes 3
 ```
 
 ## Content State
