@@ -22,10 +22,10 @@ Set your API key as an environment variable before running commands:
 export ACTIVITYSMITH_API_KEY="YOUR-API-KEY"
 ```
 
-Verify authentication:
+Verify the CLI is installed:
 
 ```bash CLI
-activitysmith --status
+activitysmith --help
 ```
 
 ## Quickstart
@@ -33,7 +33,7 @@ activitysmith --status
 Send a push notification:
 
 ```bash CLI
-activitysmith push-notification \
+activitysmith push \
   --title "Build Failed 🚨" \
   --message "CI pipeline failed on main branch"
 ```
@@ -45,7 +45,7 @@ activitysmith push-notification \
 Sends a push notification to every paired device in your account.
 
 ```bash CLI
-activitysmith push-notification \
+activitysmith push \
   --title "Build Failed 🚨" \
   --message "CI pipeline failed on main branch" \
   --subtitle "main"
@@ -53,28 +53,21 @@ activitysmith push-notification \
 
 ### Live Activity: Start
 
-Start a Live Activity and get back an `activity_id` for updates.
+Start a Live Activity and get back an `activityId` for updates.
 
 ```bash CLI
-activitysmith live-activity start \
-  --title "ActivitySmith API Deployment" \
-  --subtitle "start" \
-  --number-of-steps 4 \
-  --current-step 1 \
-  --type segmented_progress \
-  --color yellow
+activitysmith activity start \
+  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"start","numberOfSteps":4,"currentStep":1,"type":"segmented_progress","color":"yellow"}'
 ```
 
 ### Live Activity: Update
 
-Update an existing Live Activity using its `activity_id`.
+Update an existing Live Activity using its `activityId`.
 
 ```bash CLI
-activitysmith live-activity update \
-  --activity-id "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW" \
-  --title "ActivitySmith API Deployment" \
-  --subtitle "npm i & pm2" \
-  --current-step 3
+activitysmith activity update \
+  --activity-id "<activityId>" \
+  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"npm i & pm2","currentStep":3}'
 ```
 
 ### Live Activity: End
@@ -82,33 +75,42 @@ activitysmith live-activity update \
 End a Live Activity and optionally control its dismissal timing.
 
 ```bash CLI
-activitysmith live-activity end \
-  --activity-id "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW" \
-  --title "ActivitySmith API Deployment" \
-  --subtitle "done" \
-  --current-step 4 \
-  --auto-dismiss-minutes 3
+activitysmith activity end \
+  --activity-id "<activityId>" \
+  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"done","currentStep":4,"autoDismissMinutes":3}'
 ```
 
-## Raw JSON Payloads
+## Content State
 
-If you prefer, pass the full JSON body exactly as the API expects.
+You can provide content state in two ways:
 
-```bash CLI
-activitysmith push-notification \
-  --json '{"title":"Build Failed 🚨","message":"CI pipeline failed on main branch"}'
-```
+- JSON: `--content-state '{...}'` or `--content-state-file path/to/payload.json`
+- Flags: `--title`, `--subtitle`, `--type`, `--number-of-steps`, `--current-step`, `--color`, `--step-color`, `--auto-dismiss-minutes`
 
-```bash CLI
-activitysmith live-activity start \
-  --json '{"content_state":{"title":"ActivitySmith API Deployment","subtitle":"start","number_of_steps":4,"current_step":1,"type":"segmented_progress","color":"yellow"}}'
-```
+Use camelCase keys in JSON (for example: `numberOfSteps`, `currentStep`, `autoDismissMinutes`).
 
-You can also read JSON from a file using `@`:
+### Required Fields
 
-```bash CLI
-activitysmith live-activity update --json @payload.json
-```
+- `activity start`: `title`, `numberOfSteps`, `currentStep`, `type`
+- `activity update`: `title`, `currentStep`
+- `activity end`: `title`, `currentStep`
+
+### Field Reference
+
+| Field | Description |
+| --- | --- |
+| `title` | Primary label shown in the Live Activity. |
+| `subtitle` | Secondary label shown in the Live Activity. |
+| `type` | Layout type. For now: `segmented_progress`. |
+| `numberOfSteps` | Total steps in the progress flow. |
+| `currentStep` | Current step index (1-based). |
+| `color` | Accent color (`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`). |
+| `stepColor` | Color for step segments (same values as `color`). |
+| `autoDismissMinutes` | Minutes before dismissal after ending (default `3`, `0` for immediate). |
+
+## Output
+
+Use `--json` to output machine-readable JSON.
 
 ## Error Handling
 
