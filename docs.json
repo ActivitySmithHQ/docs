@@ -65,7 +65,7 @@
           },
           {
             "group": " ",
-            "pages": ["https://activitysmith.com/docs/llms-full.txt", "https://activitysmith.com/app/dashboard"]
+            "pages": ["/docs/llms-full.txt", "/app/dashboard"]
           }
         ]
       }
