@@ -18,6 +18,10 @@
             "pages": ["index", "rate-limits"]
           },
           {
+            "group": "Customization",
+            "pages": ["colors"]
+          },
+          {
             "group": "Resources",
             "pages": ["llms-full.txt"]
           }
