@@ -1,0 +1,149 @@
+---
+title: "Go"
+description: "ActivitySmith Go SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+icon: "golang"
+og:title: "Go SDK | ActivitySmith"
+og:description: "ActivitySmith Go SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+---
+
+import InstallationGo from "/snippets/installation/go.mdx";
+
+## Installation
+
+To install the ActivitySmith Go SDK, you can use `go get`:
+
+<InstallationGo />
+
+## Usage
+
+1. Get an API key from [ActivitySmith](https://activitysmith.com)
+2. Pass the API key into `activitysmith.New`.
+
+Here's an example of how to use the SDK with error handling:
+
+```go Go
+package main
+
+import (
+	"log"
+
+	activitysmith "github.com/ActivitySmithHQ/activitysmith-go"
+	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+)
+
+func main() {
+	client, err := activitysmith.New("YOUR-API-KEY", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	response, err := client.Notifications.
+		Send(
+			generated.PushNotificationRequest{
+				Title:   "Build Failed",
+				Message: generated.PtrString("CI pipeline failed on main branch"),
+			},
+		)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Notified:", response.GetDevicesNotified())
+}
+```
+
+### Send a Push Notification
+
+Use `client.Notifications.Send` with a `generated.PushNotificationRequest`. `title` is required; `message` and `subtitle` are optional.
+
+```go Go
+response, err := client.Notifications.
+	Send(
+		generated.PushNotificationRequest{
+			Title:   "Build Failed",
+			Message: generated.PtrString("CI pipeline failed on main branch"),
+		},
+	)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(response.GetSuccess())
+log.Println(response.GetDevicesNotified())
+```
+
+### Start a Live Activity
+
+Start a Live Activity with `client.LiveActivities.Start`. For a segmented progress activity, include `title`, `number_of_steps`, `current_step`, and `type`.
+
+```go Go
+start, err := client.LiveActivities.
+	Start(
+		generated.LiveActivityStartRequest{
+			ContentState: generated.ContentStateStart{
+				Title:         "ActivitySmith API Deployment",
+				Subtitle:      generated.PtrString("start"),
+				NumberOfSteps: 4,
+				CurrentStep:   1,
+				Type:          "segmented_progress",
+				Color:         generated.PtrString("yellow"),
+			},
+		},
+	)
+if err != nil {
+	log.Fatal(err)
+}
+
+activityID := start.GetActivityId()
+```
+
+### Update a Live Activity
+
+Update a Live Activity with `client.LiveActivities.Update` using the `activityID`.
+
+```go Go
+update, err := client.LiveActivities.
+	Update(
+		generated.LiveActivityUpdateRequest{
+			ActivityId: activityID,
+			ContentState: generated.ContentStateUpdate{
+				Title:       "ActivitySmith API Deployment",
+				Subtitle:    generated.PtrString("npm i & pm2"),
+				CurrentStep: 3,
+			},
+		},
+	)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(update.GetDevicesNotified())
+```
+
+### End a Live Activity
+
+End a Live Activity with `client.LiveActivities.End`. You can optionally set `auto_dismiss_minutes` in the `content_state`.
+
+```go Go
+end, err := client.LiveActivities.
+	End(
+		generated.LiveActivityEndRequest{
+			ActivityId: activityID,
+			ContentState: generated.ContentStateEnd{
+				Title:              "ActivitySmith API Deployment",
+				Subtitle:           generated.PtrString("done"),
+				CurrentStep:        4,
+				AutoDismissMinutes: generated.PtrInt32(3),
+			},
+		},
+	)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(end.GetSuccess())
+```
+
+## Error Handling
+
+Handle API errors by checking the returned `error` from SDK calls.

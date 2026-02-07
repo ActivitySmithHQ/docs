@@ -1,0 +1,132 @@
+---
+title: "Ruby"
+description: "ActivitySmith Ruby SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+icon: "ruby"
+og:title: "Ruby SDK | ActivitySmith"
+og:description: "ActivitySmith Ruby SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+---
+
+import InstallationRuby from "/snippets/installation/ruby.mdx";
+
+## Installation
+
+To install the ActivitySmith Ruby SDK, you can use RubyGems:
+
+<InstallationRuby />
+
+## Usage
+
+1. Get an API key from [ActivitySmith](https://activitysmith.com)
+2. Set the API key as an environment variable named `ACTIVITYSMITH_API_KEY` or pass it directly to `ActivitySmith::Client`.
+
+Here's an example of how to use the SDK with error handling:
+
+```ruby Ruby
+require "activitysmith"
+
+api_key = ENV["ACTIVITYSMITH_API_KEY"] || "YOUR-API-KEY"
+activitysmith = ActivitySmith::Client.new(api_key: api_key)
+
+begin
+  response = activitysmith.notifications.send(
+    {
+      title: "Build Failed",
+      message: "CI pipeline failed on main branch"
+    }
+  )
+
+  puts "Notified: #{response.devices_notified}"
+rescue StandardError => err
+  puts "Request failed: #{err.message}"
+end
+```
+
+### Send a Push Notification
+
+Use `activitysmith.notifications.send` with a push payload. `title` is required; `message` and `subtitle` are optional.
+
+```ruby Ruby
+response = activitysmith.notifications.send(
+  {
+    title: "Build Failed",
+    message: "CI pipeline failed on main branch"
+  }
+)
+
+puts response.success
+puts response.devices_notified
+```
+
+### Start a Live Activity
+
+Start a Live Activity with `activitysmith.live_activities.start`.
+
+```ruby Ruby
+start = activitysmith.live_activities.start(
+  {
+    content_state: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "start",
+      number_of_steps: 4,
+      current_step: 1,
+      type: "segmented_progress",
+      color: "yellow"
+    }
+  }
+)
+
+activity_id = start.activity_id
+```
+
+### Update a Live Activity
+
+Update a Live Activity with `activitysmith.live_activities.update` using the `activity_id`.
+
+```ruby Ruby
+update = activitysmith.live_activities.update(
+  {
+    activity_id: activity_id,
+    content_state: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "npm i & pm2",
+      current_step: 3
+    }
+  }
+)
+
+puts update.devices_notified
+```
+
+### End a Live Activity
+
+End a Live Activity with `activitysmith.live_activities.end`. You can optionally set `auto_dismiss_minutes` in the `content_state`.
+
+```ruby Ruby
+finish = activitysmith.live_activities.end(
+  {
+    activity_id: activity_id,
+    content_state: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "done",
+      current_step: 4,
+      auto_dismiss_minutes: 3
+    }
+  }
+)
+
+puts finish.success
+```
+
+## Error Handling
+
+Handle API errors with `begin/rescue` around SDK calls:
+
+```ruby Ruby
+begin
+  activitysmith.notifications.send(
+    { title: "Hello" }
+  )
+rescue OpenapiClient::ApiError => err
+  puts "Request failed: #{err.code} #{err.message}"
+end
+```
