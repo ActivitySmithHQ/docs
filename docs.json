@@ -36,7 +36,14 @@
           },
           {
             "group": "Official",
-            "pages": ["sdks/node", "sdks/python", "sdks/cli"]
+            "pages": [
+              "sdks/node",
+              "sdks/python",
+              "sdks/go",
+              "sdks/php",
+              "sdks/ruby",
+              "sdks/cli"
+            ]
           },
           {
             "group": "Resources",

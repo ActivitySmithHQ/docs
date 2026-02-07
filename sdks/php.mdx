@@ -1,0 +1,117 @@
+---
+title: "PHP"
+description: "ActivitySmith PHP SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+icon: "php"
+og:title: "PHP SDK | ActivitySmith"
+og:description: "ActivitySmith PHP SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+---
+
+import InstallationPHP from "/snippets/installation/php.mdx";
+
+## Installation
+
+To install the ActivitySmith PHP SDK, you can use Composer:
+
+<InstallationPHP />
+
+## Usage
+
+1. Get an API key from [ActivitySmith](https://activitysmith.com)
+2. Set the API key as an environment variable named `ACTIVITYSMITH_API_KEY` or pass it directly to `ActivitySmith`.
+
+Here's an example of how to use the SDK with error handling:
+
+```php PHP
+<?php
+
+declare(strict_types=1);
+
+use ActivitySmith\ActivitySmith;
+
+$apiKey = $_ENV['ACTIVITYSMITH_API_KEY'] ?? 'YOUR-API-KEY';
+$activitysmith = new ActivitySmith($apiKey);
+
+try {
+    $response = $activitysmith->notifications->send([
+        'title' => 'Build Failed',
+        'message' => 'CI pipeline failed on main branch',
+    ]);
+
+    echo 'Notified: ' . $response->getDevicesNotified() . PHP_EOL;
+} catch (Throwable $err) {
+    echo 'Request failed: ' . $err->getMessage() . PHP_EOL;
+}
+```
+
+### Send a Push Notification
+
+Use `\$activitysmith->notifications->send` with a push payload. `title` is required; `message` and `subtitle` are optional.
+
+```php PHP
+$response = $activitysmith->notifications->send([
+    'title' => 'Build Failed',
+    'message' => 'CI pipeline failed on main branch',
+]);
+
+echo $response->getSuccess() ? 'true' : 'false';
+echo PHP_EOL;
+echo $response->getDevicesNotified();
+```
+
+### Start a Live Activity
+
+Start a Live Activity with `\$activitysmith->liveActivities->start`. For a segmented progress activity, include `title`, `number_of_steps`, `current_step`, and `type`.
+
+```php PHP
+$start = $activitysmith->liveActivities->start([
+    'content_state' => [
+        'title' => 'ActivitySmith API Deployment',
+        'subtitle' => 'start',
+        'number_of_steps' => 4,
+        'current_step' => 1,
+        'type' => 'segmented_progress',
+        'color' => 'yellow',
+    ],
+]);
+
+$activityId = $start->getActivityId();
+```
+
+### Update a Live Activity
+
+Update a Live Activity with `\$activitysmith->liveActivities->update` using the `activity_id`.
+
+```php PHP
+$update = $activitysmith->liveActivities->update([
+    'activity_id' => $activityId,
+    'content_state' => [
+        'title' => 'ActivitySmith API Deployment',
+        'subtitle' => 'npm i & pm2',
+        'current_step' => 3,
+    ],
+]);
+
+echo $update->getDevicesNotified();
+```
+
+### End a Live Activity
+
+End a Live Activity with `\$activitysmith->liveActivities->end`. You can optionally set `auto_dismiss_minutes` in the `content_state`.
+
+```php PHP
+$end = $activitysmith->liveActivities->end([
+    'activity_id' => $activityId,
+    'content_state' => [
+        'title' => 'ActivitySmith API Deployment',
+        'subtitle' => 'done',
+        'current_step' => 4,
+        'auto_dismiss_minutes' => 3,
+    ],
+]);
+
+echo $end->getSuccess() ? 'true' : 'false';
+```
+
+## Error Handling
+
+Handle API errors with `try/catch` around SDK calls.

@@ -29,48 +29,40 @@ const activitysmith = new ActivitySmith({
 });
 
 try {
-  const push = await activitysmith.notifications.sendPushNotification({
-    pushNotificationRequest: {
-      title: "Build Failed",
-      message: "CI pipeline failed on main branch",
+  const push = await activitysmith.notifications.send({
+    title: "Build Failed",
+    message: "CI pipeline failed on main branch",
+  });
+
+  const start = await activitysmith.liveActivities.start({
+    content_state: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "start",
+      number_of_steps: 4,
+      current_step: 1,
+      type: "segmented_progress",
+      color: "yellow",
     },
   });
 
-  const start = await activitysmith.liveActivities.startLiveActivity({
-    liveActivityStartRequest: {
-      contentState: {
-        title: "ActivitySmith API Deployment",
-        subtitle: "start",
-        numberOfSteps: 4,
-        currentStep: 1,
-        type: "segmented_progress",
-        color: "yellow",
-      },
+  const activityId = start.activity_id;
+
+  await activitysmith.liveActivities.update({
+    activity_id: activityId,
+    content_state: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "npm i & pm2",
+      current_step: 3,
     },
   });
 
-  const activityId = start.activityId;
-
-  await activitysmith.liveActivities.updateLiveActivity({
-    liveActivityUpdateRequest: {
-      activityId,
-      contentState: {
-        title: "ActivitySmith API Deployment",
-        subtitle: "npm i & pm2",
-        currentStep: 3,
-      },
-    },
-  });
-
-  await activitysmith.liveActivities.endLiveActivity({
-    liveActivityEndRequest: {
-      activityId,
-      contentState: {
-        title: "ActivitySmith API Deployment",
-        subtitle: "done",
-        currentStep: 4,
-        autoDismissMinutes: 3,
-      },
+  await activitysmith.liveActivities.end({
+    activity_id: activityId,
+    content_state: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "done",
+      current_step: 4,
+      auto_dismiss_minutes: 3,
     },
   });
 
@@ -82,71 +74,63 @@ try {
 
 ### Send a Push Notification
 
-Use `activitysmith.notifications.sendPushNotification` with a `pushNotificationRequest`. `title` is required; `message` and `subtitle` are optional.
+Use `activitysmith.notifications.send` with a push payload. `title` is required; `message` and `subtitle` are optional.
 
 ```js Node
-const response = await activitysmith.notifications.sendPushNotification({
-  pushNotificationRequest: {
-    title: "Build Failed",
-    message: "CI pipeline failed on main branch",
-  },
+const response = await activitysmith.notifications.send({
+  title: "Build Failed",
+  message: "CI pipeline failed on main branch",
 });
 
-console.log(response.devicesNotified, response.timestamp);
+console.log(response.devices_notified, response.timestamp);
 ```
 
 ### Start a Live Activity
 
-Use `activitysmith.liveActivities.startLiveActivity` with a `contentState` payload. For the segmented progress type, `title`, `numberOfSteps`, `currentStep`, and `type` are required. Use camelCase fields in the SDK (`numberOfSteps`, `currentStep`, `stepColor`, `autoDismissMinutes`).
+Use `activitysmith.liveActivities.start` with a `content_state` payload. For the segmented progress type, `title`, `number_of_steps`, `current_step`, and `type` are required.
 
 ```js Node
-const start = await activitysmith.liveActivities.startLiveActivity({
-  liveActivityStartRequest: {
-    contentState: {
-      title: "ActivitySmith API Deployment",
-      subtitle: "start",
-      numberOfSteps: 4,
-      currentStep: 1,
-      type: "segmented_progress",
-      color: "yellow",
-    },
+const start = await activitysmith.liveActivities.start({
+  content_state: {
+    title: "ActivitySmith API Deployment",
+    subtitle: "start",
+    number_of_steps: 4,
+    current_step: 1,
+    type: "segmented_progress",
+    color: "yellow",
   },
 });
 
-const activityId = start.activityId;
+const activityId = start.activity_id;
 ```
 
 ### Update a Live Activity
 
-Use `activitysmith.liveActivities.updateLiveActivity` with the `activityId` you received from `startLiveActivity`.
+Use `activitysmith.liveActivities.update` with the `activity_id` you received from `start`.
 
 ```js Node
-await activitysmith.liveActivities.updateLiveActivity({
-  liveActivityUpdateRequest: {
-    activityId,
-    contentState: {
-      title: "ActivitySmith API Deployment",
-      subtitle: "npm i & pm2",
-      currentStep: 3,
-    },
+await activitysmith.liveActivities.update({
+  activity_id: activityId,
+  content_state: {
+    title: "ActivitySmith API Deployment",
+    subtitle: "npm i & pm2",
+    current_step: 3,
   },
 });
 ```
 
 ### End a Live Activity
 
-Use `activitysmith.liveActivities.endLiveActivity` with the `activityId`. You can optionally control how long the ended Live Activity stays visible using `autoDismissMinutes` (default `3`, `0` for immediate dismissal).
+Use `activitysmith.liveActivities.end` with the `activity_id`. You can optionally control how long the ended Live Activity stays visible using `auto_dismiss_minutes` (default `3`, `0` for immediate dismissal).
 
 ```js Node
-await activitysmith.liveActivities.endLiveActivity({
-  liveActivityEndRequest: {
-    activityId,
-    contentState: {
-      title: "ActivitySmith API Deployment",
-      subtitle: "done",
-      currentStep: 4,
-      autoDismissMinutes: 3,
-    },
+await activitysmith.liveActivities.end({
+  activity_id: activityId,
+  content_state: {
+    title: "ActivitySmith API Deployment",
+    subtitle: "done",
+    current_step: 4,
+    auto_dismiss_minutes: 3,
   },
 });
 ```
@@ -157,9 +141,7 @@ Handle errors with `try/catch` around API calls:
 
 ```js Node
 try {
-  await activitysmith.notifications.sendPushNotification({
-    pushNotificationRequest: { title: "Hello" },
-  });
+  await activitysmith.notifications.send({ title: "Hello" });
 } catch (error) {
   console.error(error);
 }
