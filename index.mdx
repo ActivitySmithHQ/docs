@@ -125,7 +125,6 @@ func main() {
 	response, err := activitysmithClient.Notifications.Send(
 		generated.PushNotificationRequest{
 			Title:   "Build Failed 🚨",
-			Message: generated.PtrString("CI pipeline failed on main branch"),
 		},
 	)
 	if err != nil {
@@ -282,11 +281,9 @@ func main() {
 		generated.LiveActivityStartRequest{
 			ContentState: generated.ContentStateStart{
 				Title:         "ActivitySmith API Deployment",
-				Subtitle:      generated.PtrString("start"),
 				NumberOfSteps: 4,
 				CurrentStep:   1,
 				Type:          "segmented_progress",
-				Color:         generated.PtrString("yellow"),
 			},
 		},
 	)
@@ -452,7 +449,6 @@ func main() {
 			ActivityId: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
 			ContentState: generated.ContentStateUpdate{
 				Title:       "ActivitySmith API Deployment",
-				Subtitle:    generated.PtrString("npm i & pm2"),
 				CurrentStep: 3,
 			},
 		},
@@ -604,9 +600,7 @@ func main() {
 			ActivityId: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
 			ContentState: generated.ContentStateEnd{
 				Title:              "ActivitySmith API Deployment",
-				Subtitle:           generated.PtrString("done"),
 				CurrentStep:        4,
-				AutoDismissMinutes: generated.PtrInt32(3),
 			},
 		},
 	)
