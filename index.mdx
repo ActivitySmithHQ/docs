@@ -109,25 +109,21 @@ import (
 	"log"
 	"os"
 
-	activitysmith "github.com/ActivitySmithHQ/activitysmith-go"
-	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
 )
 
 func main() {
-	activitysmithClient, err := activitysmith.New(
-		os.Getenv("ACTIVITYSMITH_API_KEY"),
-		nil,
-	)
+	activitysmith, err := activitysmithsdk.New(os.Getenv("ACTIVITYSMITH_API_KEY"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	response, err := activitysmithClient.Notifications.Send(
-		generated.PushNotificationRequest{
-			Title:   "Build Failed 🚨",
-			Message: generated.PtrString("CI pipeline failed on main branch"),
-		},
-	)
+	input := activitysmithsdk.PushNotificationInput{
+		Title:   "Build Failed 🚨",
+		Message: "CI pipeline failed on main branch",
+	}
+
+	response, err := activitysmith.Notifications.Send(input)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -265,31 +261,25 @@ import (
 	"log"
 	"os"
 
-	activitysmith "github.com/ActivitySmithHQ/activitysmith-go"
-	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
 )
 
 func main() {
-	activitysmithClient, err := activitysmith.New(
-		os.Getenv("ACTIVITYSMITH_API_KEY"),
-		nil,
-	)
+	activitysmith, err := activitysmithsdk.New(os.Getenv("ACTIVITYSMITH_API_KEY"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	start, err := activitysmithClient.LiveActivities.Start(
-		generated.LiveActivityStartRequest{
-			ContentState: generated.ContentStateStart{
-				Title:         "ActivitySmith API Deployment",
-				Subtitle:      generated.PtrString("start"),
-				NumberOfSteps: 4,
-				CurrentStep:   1,
-				Type:          "segmented_progress",
-				Color:         generated.PtrString("yellow"),
-			},
-		},
-	)
+	startInput := activitysmithsdk.LiveActivityStartInput{
+		Title:         "ActivitySmith API Deployment",
+		Subtitle:      "start",
+		NumberOfSteps: 4,
+		CurrentStep:   1,
+		Type:          "segmented_progress",
+		Color:         "yellow",
+	}
+
+	start, err := activitysmith.LiveActivities.Start(startInput)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -434,29 +424,23 @@ import (
 	"log"
 	"os"
 
-	activitysmith "github.com/ActivitySmithHQ/activitysmith-go"
-	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
 )
 
 func main() {
-	activitysmithClient, err := activitysmith.New(
-		os.Getenv("ACTIVITYSMITH_API_KEY"),
-		nil,
-	)
+	activitysmith, err := activitysmithsdk.New(os.Getenv("ACTIVITYSMITH_API_KEY"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = activitysmithClient.LiveActivities.Update(
-		generated.LiveActivityUpdateRequest{
-			ActivityId: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
-			ContentState: generated.ContentStateUpdate{
-				Title:       "ActivitySmith API Deployment",
-				Subtitle:    generated.PtrString("npm i & pm2"),
-				CurrentStep: 3,
-			},
-		},
-	)
+	updateInput := activitysmithsdk.LiveActivityUpdateInput{
+		ActivityID:  "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+		Title:       "ActivitySmith API Deployment",
+		Subtitle:    "npm i & pm2",
+		CurrentStep: 3,
+	}
+
+	_, err = activitysmith.LiveActivities.Update(updateInput)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -586,30 +570,24 @@ import (
 	"log"
 	"os"
 
-	activitysmith "github.com/ActivitySmithHQ/activitysmith-go"
-	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
 )
 
 func main() {
-	activitysmithClient, err := activitysmith.New(
-		os.Getenv("ACTIVITYSMITH_API_KEY"),
-		nil,
-	)
+	activitysmith, err := activitysmithsdk.New(os.Getenv("ACTIVITYSMITH_API_KEY"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = activitysmithClient.LiveActivities.End(
-		generated.LiveActivityEndRequest{
-			ActivityId: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
-			ContentState: generated.ContentStateEnd{
-				Title:              "ActivitySmith API Deployment",
-				Subtitle:           generated.PtrString("done"),
-				CurrentStep:        4,
-				AutoDismissMinutes: generated.PtrInt32(3),
-			},
-		},
-	)
+	endInput := activitysmithsdk.LiveActivityEndInput{
+		ActivityID:         "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+		Title:              "ActivitySmith API Deployment",
+		Subtitle:           "done",
+		CurrentStep:        4,
+		AutoDismissMinutes: 3,
+	}
+
+	_, err = activitysmith.LiveActivities.End(endInput)
 	if err != nil {
 		log.Fatal(err)
 	}

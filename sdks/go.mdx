@@ -27,23 +27,22 @@ package main
 import (
 	"log"
 
-	activitysmith "github.com/ActivitySmithHQ/activitysmith-go"
-	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
 )
 
 func main() {
-	client, err := activitysmith.New("YOUR-API-KEY", nil)
+	activitysmith, err := activitysmithsdk.New("YOUR-API-KEY")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	response, err := client.Notifications.
-		Send(
-			generated.PushNotificationRequest{
-				Title:   "Build Failed",
-				Message: generated.PtrString("CI pipeline failed on main branch"),
-			},
-		)
+	input := activitysmithsdk.PushNotificationInput{
+		Title:   "Build Failed",
+		Message: "CI pipeline failed on main branch",
+	}
+
+	response, err := activitysmith.Notifications.
+		Send(input)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,16 +53,16 @@ func main() {
 
 ### Send a Push Notification
 
-Use `client.Notifications.Send` with a `generated.PushNotificationRequest`. `title` is required; `message` and `subtitle` are optional.
+Use `activitysmith.Notifications.Send` with an `activitysmithsdk.PushNotificationInput`.
 
 ```go Go
-response, err := client.Notifications.
-	Send(
-		generated.PushNotificationRequest{
-			Title:   "Build Failed",
-			Message: generated.PtrString("CI pipeline failed on main branch"),
-		},
-	)
+input := activitysmithsdk.PushNotificationInput{
+	Title:   "Build Failed",
+	Message: "CI pipeline failed on main branch",
+}
+
+response, err := activitysmith.Notifications.
+	Send(input)
 if err != nil {
 	log.Fatal(err)
 }
@@ -74,22 +73,20 @@ log.Println(response.GetDevicesNotified())
 
 ### Start a Live Activity
 
-Start a Live Activity with `client.LiveActivities.Start`. For a segmented progress activity, include `title`, `number_of_steps`, `current_step`, and `type`.
+Start a Live Activity with `activitysmith.LiveActivities.Start`. For a segmented progress activity, include `title`, `number_of_steps`, `current_step`, and `type`.
 
 ```go Go
-start, err := client.LiveActivities.
-	Start(
-		generated.LiveActivityStartRequest{
-			ContentState: generated.ContentStateStart{
-				Title:         "ActivitySmith API Deployment",
-				Subtitle:      generated.PtrString("start"),
-				NumberOfSteps: 4,
-				CurrentStep:   1,
-				Type:          "segmented_progress",
-				Color:         generated.PtrString("yellow"),
-			},
-		},
-	)
+startInput := activitysmithsdk.LiveActivityStartInput{
+	Title:         "ActivitySmith API Deployment",
+	Subtitle:      "start",
+	NumberOfSteps: 4,
+	CurrentStep:   1,
+	Type:          "segmented_progress",
+	Color:         "yellow",
+}
+
+start, err := activitysmith.LiveActivities.
+	Start(startInput)
 if err != nil {
 	log.Fatal(err)
 }
@@ -99,20 +96,18 @@ activityID := start.GetActivityId()
 
 ### Update a Live Activity
 
-Update a Live Activity with `client.LiveActivities.Update` using the `activityID`.
+Update a Live Activity with `activitysmith.LiveActivities.Update` using the `activityID`.
 
 ```go Go
-update, err := client.LiveActivities.
-	Update(
-		generated.LiveActivityUpdateRequest{
-			ActivityId: activityID,
-			ContentState: generated.ContentStateUpdate{
-				Title:       "ActivitySmith API Deployment",
-				Subtitle:    generated.PtrString("npm i & pm2"),
-				CurrentStep: 3,
-			},
-		},
-	)
+updateInput := activitysmithsdk.LiveActivityUpdateInput{
+	ActivityID:  activityID,
+	Title:       "ActivitySmith API Deployment",
+	Subtitle:    "npm i & pm2",
+	CurrentStep: 3,
+}
+
+update, err := activitysmith.LiveActivities.
+	Update(updateInput)
 if err != nil {
 	log.Fatal(err)
 }
@@ -122,21 +117,20 @@ log.Println(update.GetDevicesNotified())
 
 ### End a Live Activity
 
-End a Live Activity with `client.LiveActivities.End`. You can optionally set `auto_dismiss_minutes` in the `content_state`.
+End a Live Activity with `activitysmith.LiveActivities.End`.
+If `AutoDismissMinutes` is omitted, backend default `3` is used.
 
 ```go Go
-end, err := client.LiveActivities.
-	End(
-		generated.LiveActivityEndRequest{
-			ActivityId: activityID,
-			ContentState: generated.ContentStateEnd{
-				Title:              "ActivitySmith API Deployment",
-				Subtitle:           generated.PtrString("done"),
-				CurrentStep:        4,
-				AutoDismissMinutes: generated.PtrInt32(3),
-			},
-		},
-	)
+endInput := activitysmithsdk.LiveActivityEndInput{
+	ActivityID:         activityID,
+	Title:              "ActivitySmith API Deployment",
+	Subtitle:           "done",
+	CurrentStep:        4,
+	AutoDismissMinutes: 3,
+}
+
+end, err := activitysmith.LiveActivities.
+	End(endInput)
 if err != nil {
 	log.Fatal(err)
 }
