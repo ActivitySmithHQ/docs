@@ -29,7 +29,7 @@ We provide an easy to use API. You can download the iOS app from the [App Store]
 Check out the following resources to get started:
 
 - **API**: [Documentation](https://activitysmith.com/docs/api-reference/introduction)
-- **SDKs**: [Node](https://activitysmith.com/docs/sdks/node), [Python](https://activitysmith.com/docs/sdks/python), [CLI](https://activitysmith.com/docs/sdks/cli)
+- **SDKs**: [Node](https://activitysmith.com/docs/sdks/node), [Python](https://activitysmith.com/docs/sdks/python), [Go](https://activitysmith.com/docs/sdks/go), [PHP](https://activitysmith.com/docs/sdks/php), [Ruby](https://activitysmith.com/docs/sdks/ruby), [CLI](https://activitysmith.com/docs/sdks/cli)
 - **Others**: [Zapier](https://zapier.com/apps/activitysmith/integrations)
 
 Want an SDK or Integration? Let us know at [adam@activitysmith.com](mailto:adam@activitysmith.com).
@@ -57,6 +57,8 @@ To send a push notification, use the `push-notification` endpoint. It takes the 
 
 <img className="image" src="https://cdn.activitysmith.com/printkit/notification.png" alt="Push Notification" />
 
+### cURL
+
 ```bash
 curl -X POST https://activitysmith.com/api/push-notification \
   -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
@@ -65,6 +67,115 @@ curl -X POST https://activitysmith.com/api/push-notification \
     "title": "Build Failed 🚨",
     "message": "CI pipeline failed on main branch"
   }'
+```
+
+### Node SDK
+
+```js Node
+import ActivitySmith from "activitysmith";
+
+const activitysmith = new ActivitySmith({
+  apiKey: process.env.ACTIVITYSMITH_API_KEY,
+});
+
+const response = await activitysmith.notifications.send({
+  title: "Build Failed 🚨",
+  message: "CI pipeline failed on main branch",
+});
+
+console.log(response);
+```
+
+### Python SDK
+
+```python Python
+import os
+from activitysmith import ActivitySmith
+
+activitysmith = ActivitySmith(
+    api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+response = activitysmith.notifications.send(
+    {
+        "title": "Build Failed 🚨",
+        "message": "CI pipeline failed on main branch",
+    }
+)
+
+print(response)
+```
+
+### Go SDK
+
+```go Go
+package main
+
+import (
+	"log"
+	"os"
+
+	activitysmith "github.com/ActivitySmithHQ/activitysmith-go"
+	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+)
+
+func main() {
+	activitysmithClient, err := activitysmith.New(
+		os.Getenv("ACTIVITYSMITH_API_KEY"),
+		nil,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	response, err := activitysmithClient.Notifications.Send(
+		generated.PushNotificationRequest{
+			Title:   "Build Failed 🚨",
+			Message: generated.PtrString("CI pipeline failed on main branch"),
+		},
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(response)
+}
+```
+
+### PHP SDK
+
+```php PHP
+<?php
+
+use ActivitySmith\ActivitySmith;
+
+$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+$response = $activitysmith->notifications->send([
+    'title' => 'Build Failed 🚨',
+    'message' => 'CI pipeline failed on main branch',
+]);
+
+var_dump($response);
+```
+
+### Ruby SDK
+
+```ruby Ruby
+require "activitysmith"
+
+activitysmith = ActivitySmith::Client.new(
+  api_key: ENV.fetch("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+response = activitysmith.notifications.send(
+  {
+    title: "Build Failed 🚨",
+    message: "CI pipeline failed on main branch"
+  }
+)
+
+p response
 ```
 
 **Response**
@@ -86,6 +197,8 @@ To start a Live Activity, use the `live-activity/start` endpoint. It takes a `co
 
 <img className="image" src="https://cdn.activitysmith.com/printkit/live-activity-start.png" alt="Live Activity Start" />
 
+### cURL
+
 ```bash
 curl -X POST https://activitysmith.com/api/live-activity/start \
   -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
@@ -100,6 +213,146 @@ curl -X POST https://activitysmith.com/api/live-activity/start \
       "color": "yellow"
     }
   }'
+```
+
+### Node SDK
+
+```js Node
+import ActivitySmith from "activitysmith";
+
+const activitysmith = new ActivitySmith({
+  apiKey: process.env.ACTIVITYSMITH_API_KEY,
+});
+
+const start = await activitysmith.liveActivities.start({
+  content_state: {
+    title: "ActivitySmith API Deployment",
+    subtitle: "start",
+    number_of_steps: 4,
+    current_step: 1,
+    type: "segmented_progress",
+    color: "yellow",
+  },
+});
+
+const activityId = start.activity_id;
+```
+
+### Python SDK
+
+```python Python
+import os
+from activitysmith import ActivitySmith
+
+activitysmith = ActivitySmith(
+    api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+start = activitysmith.live_activities.start(
+    {
+        "content_state": {
+            "title": "ActivitySmith API Deployment",
+            "subtitle": "start",
+            "number_of_steps": 4,
+            "current_step": 1,
+            "type": "segmented_progress",
+            "color": "yellow",
+        }
+    }
+)
+
+activity_id = start.activity_id
+```
+
+### Go SDK
+
+```go Go
+package main
+
+import (
+	"log"
+	"os"
+
+	activitysmith "github.com/ActivitySmithHQ/activitysmith-go"
+	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+)
+
+func main() {
+	activitysmithClient, err := activitysmith.New(
+		os.Getenv("ACTIVITYSMITH_API_KEY"),
+		nil,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	start, err := activitysmithClient.LiveActivities.Start(
+		generated.LiveActivityStartRequest{
+			ContentState: generated.ContentStateStart{
+				Title:         "ActivitySmith API Deployment",
+				Subtitle:      generated.PtrString("start"),
+				NumberOfSteps: 4,
+				CurrentStep:   1,
+				Type:          "segmented_progress",
+				Color:         generated.PtrString("yellow"),
+			},
+		},
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	activityID := start.GetActivityId()
+	log.Println(activityID)
+}
+```
+
+### PHP SDK
+
+```php PHP
+<?php
+
+use ActivitySmith\ActivitySmith;
+
+$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+$start = $activitysmith->liveActivities->start([
+    'content_state' => [
+        'title' => 'ActivitySmith API Deployment',
+        'subtitle' => 'start',
+        'number_of_steps' => 4,
+        'current_step' => 1,
+        'type' => 'segmented_progress',
+        'color' => 'yellow',
+    ],
+]);
+
+$activityId = $start->getActivityId();
+```
+
+### Ruby SDK
+
+```ruby Ruby
+require "activitysmith"
+
+activitysmith = ActivitySmith::Client.new(
+  api_key: ENV.fetch("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+start = activitysmith.live_activities.start(
+  {
+    content_state: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "start",
+      number_of_steps: 4,
+      current_step: 1,
+      type: "segmented_progress",
+      color: "yellow"
+    }
+  }
+)
+
+activity_id = start.activity_id
 ```
 
 ### Response
@@ -126,6 +379,8 @@ To update the Live Activity, call `live-activity/update` with the `activity_id` 
   alt="Live Activity Update"
 />
 
+### cURL
+
 ```bash
 curl -X POST https://activitysmith.com/api/live-activity/update \
   -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
@@ -138,6 +393,125 @@ curl -X POST https://activitysmith.com/api/live-activity/update \
       "current_step": 3
     }
   }'
+```
+
+### Node SDK
+
+```js Node
+import ActivitySmith from "activitysmith";
+
+const activitysmith = new ActivitySmith({
+  apiKey: process.env.ACTIVITYSMITH_API_KEY,
+});
+
+await activitysmith.liveActivities.update({
+  activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+  content_state: {
+    title: "ActivitySmith API Deployment",
+    subtitle: "npm i & pm2",
+    current_step: 3,
+  },
+});
+```
+
+### Python SDK
+
+```python Python
+import os
+from activitysmith import ActivitySmith
+
+activitysmith = ActivitySmith(
+    api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.update(
+    {
+        "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+        "content_state": {
+            "title": "ActivitySmith API Deployment",
+            "subtitle": "npm i & pm2",
+            "current_step": 3,
+        },
+    }
+)
+```
+
+### Go SDK
+
+```go Go
+package main
+
+import (
+	"log"
+	"os"
+
+	activitysmith "github.com/ActivitySmithHQ/activitysmith-go"
+	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+)
+
+func main() {
+	activitysmithClient, err := activitysmith.New(
+		os.Getenv("ACTIVITYSMITH_API_KEY"),
+		nil,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = activitysmithClient.LiveActivities.Update(
+		generated.LiveActivityUpdateRequest{
+			ActivityId: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+			ContentState: generated.ContentStateUpdate{
+				Title:       "ActivitySmith API Deployment",
+				Subtitle:    generated.PtrString("npm i & pm2"),
+				CurrentStep: 3,
+			},
+		},
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+### PHP SDK
+
+```php PHP
+<?php
+
+use ActivitySmith\ActivitySmith;
+
+$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+$activitysmith->liveActivities->update([
+    'activity_id' => 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',
+    'content_state' => [
+        'title' => 'ActivitySmith API Deployment',
+        'subtitle' => 'npm i & pm2',
+        'current_step' => 3,
+    ],
+]);
+```
+
+### Ruby SDK
+
+```ruby Ruby
+require "activitysmith"
+
+activitysmith = ActivitySmith::Client.new(
+  api_key: ENV.fetch("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.update(
+  {
+    activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+    content_state: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "npm i & pm2",
+      current_step: 3
+    }
+  }
+)
 ```
 
 ### Response
@@ -157,6 +531,8 @@ To end the Live Activity, call `live-activity/end` with the `activity_id` and th
 
 <img className="image" src="https://cdn.activitysmith.com/printkit/live-activity-end.png" alt="Live Activity End" />
 
+### cURL
+
 ```bash
 curl -X POST https://activitysmith.com/api/live-activity/end \
   -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
@@ -169,6 +545,130 @@ curl -X POST https://activitysmith.com/api/live-activity/end \
       "current_step": 4
     }
   }'
+```
+
+### Node SDK
+
+```js Node
+import ActivitySmith from "activitysmith";
+
+const activitysmith = new ActivitySmith({
+  apiKey: process.env.ACTIVITYSMITH_API_KEY,
+});
+
+await activitysmith.liveActivities.end({
+  activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+  content_state: {
+    title: "ActivitySmith API Deployment",
+    subtitle: "done",
+    current_step: 4,
+    auto_dismiss_minutes: 3,
+  },
+});
+```
+
+### Python SDK
+
+```python Python
+import os
+from activitysmith import ActivitySmith
+
+activitysmith = ActivitySmith(
+    api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.end(
+    {
+        "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+        "content_state": {
+            "title": "ActivitySmith API Deployment",
+            "subtitle": "done",
+            "current_step": 4,
+            "auto_dismiss_minutes": 3,
+        },
+    }
+)
+```
+
+### Go SDK
+
+```go Go
+package main
+
+import (
+	"log"
+	"os"
+
+	activitysmith "github.com/ActivitySmithHQ/activitysmith-go"
+	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+)
+
+func main() {
+	activitysmithClient, err := activitysmith.New(
+		os.Getenv("ACTIVITYSMITH_API_KEY"),
+		nil,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = activitysmithClient.LiveActivities.End(
+		generated.LiveActivityEndRequest{
+			ActivityId: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+			ContentState: generated.ContentStateEnd{
+				Title:              "ActivitySmith API Deployment",
+				Subtitle:           generated.PtrString("done"),
+				CurrentStep:        4,
+				AutoDismissMinutes: generated.PtrInt32(3),
+			},
+		},
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+### PHP SDK
+
+```php PHP
+<?php
+
+use ActivitySmith\ActivitySmith;
+
+$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+$activitysmith->liveActivities->end([
+    'activity_id' => 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',
+    'content_state' => [
+        'title' => 'ActivitySmith API Deployment',
+        'subtitle' => 'done',
+        'current_step' => 4,
+        'auto_dismiss_minutes' => 3,
+    ],
+]);
+```
+
+### Ruby SDK
+
+```ruby Ruby
+require "activitysmith"
+
+activitysmith = ActivitySmith::Client.new(
+  api_key: ENV.fetch("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.end(
+  {
+    activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+    content_state: {
+      title: "ActivitySmith API Deployment",
+      subtitle: "done",
+      current_step: 4,
+      auto_dismiss_minutes: 3
+    }
+  }
+)
 ```
 
 ### Response
