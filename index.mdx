@@ -69,12 +69,6 @@ curl -X POST https://activitysmith.com/api/push-notification \
   }'
 ```
 
-```bash CLI
-activitysmith push \
-  --title "Build Failed 🚨" \
-  --message "CI pipeline failed on main branch"
-```
-
 ```js Node
 import ActivitySmith from "activitysmith";
 
@@ -174,6 +168,12 @@ response = activitysmith.notifications.send(
 p response
 ```
 
+```bash CLI
+activitysmith push \
+  --title "Build Failed 🚨" \
+  --message "CI pipeline failed on main branch"
+```
+
 </CodeGroup>
 
 **Response**
@@ -211,11 +211,6 @@ curl -X POST https://activitysmith.com/api/live-activity/start \
       "color": "yellow"
     }
   }'
-```
-
-```bash CLI
-activitysmith activity start \
-  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"start","numberOfSteps":4,"currentStep":1,"type":"segmented_progress","color":"yellow"}'
 ```
 
 ```js Node
@@ -348,6 +343,11 @@ start = activitysmith.live_activities.start(
 activity_id = start.activity_id
 ```
 
+```bash CLI
+activitysmith activity start \
+  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"start","numberOfSteps":4,"currentStep":1,"type":"segmented_progress","color":"yellow"}'
+```
+
 </CodeGroup>
 
 ### Response
@@ -388,12 +388,6 @@ curl -X POST https://activitysmith.com/api/live-activity/update \
       "current_step": 3
     }
   }'
-```
-
-```bash CLI
-activitysmith activity update \
-  --activity-id "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW" \
-  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"npm i & pm2","currentStep":3}'
 ```
 
 ```js Node
@@ -505,6 +499,12 @@ activitysmith.live_activities.update(
 )
 ```
 
+```bash CLI
+activitysmith activity update \
+  --activity-id "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW" \
+  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"npm i & pm2","currentStep":3}'
+```
+
 </CodeGroup>
 
 ### Response
@@ -538,12 +538,6 @@ curl -X POST https://activitysmith.com/api/live-activity/end \
       "current_step": 4
     }
   }'
-```
-
-```bash CLI
-activitysmith activity end \
-  --activity-id "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW" \
-  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"done","currentStep":4,"autoDismissMinutes":3}'
 ```
 
 ```js Node
@@ -658,6 +652,12 @@ activitysmith.live_activities.end(
     }
   }
 )
+```
+
+```bash CLI
+activitysmith activity end \
+  --activity-id "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW" \
+  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"done","currentStep":4,"autoDismissMinutes":3}'
 ```
 
 </CodeGroup>
