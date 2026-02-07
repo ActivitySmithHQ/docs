@@ -57,9 +57,9 @@ To send a push notification, use the `push-notification` endpoint. It takes the 
 
 <img className="image" src="https://cdn.activitysmith.com/printkit/notification.png" alt="Push Notification" />
 
-### cURL
+<CodeGroup>
 
-```bash
+```bash cURL
 curl -X POST https://activitysmith.com/api/push-notification \
   -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
   -H "Content-Type: application/json" \
@@ -68,8 +68,6 @@ curl -X POST https://activitysmith.com/api/push-notification \
     "message": "CI pipeline failed on main branch"
   }'
 ```
-
-### Node SDK
 
 ```js Node
 import ActivitySmith from "activitysmith";
@@ -85,8 +83,6 @@ const response = await activitysmith.notifications.send({
 
 console.log(response);
 ```
-
-### Python SDK
 
 ```python Python
 import os
@@ -105,8 +101,6 @@ response = activitysmith.notifications.send(
 
 print(response)
 ```
-
-### Go SDK
 
 ```go Go
 package main
@@ -142,8 +136,6 @@ func main() {
 }
 ```
 
-### PHP SDK
-
 ```php PHP
 <?php
 
@@ -158,8 +150,6 @@ $response = $activitysmith->notifications->send([
 
 var_dump($response);
 ```
-
-### Ruby SDK
 
 ```ruby Ruby
 require "activitysmith"
@@ -177,6 +167,8 @@ response = activitysmith.notifications.send(
 
 p response
 ```
+
+</CodeGroup>
 
 **Response**
 
@@ -197,9 +189,9 @@ To start a Live Activity, use the `live-activity/start` endpoint. It takes a `co
 
 <img className="image" src="https://cdn.activitysmith.com/printkit/live-activity-start.png" alt="Live Activity Start" />
 
-### cURL
+<CodeGroup>
 
-```bash
+```bash cURL
 curl -X POST https://activitysmith.com/api/live-activity/start \
   -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
   -H "Content-Type: application/json" \
@@ -214,8 +206,6 @@ curl -X POST https://activitysmith.com/api/live-activity/start \
     }
   }'
 ```
-
-### Node SDK
 
 ```js Node
 import ActivitySmith from "activitysmith";
@@ -237,8 +227,6 @@ const start = await activitysmith.liveActivities.start({
 
 const activityId = start.activity_id;
 ```
-
-### Python SDK
 
 ```python Python
 import os
@@ -263,8 +251,6 @@ start = activitysmith.live_activities.start(
 
 activity_id = start.activity_id
 ```
-
-### Go SDK
 
 ```go Go
 package main
@@ -307,8 +293,6 @@ func main() {
 }
 ```
 
-### PHP SDK
-
 ```php PHP
 <?php
 
@@ -329,8 +313,6 @@ $start = $activitysmith->liveActivities->start([
 
 $activityId = $start->getActivityId();
 ```
-
-### Ruby SDK
 
 ```ruby Ruby
 require "activitysmith"
@@ -354,6 +336,8 @@ start = activitysmith.live_activities.start(
 
 activity_id = start.activity_id
 ```
+
+</CodeGroup>
 
 ### Response
 
@@ -379,9 +363,9 @@ To update the Live Activity, call `live-activity/update` with the `activity_id` 
   alt="Live Activity Update"
 />
 
-### cURL
+<CodeGroup>
 
-```bash
+```bash cURL
 curl -X POST https://activitysmith.com/api/live-activity/update \
   -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
   -H "Content-Type: application/json" \
@@ -394,8 +378,6 @@ curl -X POST https://activitysmith.com/api/live-activity/update \
     }
   }'
 ```
-
-### Node SDK
 
 ```js Node
 import ActivitySmith from "activitysmith";
@@ -413,8 +395,6 @@ await activitysmith.liveActivities.update({
   },
 });
 ```
-
-### Python SDK
 
 ```python Python
 import os
@@ -435,8 +415,6 @@ activitysmith.live_activities.update(
     }
 )
 ```
-
-### Go SDK
 
 ```go Go
 package main
@@ -474,8 +452,6 @@ func main() {
 }
 ```
 
-### PHP SDK
-
 ```php PHP
 <?php
 
@@ -492,8 +468,6 @@ $activitysmith->liveActivities->update([
     ],
 ]);
 ```
-
-### Ruby SDK
 
 ```ruby Ruby
 require "activitysmith"
@@ -514,6 +488,8 @@ activitysmith.live_activities.update(
 )
 ```
 
+</CodeGroup>
+
 ### Response
 
 ```json
@@ -531,9 +507,9 @@ To end the Live Activity, call `live-activity/end` with the `activity_id` and th
 
 <img className="image" src="https://cdn.activitysmith.com/printkit/live-activity-end.png" alt="Live Activity End" />
 
-### cURL
+<CodeGroup>
 
-```bash
+```bash cURL
 curl -X POST https://activitysmith.com/api/live-activity/end \
   -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
   -H "Content-Type: application/json" \
@@ -546,8 +522,6 @@ curl -X POST https://activitysmith.com/api/live-activity/end \
     }
   }'
 ```
-
-### Node SDK
 
 ```js Node
 import ActivitySmith from "activitysmith";
@@ -566,8 +540,6 @@ await activitysmith.liveActivities.end({
   },
 });
 ```
-
-### Python SDK
 
 ```python Python
 import os
@@ -589,8 +561,6 @@ activitysmith.live_activities.end(
     }
 )
 ```
-
-### Go SDK
 
 ```go Go
 package main
@@ -629,8 +599,6 @@ func main() {
 }
 ```
 
-### PHP SDK
-
 ```php PHP
 <?php
 
@@ -648,8 +616,6 @@ $activitysmith->liveActivities->end([
     ],
 ]);
 ```
-
-### Ruby SDK
 
 ```ruby Ruby
 require "activitysmith"
@@ -670,6 +636,8 @@ activitysmith.live_activities.end(
   }
 )
 ```
+
+</CodeGroup>
 
 ### Response
 
