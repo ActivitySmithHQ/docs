@@ -18,6 +18,10 @@
             "pages": ["index", "rate-limits"]
           },
           {
+            "group": "Workspace",
+            "pages": ["team"]
+          },
+          {
             "group": "Customization",
             "pages": ["colors"]
           },
@@ -36,14 +40,7 @@
           },
           {
             "group": "Official",
-            "pages": [
-              "sdks/node",
-              "sdks/python",
-              "sdks/go",
-              "sdks/php",
-              "sdks/ruby",
-              "sdks/cli"
-            ]
+            "pages": ["sdks/node", "sdks/python", "sdks/go", "sdks/php", "sdks/ruby", "sdks/cli"]
           },
           {
             "group": "Resources",
