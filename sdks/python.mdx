@@ -115,6 +115,32 @@ end = activitysmith.live_activities.end(
 print(end.success)
 ```
 
+## Channels
+
+You can target specific channels when sending a push or starting a Live Activity.
+
+```python Python
+activitysmith.notifications.send(
+    {
+        "title": "Build Failed 🚨",
+        "message": "CI pipeline failed on main branch",
+        "channels": ["ios-builds", "engineering"],
+    }
+)
+
+activitysmith.live_activities.start(
+    {
+        "channels": ["ios-builds"],
+        "content_state": {
+            "title": "ActivitySmith API Deployment",
+            "number_of_steps": 4,
+            "current_step": 1,
+            "type": "segmented_progress",
+        },
+    }
+)
+```
+
 ## Error Handling
 
 The SDK raises exceptions for non-2xx responses. Rate limit errors use the `error` and `message` fields, and Live Activity limits include `limit` and `active`. See [Rate Limits](/rate-limits) for details.

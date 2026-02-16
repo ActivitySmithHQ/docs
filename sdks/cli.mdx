@@ -145,6 +145,26 @@ Use camelCase keys in JSON (for example: `numberOfSteps`, `currentStep`, `autoDi
 
 Use `--json` to output machine-readable JSON.
 
+## Channels
+
+You can target specific channels for `push` and `activity start` using `--channels`.
+
+```bash CLI
+activitysmith push \
+  --title "Build Failed 🚨" \
+  --message "CI pipeline failed on main branch" \
+  --channels "ios-builds,engineering"
+```
+
+```bash CLI
+activitysmith activity start \
+  --title "ActivitySmith API Deployment" \
+  --number-of-steps 4 \
+  --current-step 1 \
+  --type segmented_progress \
+  --channels "ios-builds"
+```
+
 ## Error Handling
 
 The CLI exits non-zero on non-2xx responses and prints the API error body (for example, rate limit or Live Activity limit errors).

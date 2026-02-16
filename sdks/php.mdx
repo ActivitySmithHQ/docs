@@ -112,6 +112,28 @@ $end = $activitysmith->liveActivities->end([
 echo $end->getSuccess() ? 'true' : 'false';
 ```
 
+## Channels
+
+You can target specific channels when sending a push or starting a Live Activity.
+
+```php PHP
+$activitysmith->notifications->send([
+    'title' => 'Build Failed',
+    'message' => 'CI pipeline failed on main branch',
+    'channels' => ['ios-builds', 'engineering'],
+]);
+
+$activitysmith->liveActivities->start([
+    'channels' => ['ios-builds'],
+    'content_state' => [
+        'title' => 'ActivitySmith API Deployment',
+        'number_of_steps' => 4,
+        'current_step' => 1,
+        'type' => 'segmented_progress',
+    ],
+]);
+```
+
 ## Error Handling
 
 Handle API errors with `try/catch` around SDK calls.

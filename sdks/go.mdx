@@ -138,6 +138,36 @@ if err != nil {
 log.Println(end.GetSuccess())
 ```
 
+## Channels
+
+You can target specific channels when sending a push or starting a Live Activity.
+
+```go Go
+pushInput := activitysmithsdk.PushNotificationInput{
+	Title:    "Build Failed",
+	Message:  "CI pipeline failed on main branch",
+	Channels: []string{"ios-builds", "engineering"},
+}
+
+_, err = activitysmith.Notifications.Send(pushInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+startInput := activitysmithsdk.LiveActivityStartInput{
+	Title:         "ActivitySmith API Deployment",
+	NumberOfSteps: 4,
+	CurrentStep:   1,
+	Type:          "segmented_progress",
+	Channels:      []string{"ios-builds"},
+}
+
+_, err = activitysmith.LiveActivities.Start(startInput)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
 ## Error Handling
 
 Handle API errors by checking the returned `error` from SDK calls.

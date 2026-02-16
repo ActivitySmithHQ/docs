@@ -117,6 +117,32 @@ finish = activitysmith.live_activities.end(
 puts finish.success
 ```
 
+## Channels
+
+You can target specific channels when sending a push or starting a Live Activity.
+
+```ruby Ruby
+activitysmith.notifications.send(
+  {
+    title: "Build Failed",
+    message: "CI pipeline failed on main branch",
+    channels: ["ios-builds", "engineering"]
+  }
+)
+
+activitysmith.live_activities.start(
+  {
+    channels: ["ios-builds"],
+    content_state: {
+      title: "ActivitySmith API Deployment",
+      number_of_steps: 4,
+      current_step: 1,
+      type: "segmented_progress"
+    }
+  }
+)
+```
+
 ## Error Handling
 
 Handle API errors with `begin/rescue` around SDK calls:
