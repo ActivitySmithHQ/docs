@@ -1,0 +1,65 @@
+---
+title: "Channels"
+description: "Use channels to target specific users and devices."
+---
+
+Channels let you target specific groups of recipients instead of sending to everyone in an account.
+
+Common use case:
+
+- Different teams should receive different notifications (for example, `marketing`, `developers`, `devops`, `sre`).
+
+Channels are flexible:
+
+- You can assign users, devices, or both to a channel.
+- You can choose channels per request using `target.channels`.
+- You can keep some API keys broad and scope other API keys to specific channels.
+
+## How Targeting Works
+
+Use channel slugs in `target.channels`:
+
+```json
+{
+  "target": {
+    "channels": ["ios-beta", "ops"]
+  }
+}
+```
+
+- If `target` is omitted and API key scope is `all`, delivery goes to all recipients in the account.
+- If `target` is omitted and API key scope is `channels`, delivery goes to channels assigned to that API key.
+- If `target.channels` is provided, only those channel slugs are targeted.
+
+## Push Notifications
+
+```json
+{
+  "title": "Build Failed 🚨",
+  "message": "CI pipeline failed on main branch",
+  "target": {
+    "channels": ["ios-beta", "ops"]
+  }
+}
+```
+
+## Live Activities
+
+```json
+{
+  "content_state": {
+    "title": "ActivitySmith API Deployment",
+    "number_of_steps": 4,
+    "current_step": 1,
+    "type": "segmented_progress"
+  },
+  "target": {
+    "channels": ["ios-beta", "ops"]
+  }
+}
+```
+
+See endpoint docs for full request and response fields:
+
+- [/api-reference/endpoint/push-notification](/api-reference/endpoint/push-notification)
+- [/api-reference/endpoint/live-activity-start](/api-reference/endpoint/live-activity-start)

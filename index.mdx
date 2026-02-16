@@ -40,8 +40,8 @@ To use the API, you need to sign up on [ActivitySmith](https://activitysmith.com
 
 ### Features
 
-- [**Push Notifications**](#push-notifications): send a push notifications to all of your paired devices.
-- [**Live Activities**](#live-activities): start, update and end a Live Activity on your lock screen or dynamic island.
+- [**Push Notifications**](#push-notifications): send push notifications to all paired devices or target specific channels.
+- [**Live Activities**](#live-activities): start, update and end a Live Activity on your lock screen or dynamic island, with optional channel targeting.
 
 ### Powerful Capabilities
 
@@ -53,7 +53,8 @@ To use the API, you need to sign up on [ActivitySmith](https://activitysmith.com
 
 ## Push Notifications
 
-To send a push notification, use the `push-notification` endpoint. It takes the title and message as parameters and sends a push notification to all of your paired devices.
+To send a push notification, use the `push-notification` endpoint. It takes `title` and optional fields like `message`, `payload`, and `target.channels`.  
+`target.channels` accepts channel slugs (for example `["devs", "ops"]`).
 
 <img className="image" src="https://cdn.activitysmith.com/printkit/notification.png" alt="Push Notification" />
 
@@ -187,7 +188,9 @@ activitysmith push \
 
 ### /start endpoint
 
-To start a Live Activity, use the `live-activity/start` endpoint. It takes a `content_state` payload and starts a Live Activity on your lock screen or dynamic island. For a segmented progress activity, include `title`, `current_step`, `type`, and `number_of_steps`.
+To start a Live Activity, use the `live-activity/start` endpoint. It takes a `content_state` payload and starts a Live Activity on your lock screen or dynamic island.  
+You can optionally pass `target.channels` with channel slugs to scope recipients.
+For a segmented progress activity, include `title`, `current_step`, `type`, and `number_of_steps`.
 
 <img className="image" src="https://cdn.activitysmith.com/printkit/live-activity-start.png" alt="Live Activity Start" />
 
@@ -650,3 +653,19 @@ activitysmith activity end \
   "timestamp": "2026-01-28T09:57:29.258Z"
 }
 ```
+
+## Channel Targeting
+
+You can scope delivery with channel slugs:
+
+```json
+{
+  "target": {
+    "channels": ["devs", "ops"]
+  }
+}
+```
+
+- If `target` is omitted and API key scope is `all`: send to all account recipients.
+- If `target` is omitted and API key scope is `channels`: send to channels assigned to that key.
+- If `target.channels` is present: only those channel slugs are used.

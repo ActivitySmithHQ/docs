@@ -19,7 +19,7 @@
           },
           {
             "group": "Workspace",
-            "pages": ["team"]
+            "pages": ["team", "channels"]
           },
           {
             "group": "Customization",

@@ -28,7 +28,7 @@
       "post": {
         "tags": ["PushNotifications"],
         "summary": "Send a push notification",
-        "description": "Sends a push notification to every paired device in your account.",
+        "description": "Sends a push notification to devices matched by API key scope and optional target channels.",
         "operationId": "sendPushNotification",
         "requestBody": {
           "required": true,
@@ -40,6 +40,15 @@
                   "value": {
                     "title": "Build Failed 🚨",
                     "message": "CI pipeline failed on main branch"
+                  }
+                },
+                "channel_targeted": {
+                  "value": {
+                    "title": "Build Failed 🚨",
+                    "message": "CI pipeline failed on main branch",
+                    "target": {
+                      "channels": ["devs", "ops"]
+                    }
                   }
                 }
               }
@@ -56,9 +65,67 @@
                   "default": {
                     "value": {
                       "success": true,
-                      "devices_notified": 3,
+                      "devices_notified": 2,
                       "users_notified": 1,
                       "timestamp": "2025-08-12T12:00:00.000Z"
+                    }
+                  },
+                  "channel_targeted": {
+                    "value": {
+                      "success": true,
+                      "devices_notified": 2,
+                      "users_notified": 1,
+                      "effective_channel_slugs": ["devs", "ops"],
+                      "timestamp": "2025-08-12T12:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid payload or channel targeting input)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BadRequestError" },
+                "examples": {
+                  "invalid_target": {
+                    "value": {
+                      "error": "Invalid channel targeting",
+                      "message": "target.channels must be an array of channel slugs"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden (API key scope or channel assignment violation)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ForbiddenError" },
+                "examples": {
+                  "channel_scope_violation": {
+                    "value": {
+                      "error": "Invalid channel targeting",
+                      "message": "This API key can only target assigned channels. Requested channels include channels outside this key scope."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No recipients found for effective channel target",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NoRecipientsError" },
+                "examples": {
+                  "no_devices": {
+                    "value": {
+                      "error": "No recipients found",
+                      "message": "No devices matched the effective channel target",
+                      "effective_channel_slugs": ["marketing"]
                     }
                   }
                 }
@@ -93,7 +160,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "Start a Live Activity",
-        "description": "Starts a Live Activity on all registered devices and returns an activity_id.",
+        "description": "Starts a Live Activity on devices matched by API key scope and optional target channels.",
         "operationId": "startLiveActivity",
         "requestBody": {
           "required": true,
@@ -110,6 +177,21 @@
                       "current_step": 1,
                       "type": "segmented_progress",
                       "color": "yellow"
+                    }
+                  }
+                },
+                "channel_targeted": {
+                  "value": {
+                    "content_state": {
+                      "title": "ActivitySmith API Deployment",
+                      "subtitle": "start",
+                      "number_of_steps": 4,
+                      "current_step": 1,
+                      "type": "segmented_progress",
+                      "color": "yellow"
+                    },
+                    "target": {
+                      "channels": ["devs", "ops"]
                     }
                   }
                 }
@@ -131,6 +213,65 @@
                       "devices_notified": 2,
                       "users_notified": 1,
                       "timestamp": "2026-01-28T09:57:22.929Z"
+                    }
+                  },
+                  "channel_targeted": {
+                    "value": {
+                      "success": true,
+                      "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                      "devices_notified": 2,
+                      "users_notified": 1,
+                      "effective_channel_slugs": ["devs", "ops"],
+                      "timestamp": "2026-01-28T09:57:22.929Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid payload or channel targeting input)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BadRequestError" },
+                "examples": {
+                  "invalid_target": {
+                    "value": {
+                      "error": "Invalid channel targeting",
+                      "message": "target.channels must be an array of channel slugs"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden (API key scope or channel assignment violation)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ForbiddenError" },
+                "examples": {
+                  "channel_scope_violation": {
+                    "value": {
+                      "error": "Invalid channel targeting",
+                      "message": "This API key can only target assigned channels. Requested channels include channels outside this key scope."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No recipients found for effective channel target",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NoRecipientsError" },
+                "examples": {
+                  "no_devices": {
+                    "value": {
+                      "error": "No recipients found",
+                      "message": "No Live Activity devices matched the effective channel target",
+                      "effective_channel_slugs": ["marketing"]
                     }
                   }
                 }
@@ -210,6 +351,22 @@
               }
             }
           },
+          "403": {
+            "description": "Forbidden (activity not owned by this API key account)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ForbiddenError" },
+                "examples": {
+                  "forbidden": {
+                    "value": {
+                      "error": "Forbidden",
+                      "message": "This API key cannot update this Live Activity"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "429": {
             "description": "Rate limit exceeded",
             "content": {
@@ -270,6 +427,22 @@
                       "devices_notified": 2,
                       "devices_queued": 0,
                       "timestamp": "2026-01-28T09:57:29.258Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden (activity not owned by this API key account)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ForbiddenError" },
+                "examples": {
+                  "forbidden": {
+                    "value": {
+                      "error": "Forbidden",
+                      "message": "This API key cannot end this Live Activity"
                     }
                   }
                 }
@@ -385,13 +558,41 @@
         },
         "additionalProperties": false
       },
+      "AlertPayload": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "body": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "ChannelTarget": {
+        "type": "object",
+        "properties": {
+          "channels": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1,
+            "description": "Channel slugs. When omitted, API key scope determines recipients."
+          }
+        },
+        "required": ["channels"],
+        "additionalProperties": false
+      },
       "PushNotificationRequest": {
         "type": "object",
         "required": ["title"],
         "properties": {
           "title": { "type": "string" },
           "message": { "type": "string" },
-          "subtitle": { "type": "string" }
+          "subtitle": { "type": "string" },
+          "payload": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "badge": { "type": "integer" },
+          "sound": { "type": "string" },
+          "target": { "$ref": "#/components/schemas/ChannelTarget" }
         },
         "additionalProperties": false
       },
@@ -401,6 +602,10 @@
           "success": { "type": "boolean" },
           "devices_notified": { "type": "integer" },
           "users_notified": { "type": "integer" },
+          "effective_channel_slugs": {
+            "type": ["array", "null"],
+            "items": { "type": "string" }
+          },
           "timestamp": { "type": "string", "format": "date-time" }
         },
         "required": ["success", "timestamp"],
@@ -410,7 +615,9 @@
         "type": "object",
         "required": ["content_state"],
         "properties": {
-          "content_state": { "$ref": "#/components/schemas/ContentStateStart" }
+          "content_state": { "$ref": "#/components/schemas/ContentStateStart" },
+          "alert": { "$ref": "#/components/schemas/AlertPayload" },
+          "target": { "$ref": "#/components/schemas/ChannelTarget" }
         },
         "additionalProperties": false
       },
@@ -421,10 +628,45 @@
           "devices_notified": { "type": "integer" },
           "users_notified": { "type": "integer" },
           "activity_id": { "type": "string" },
+          "effective_channel_slugs": {
+            "type": ["array", "null"],
+            "items": { "type": "string" }
+          },
           "timestamp": { "type": "string", "format": "date-time" }
         },
         "required": ["success", "activity_id", "timestamp"],
         "additionalProperties": false
+      },
+      "BadRequestError": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "required": ["error", "message"],
+        "additionalProperties": true
+      },
+      "ForbiddenError": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "required": ["error", "message"],
+        "additionalProperties": true
+      },
+      "NoRecipientsError": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" },
+          "effective_channel_slugs": {
+            "type": ["array", "null"],
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["error", "message"],
+        "additionalProperties": true
       },
       "RateLimitError": {
         "type": "object",
