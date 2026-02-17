@@ -130,16 +130,16 @@ Use camelCase keys in JSON (for example: `numberOfSteps`, `currentStep`, `autoDi
 
 ### Field Reference
 
-| Field | Description |
-| --- | --- |
-| `title` | Primary label shown in the Live Activity. |
-| `subtitle` | Secondary label shown in the Live Activity. |
-| `type` | Layout type. For now: `segmented_progress`. |
-| `numberOfSteps` | Total steps in the progress flow. |
-| `currentStep` | Current step index (1-based). |
-| `color` | Accent color (`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`). |
-| `stepColor` | Color for step segments (same values as `color`). |
-| `autoDismissMinutes` | Minutes before dismissal after ending (default `3`, `0` for immediate). |
+| Field                | Description                                                                                     |
+| -------------------- | ----------------------------------------------------------------------------------------------- |
+| `title`              | Primary label shown in the Live Activity.                                                       |
+| `subtitle`           | Secondary label shown in the Live Activity.                                                     |
+| `type`               | Layout type. For now: `segmented_progress`.                                                     |
+| `numberOfSteps`      | Total steps in the progress flow.                                                               |
+| `currentStep`        | Current step index (1-based).                                                                   |
+| `color`              | Accent color (`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`). |
+| `stepColor`          | Color for step segments (same values as `color`).                                               |
+| `autoDismissMinutes` | Minutes before dismissal after ending (default `3`, `0` for immediate).                         |
 
 ## Output
 
@@ -168,3 +168,14 @@ activitysmith activity start \
 ## Error Handling
 
 The CLI exits non-zero on non-2xx responses and prints the API error body (for example, rate limit or Live Activity limit errors).
+
+## Additional Resources
+
+<CardGroup cols={2}>
+  <Card title="NPM Package" icon="npm" href="https://www.npmjs.com/package/activitysmith-cli">
+    Download and install the ActivitySmith CLI on NPM
+  </Card>
+  <Card title="Source Code" icon="github" href="https://github.com/ActivitySmithHQ/activitysmith-cli">
+    View the complete source code for the ActivitySmith CLI
+  </Card>
+</CardGroup>
