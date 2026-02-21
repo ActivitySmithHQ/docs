@@ -30,15 +30,15 @@ const activitysmith = new ActivitySmith({
 
 try {
   const push = await activitysmith.notifications.send({
-    title: "Build Failed",
-    message: "CI pipeline failed on main branch",
+    title: "New subscription 💸",
+    message: "Customer upgraded to Pro plan",
   });
 
   const start = await activitysmith.liveActivities.start({
     content_state: {
-      title: "ActivitySmith API Deployment",
-      subtitle: "start",
-      number_of_steps: 4,
+      title: "Nightly database backup",
+      subtitle: "create snapshot",
+      number_of_steps: 3,
       current_step: 1,
       type: "segmented_progress",
       color: "yellow",
@@ -50,19 +50,19 @@ try {
   await activitysmith.liveActivities.update({
     activity_id: activityId,
     content_state: {
-      title: "ActivitySmith API Deployment",
-      subtitle: "npm i & pm2",
-      current_step: 3,
+      title: "Nightly database backup",
+      subtitle: "upload archive",
+      current_step: 2,
     },
   });
 
   await activitysmith.liveActivities.end({
     activity_id: activityId,
     content_state: {
-      title: "ActivitySmith API Deployment",
-      subtitle: "done",
-      current_step: 4,
-      auto_dismiss_minutes: 3,
+      title: "Nightly database backup",
+      subtitle: "verify restore",
+      current_step: 3,
+      auto_dismiss_minutes: 2,
     },
   });
 
@@ -78,8 +78,8 @@ Use `activitysmith.notifications.send` with a push payload. `title` is required;
 
 ```js Node
 const response = await activitysmith.notifications.send({
-  title: "Build Failed",
-  message: "CI pipeline failed on main branch",
+  title: "New subscription 💸",
+  message: "Customer upgraded to Pro plan",
 });
 
 console.log(response.devices_notified, response.timestamp);
@@ -92,9 +92,9 @@ Use `activitysmith.liveActivities.start` with a `content_state` payload. For the
 ```js Node
 const start = await activitysmith.liveActivities.start({
   content_state: {
-    title: "ActivitySmith API Deployment",
-    subtitle: "start",
-    number_of_steps: 4,
+    title: "Nightly database backup",
+    subtitle: "create snapshot",
+    number_of_steps: 3,
     current_step: 1,
     type: "segmented_progress",
     color: "yellow",
@@ -112,9 +112,9 @@ Use `activitysmith.liveActivities.update` with the `activity_id` you received fr
 await activitysmith.liveActivities.update({
   activity_id: activityId,
   content_state: {
-    title: "ActivitySmith API Deployment",
-    subtitle: "npm i & pm2",
-    current_step: 3,
+    title: "Nightly database backup",
+    subtitle: "upload archive",
+    current_step: 2,
   },
 });
 ```
@@ -127,10 +127,10 @@ Use `activitysmith.liveActivities.end` with the `activity_id`. You can optionall
 await activitysmith.liveActivities.end({
   activity_id: activityId,
   content_state: {
-    title: "ActivitySmith API Deployment",
-    subtitle: "done",
-    current_step: 4,
-    auto_dismiss_minutes: 3,
+    title: "Nightly database backup",
+    subtitle: "verify restore",
+    current_step: 3,
+    auto_dismiss_minutes: 2,
   },
 });
 ```
@@ -141,16 +141,16 @@ You can target specific channels when sending a push or starting a Live Activity
 
 ```js Node
 await activitysmith.notifications.send({
-  title: "Build Failed",
-  message: "CI pipeline failed on main branch",
+  title: "New subscription 💸",
+  message: "Customer upgraded to Pro plan",
   channels: ["ios-builds", "engineering"],
 });
 
 await activitysmith.liveActivities.start({
   channels: ["ios-builds"],
   content_state: {
-    title: "ActivitySmith API Deployment",
-    number_of_steps: 4,
+    title: "Nightly database backup",
+    number_of_steps: 3,
     current_step: 1,
     type: "segmented_progress",
   },

@@ -37,8 +37,8 @@ func main() {
 	}
 
 	input := activitysmithsdk.PushNotificationInput{
-		Title:   "Build Failed",
-		Message: "CI pipeline failed on main branch",
+		Title:   "New subscription 💸",
+		Message: "Customer upgraded to Pro plan",
 	}
 
 	response, err := activitysmith.Notifications.
@@ -57,8 +57,8 @@ Use `activitysmith.Notifications.Send` with an `activitysmithsdk.PushNotificatio
 
 ```go Go
 input := activitysmithsdk.PushNotificationInput{
-	Title:   "Build Failed",
-	Message: "CI pipeline failed on main branch",
+	Title:   "New subscription 💸",
+	Message: "Customer upgraded to Pro plan",
 }
 
 response, err := activitysmith.Notifications.
@@ -77,9 +77,9 @@ Start a Live Activity with `activitysmith.LiveActivities.Start`. For a segmented
 
 ```go Go
 startInput := activitysmithsdk.LiveActivityStartInput{
-	Title:         "ActivitySmith API Deployment",
-	Subtitle:      "start",
-	NumberOfSteps: 4,
+	Title:         "Nightly database backup",
+	Subtitle:      "create snapshot",
+	NumberOfSteps: 3,
 	CurrentStep:   1,
 	Type:          "segmented_progress",
 	Color:         "yellow",
@@ -101,9 +101,9 @@ Update a Live Activity with `activitysmith.LiveActivities.Update` using the `act
 ```go Go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	ActivityID:  activityID,
-	Title:       "ActivitySmith API Deployment",
-	Subtitle:    "npm i & pm2",
-	CurrentStep: 3,
+	Title:       "Nightly database backup",
+	Subtitle:    "upload archive",
+	CurrentStep: 2,
 }
 
 update, err := activitysmith.LiveActivities.
@@ -123,10 +123,10 @@ If `AutoDismissMinutes` is omitted, backend default `3` is used.
 ```go Go
 endInput := activitysmithsdk.LiveActivityEndInput{
 	ActivityID:         activityID,
-	Title:              "ActivitySmith API Deployment",
-	Subtitle:           "done",
-	CurrentStep:        4,
-	AutoDismissMinutes: 3,
+	Title:              "Nightly database backup",
+	Subtitle:           "verify restore",
+	CurrentStep: 3,
+	AutoDismissMinutes: 2,
 }
 
 end, err := activitysmith.LiveActivities.
@@ -144,8 +144,8 @@ You can target specific channels when sending a push or starting a Live Activity
 
 ```go Go
 pushInput := activitysmithsdk.PushNotificationInput{
-	Title:    "Build Failed",
-	Message:  "CI pipeline failed on main branch",
+	Title:    "New subscription 💸",
+	Message:  "Customer upgraded to Pro plan",
 	Channels: []string{"ios-builds", "engineering"},
 }
 
@@ -155,8 +155,8 @@ if err != nil {
 }
 
 startInput := activitysmithsdk.LiveActivityStartInput{
-	Title:         "ActivitySmith API Deployment",
-	NumberOfSteps: 4,
+	Title:         "Nightly database backup",
+	NumberOfSteps: 3,
 	CurrentStep:   1,
 	Type:          "segmented_progress",
 	Channels:      []string{"ios-builds"},

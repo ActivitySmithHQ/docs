@@ -33,8 +33,8 @@ $activitysmith = new ActivitySmith($apiKey);
 
 try {
     $response = $activitysmith->notifications->send([
-        'title' => 'Build Failed',
-        'message' => 'CI pipeline failed on main branch',
+        'title' => 'New subscription 💸',
+        'message' => 'Customer upgraded to Pro plan',
     ]);
 
     echo 'Notified: ' . $response->getDevicesNotified() . PHP_EOL;
@@ -49,8 +49,8 @@ Use `\$activitysmith->notifications->send` with a push payload. `title` is requi
 
 ```php PHP
 $response = $activitysmith->notifications->send([
-    'title' => 'Build Failed',
-    'message' => 'CI pipeline failed on main branch',
+    'title' => 'New subscription 💸',
+    'message' => 'Customer upgraded to Pro plan',
 ]);
 
 echo $response->getSuccess() ? 'true' : 'false';
@@ -65,9 +65,9 @@ Start a Live Activity with `\$activitysmith->liveActivities->start`. For a segme
 ```php PHP
 $start = $activitysmith->liveActivities->start([
     'content_state' => [
-        'title' => 'ActivitySmith API Deployment',
-        'subtitle' => 'start',
-        'number_of_steps' => 4,
+        'title' => 'Nightly database backup',
+        'subtitle' => 'create snapshot',
+        'number_of_steps' => 3,
         'current_step' => 1,
         'type' => 'segmented_progress',
         'color' => 'yellow',
@@ -85,9 +85,9 @@ Update a Live Activity with `\$activitysmith->liveActivities->update` using the 
 $update = $activitysmith->liveActivities->update([
     'activity_id' => $activityId,
     'content_state' => [
-        'title' => 'ActivitySmith API Deployment',
-        'subtitle' => 'npm i & pm2',
-        'current_step' => 3,
+        'title' => 'Nightly database backup',
+        'subtitle' => 'upload archive',
+        'current_step' => 2,
     ],
 ]);
 
@@ -102,10 +102,10 @@ End a Live Activity with `\$activitysmith->liveActivities->end`. You can optiona
 $end = $activitysmith->liveActivities->end([
     'activity_id' => $activityId,
     'content_state' => [
-        'title' => 'ActivitySmith API Deployment',
-        'subtitle' => 'done',
-        'current_step' => 4,
-        'auto_dismiss_minutes' => 3,
+        'title' => 'Nightly database backup',
+        'subtitle' => 'verify restore',
+        'current_step' => 3,
+        'auto_dismiss_minutes' => 2,
     ],
 ]);
 
@@ -118,16 +118,16 @@ You can target specific channels when sending a push or starting a Live Activity
 
 ```php PHP
 $activitysmith->notifications->send([
-    'title' => 'Build Failed',
-    'message' => 'CI pipeline failed on main branch',
+    'title' => 'New subscription 💸',
+    'message' => 'Customer upgraded to Pro plan',
     'channels' => ['ios-builds', 'engineering'],
 ]);
 
 $activitysmith->liveActivities->start([
     'channels' => ['ios-builds'],
     'content_state' => [
-        'title' => 'ActivitySmith API Deployment',
-        'number_of_steps' => 4,
+        'title' => 'Nightly database backup',
+        'number_of_steps' => 3,
         'current_step' => 1,
         'type' => 'segmented_progress',
     ],
