@@ -26,22 +26,17 @@ import os
 from activitysmith import ActivitySmith
 
 activitysmith = ActivitySmith(api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY"))
-
-try:
-    response = activitysmith.notifications.send(
-        {
-            "title": "New subscription 💸",
-            "message": "Customer upgraded to Pro plan",
-        }
-    )
-    print("Notified:", response.devices_notified)
-except Exception as err:
-    print("Request failed:", err)
 ```
 
 ### Send a Push Notification
 
 Use `activitysmith.notifications.send` with a push payload. `title` is required; `message` and `subtitle` are optional.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png"
+  alt="Push Notification"
+/>
 
 ```python Python
 response = activitysmith.notifications.send(

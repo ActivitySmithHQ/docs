@@ -35,25 +35,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	input := activitysmithsdk.PushNotificationInput{
-		Title:   "New subscription 💸",
-		Message: "Customer upgraded to Pro plan",
-	}
-
-	response, err := activitysmith.Notifications.
-		Send(input)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println("Notified:", response.GetDevicesNotified())
 }
 ```
 
 ### Send a Push Notification
 
 Use `activitysmith.Notifications.Send` with an `activitysmithsdk.PushNotificationInput`.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png"
+  alt="Push Notification"
+/>
 
 ```go Go
 input := activitysmithsdk.PushNotificationInput{
