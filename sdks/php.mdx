@@ -30,22 +30,17 @@ use ActivitySmith\ActivitySmith;
 
 $apiKey = $_ENV['ACTIVITYSMITH_API_KEY'] ?? 'YOUR-API-KEY';
 $activitysmith = new ActivitySmith($apiKey);
-
-try {
-    $response = $activitysmith->notifications->send([
-        'title' => 'New subscription 💸',
-        'message' => 'Customer upgraded to Pro plan',
-    ]);
-
-    echo 'Notified: ' . $response->getDevicesNotified() . PHP_EOL;
-} catch (Throwable $err) {
-    echo 'Request failed: ' . $err->getMessage() . PHP_EOL;
-}
 ```
 
 ### Send a Push Notification
 
 Use `\$activitysmith->notifications->send` with a push payload. `title` is required; `message` and `subtitle` are optional.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png"
+  alt="Push Notification"
+/>
 
 ```php PHP
 $response = $activitysmith->notifications->send([

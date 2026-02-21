@@ -26,24 +26,17 @@ require "activitysmith"
 
 api_key = ENV["ACTIVITYSMITH_API_KEY"] || "YOUR-API-KEY"
 activitysmith = ActivitySmith::Client.new(api_key: api_key)
-
-begin
-  response = activitysmith.notifications.send(
-    {
-      title: "New subscription 💸",
-      message: "Customer upgraded to Pro plan"
-    }
-  )
-
-  puts "Notified: #{response.devices_notified}"
-rescue StandardError => err
-  puts "Request failed: #{err.message}"
-end
 ```
 
 ### Send a Push Notification
 
 Use `activitysmith.notifications.send` with a push payload. `title` is required; `message` and `subtitle` are optional.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png"
+  alt="Push Notification"
+/>
 
 ```ruby Ruby
 response = activitysmith.notifications.send(

@@ -27,54 +27,17 @@ import ActivitySmith from "activitysmith";
 const activitysmith = new ActivitySmith({
   apiKey: process.env.ACTIVITYSMITH_API_KEY,
 });
-
-try {
-  const push = await activitysmith.notifications.send({
-    title: "New subscription 💸",
-    message: "Customer upgraded to Pro plan",
-  });
-
-  const start = await activitysmith.liveActivities.start({
-    content_state: {
-      title: "Nightly database backup",
-      subtitle: "create snapshot",
-      number_of_steps: 3,
-      current_step: 1,
-      type: "segmented_progress",
-      color: "yellow",
-    },
-  });
-
-  const activityId = start.activity_id;
-
-  await activitysmith.liveActivities.update({
-    activity_id: activityId,
-    content_state: {
-      title: "Nightly database backup",
-      subtitle: "upload archive",
-      current_step: 2,
-    },
-  });
-
-  await activitysmith.liveActivities.end({
-    activity_id: activityId,
-    content_state: {
-      title: "Nightly database backup",
-      subtitle: "verify restore",
-      current_step: 3,
-      auto_dismiss_minutes: 2,
-    },
-  });
-
-  console.log("Push sent:", push.success);
-} catch (error) {
-  console.error(error);
-}
 ```
 
 ### Send a Push Notification
 
 Use `activitysmith.notifications.send` with a push payload. `title` is required; `message` and `subtitle` are optional.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png"
+  alt="Push Notification"
+/>
 
 ```js Node
 const response = await activitysmith.notifications.send({

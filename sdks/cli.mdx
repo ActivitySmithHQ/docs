@@ -14,35 +14,13 @@ Install the ActivitySmith CLI globally using npm:
 
 <InstallationCLI />
 
-## Authentication
-
-Set your API key as an environment variable before running commands:
-
-```bash CLI
-export ACTIVITYSMITH_API_KEY="YOUR-API-KEY"
-```
-
-Verify the CLI is installed:
-
-```bash CLI
-activitysmith --help
-```
-
-## Quickstart
-
-Send a push notification:
-
-```bash CLI
-activitysmith push \
-  --title "Build Failed 🚨" \
-  --message "CI pipeline failed on main branch"
-```
-
 ## Commands
 
 ### Push Notification
 
 Sends a push notification to every paired device in your account.
+
+<img className="image" src="https://cdn.activitysmith.com/printkit/notification.png" alt="Push Notification" />
 
 ```bash CLI
 activitysmith push \
