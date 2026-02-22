@@ -54,6 +54,8 @@ puts response.devices_notified
 
 Start a Live Activity with `activitysmith.live_activities.start`.
 
+<img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start Live Activity" />
+
 ```ruby Ruby
 start = activitysmith.live_activities.start(
   {
@@ -75,6 +77,12 @@ activity_id = start.activity_id
 
 Update a Live Activity with `activitysmith.live_activities.update` using the `activity_id`.
 
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/update-live-activity.png"
+  alt="Update Live Activity"
+/>
+
 ```ruby Ruby
 update = activitysmith.live_activities.update(
   {
@@ -93,6 +101,8 @@ puts update.devices_notified
 ### End a Live Activity
 
 End a Live Activity with `activitysmith.live_activities.end`. You can optionally set `auto_dismiss_minutes` in the `content_state`.
+
+<img className="image" src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="End Live Activity" />
 
 ```ruby Ruby
 finish = activitysmith.live_activities.end(

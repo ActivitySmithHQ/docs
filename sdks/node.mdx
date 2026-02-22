@@ -52,6 +52,8 @@ console.log(response.devices_notified, response.timestamp);
 
 Use `activitysmith.liveActivities.start` with a `content_state` payload. For the segmented progress type, `title`, `number_of_steps`, `current_step`, and `type` are required.
 
+<img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start Live Activity" />
+
 ```js Node
 const start = await activitysmith.liveActivities.start({
   content_state: {
@@ -71,6 +73,12 @@ const activityId = start.activity_id;
 
 Use `activitysmith.liveActivities.update` with the `activity_id` you received from `start`.
 
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/update-live-activity.png"
+  alt="Update Live Activity"
+/>
+
 ```js Node
 await activitysmith.liveActivities.update({
   activity_id: activityId,
@@ -85,6 +93,8 @@ await activitysmith.liveActivities.update({
 ### End a Live Activity
 
 Use `activitysmith.liveActivities.end` with the `activity_id`. You can optionally control how long the ended Live Activity stays visible using `auto_dismiss_minutes` (default `3`, `0` for immediate dismissal).
+
+<img className="image" src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="End Live Activity" />
 
 ```js Node
 await activitysmith.liveActivities.end({

@@ -68,6 +68,8 @@ log.Println(response.GetDevicesNotified())
 
 Start a Live Activity with `activitysmith.LiveActivities.Start`. For a segmented progress activity, include `title`, `number_of_steps`, `current_step`, and `type`.
 
+<img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start Live Activity" />
+
 ```go Go
 startInput := activitysmithsdk.LiveActivityStartInput{
 	Title:         "Nightly database backup",
@@ -91,6 +93,12 @@ activityID := start.GetActivityId()
 
 Update a Live Activity with `activitysmith.LiveActivities.Update` using the `activityID`.
 
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/update-live-activity.png"
+  alt="Update Live Activity"
+/>
+
 ```go Go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	ActivityID:  activityID,
@@ -112,6 +120,8 @@ log.Println(update.GetDevicesNotified())
 
 End a Live Activity with `activitysmith.LiveActivities.End`.
 If `AutoDismissMinutes` is omitted, backend default `3` is used.
+
+<img className="image" src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="End Live Activity" />
 
 ```go Go
 endInput := activitysmithsdk.LiveActivityEndInput{

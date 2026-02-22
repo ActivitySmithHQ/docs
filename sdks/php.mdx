@@ -57,6 +57,8 @@ echo $response->getDevicesNotified();
 
 Start a Live Activity with `\$activitysmith->liveActivities->start`. For a segmented progress activity, include `title`, `number_of_steps`, `current_step`, and `type`.
 
+<img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start Live Activity" />
+
 ```php PHP
 $start = $activitysmith->liveActivities->start([
     'content_state' => [
@@ -76,6 +78,12 @@ $activityId = $start->getActivityId();
 
 Update a Live Activity with `\$activitysmith->liveActivities->update` using the `activity_id`.
 
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/update-live-activity.png"
+  alt="Update Live Activity"
+/>
+
 ```php PHP
 $update = $activitysmith->liveActivities->update([
     'activity_id' => $activityId,
@@ -92,6 +100,8 @@ echo $update->getDevicesNotified();
 ### End a Live Activity
 
 End a Live Activity with `\$activitysmith->liveActivities->end`. You can optionally set `auto_dismiss_minutes` in the `content_state`.
+
+<img className="image" src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="End Live Activity" />
 
 ```php PHP
 $end = $activitysmith->liveActivities->end([
