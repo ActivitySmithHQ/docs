@@ -15,7 +15,7 @@
         "groups": [
           {
             "group": "Get started",
-            "pages": ["index", "rate-limits"]
+            "pages": ["index", "api-keys", "rate-limits"]
           },
           {
             "group": "Workspace",

@@ -13,7 +13,7 @@ Channels are flexible:
 
 - You can assign users, devices, or both to a channel.
 - You can choose channels per request using `target.channels`.
-- You can keep some API keys broad and scope other API keys to specific channels.
+- You can keep some [API key](/api-keys) broad and scope other [API key](/api-keys) to specific channels.
 
 ## How Targeting Works
 
@@ -28,7 +28,7 @@ Use channel slugs in `target.channels`:
 ```
 
 - If `target` is omitted and API key scope is `all`, delivery goes to all recipients in the account.
-- If `target` is omitted and API key scope is `channels`, delivery goes to channels assigned to that API key.
+- If `target` is omitted and API key scope is `channels`, delivery goes to channels assigned to that [API key](/api-keys).
 - If `target.channels` is provided, only those channel slugs are targeted.
 
 ## Push Notifications
