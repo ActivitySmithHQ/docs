@@ -20,11 +20,9 @@ og:description: "ActivitySmith Send Live Activities and push notifications to yo
 
 ## Welcome to ActivitySmith
 
-[ActivitySmith](https://activitysmith.com) is API service that lets you trigger and update Live Activities and send push notifications directly from your own infrastructure. Pair your iOS device(s), authenticate with an API key, and send real-time alerts from any backend, cron, agent, or automation. Without building or maintaining your own iOS app or dealing directly with APNs.
+[ActivitySmith](https://activitysmith.com) is API service that lets you trigger and update Live Activities and send push notifications directly from your own infrastructure.
 
-## How to use it?
-
-We provide an easy to use API. You can download the iOS app from the [App Store](https://apps.apple.com/us/app/activitysmith/id6752254835).
+Pair your iOS device(s), authenticate with an API key, and send real-time alerts from any backend, cron, agent, or automation. Without building or maintaining your own iOS app or dealing directly with APNs.
 
 Check out the following resources to get started:
 
@@ -34,9 +32,10 @@ Check out the following resources to get started:
 
 Want an SDK or Integration? Let us know at [adam@activitysmith.com](mailto:adam@activitysmith.com).
 
-### API Key
+### Prerequisites
 
-To use the API, you need to sign up on [ActivitySmith](https://activitysmith.com/) and get an API key.
+- [Create an API key](https://activitysmith.com/app/keys)
+- [Download our iOS app](https://apps.apple.com/us/app/activitysmith/id6752254835) and pair your device(s)
 
 ### Features
 
@@ -53,8 +52,11 @@ To use the API, you need to sign up on [ActivitySmith](https://activitysmith.com
 
 ## Push Notifications
 
-To send a push notification, use the `push-notification` endpoint. It takes `title` and optional fields like `message`, `payload`, and `target.channels`.  
+To send a push notification, use the `push-notification` endpoint. It takes `title` and optional fields like `message`, `payload`, `redirection`, `actions`, and `target.channels`.  
 `target.channels` accepts channel slugs (for example `["devs", "ops"]`).
+
+- `redirection` opens on normal tap.
+- `actions` (up to 4) show on long-press in iOS expanded notification UI.
 
 <img
   className="image"
