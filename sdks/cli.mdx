@@ -14,6 +14,24 @@ Install the ActivitySmith CLI globally using npm:
 
 <InstallationCLI />
 
+## Usage
+
+1. [Create an API key](https://activitysmith.com/app/keys)
+2. Authenticate with either `ACTIVITYSMITH_API_KEY` or `--api-key`.
+
+```bash CLI
+# Option 1: set env var (recommended)
+export ACTIVITYSMITH_API_KEY="YOUR-API-KEY"
+
+# Verify authentication
+activitysmith --status
+```
+
+```bash CLI
+# Option 2: pass key per command
+activitysmith --api-key "YOUR-API-KEY" --status
+```
+
 ## Commands
 
 ### Push Notification
