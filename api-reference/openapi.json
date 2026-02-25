@@ -28,7 +28,7 @@
       "post": {
         "tags": ["PushNotifications"],
         "summary": "Send a push notification",
-        "description": "Sends a push notification to devices matched by API key scope and optional target channels.",
+        "description": "Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL (tap) and up to 4 interactive actions (long-press on iOS).",
         "operationId": "sendPushNotification",
         "requestBody": {
           "required": true,
@@ -49,6 +49,50 @@
                     "target": {
                       "channels": ["devs", "ops"]
                     }
+                  }
+                },
+                "redirection": {
+                  "value": {
+                    "title": "Incident Resolved ✅",
+                    "message": "All systems operational",
+                    "redirection": "https://status.example.com/incidents/abc-123"
+                  }
+                },
+                "actions_open_url": {
+                  "value": {
+                    "title": "Release Candidate Ready 🚀",
+                    "message": "v2.14.0-rc.1 deployed to staging",
+                    "actions": [
+                      {
+                        "title": "View CI Run",
+                        "type": "open_url",
+                        "url": "https://github.com/activitysmithhq/backend/actions/runs/1234567890"
+                      },
+                      {
+                        "title": "Release Notes",
+                        "type": "open_url",
+                        "url": "https://github.com/activitysmithhq/backend/releases/tag/v2.14.0-rc.1"
+                      }
+                    ]
+                  }
+                },
+                "actions_webhook": {
+                  "value": {
+                    "title": "Build Failed 🚨",
+                    "message": "Tap and hold for remediation actions",
+                    "redirection": "https://ci.example.com/builds/8842",
+                    "actions": [
+                      {
+                        "title": "Retry Build",
+                        "type": "webhook",
+                        "url": "https://hooks.example.com/activitysmith/build-retry",
+                        "method": "POST",
+                        "body": {
+                          "build_id": "8842",
+                          "source": "push_action"
+                        }
+                      }
+                    ]
                   }
                 }
               }
@@ -579,6 +623,42 @@
         "required": ["channels"],
         "additionalProperties": false
       },
+      "PushNotificationActionType": {
+        "type": "string",
+        "enum": ["open_url", "webhook"]
+      },
+      "PushNotificationWebhookMethod": {
+        "type": "string",
+        "enum": ["GET", "POST"],
+        "default": "POST"
+      },
+      "PushNotificationAction": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Button title displayed in iOS expanded notification UI."
+          },
+          "type": { "$ref": "#/components/schemas/PushNotificationActionType" },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://",
+            "description": "HTTPS URL. For open_url it is opened in browser. For webhook it is called by ActivitySmith backend."
+          },
+          "method": {
+            "$ref": "#/components/schemas/PushNotificationWebhookMethod",
+            "description": "Webhook HTTP method. Used only when type=webhook."
+          },
+          "body": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Optional webhook payload body. Used only when type=webhook."
+          }
+        },
+        "required": ["title", "type", "url"],
+        "additionalProperties": false
+      },
       "PushNotificationRequest": {
         "type": "object",
         "required": ["title"],
@@ -586,6 +666,18 @@
           "title": { "type": "string" },
           "message": { "type": "string" },
           "subtitle": { "type": "string" },
+          "redirection": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://",
+            "description": "Optional HTTPS URL opened when user taps the notification body."
+          },
+          "actions": {
+            "type": "array",
+            "maxItems": 4,
+            "items": { "$ref": "#/components/schemas/PushNotificationAction" },
+            "description": "Optional interactive actions shown on iOS long-press."
+          },
           "payload": {
             "type": "object",
             "additionalProperties": true
