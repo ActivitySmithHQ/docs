@@ -5,7 +5,6 @@ on:
     branches: [main]
     paths:
       - api-reference/openapi.json
-      - api-reference/**
 
 jobs:
   trigger:
