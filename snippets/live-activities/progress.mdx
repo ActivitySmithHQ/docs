@@ -1,0 +1,440 @@
+### Progress Type
+
+Use `progress` when the state is naturally continuous. It fits charging,
+downloads, sync jobs, uploads, timers, and any flow where a percentage or
+numeric range is the clearest signal.
+
+#### Start
+
+Start with `title`, `type: "progress"`, and either `percentage` or `value` plus
+`upper_limit`. Add `subtitle`, `color`, and `target.channels` if needed.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-start.png"
+  alt="Progress Live Activity start"
+/>
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://activitysmith.com/api/live-activity/start \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content_state": {
+      "title": "EV Charging",
+      "subtitle": "Added 30 mi range",
+      "percentage": 15,
+      "type": "progress",
+      "color": "lime"
+    }
+  }'
+```
+
+```js Node
+import ActivitySmith from "activitysmith";
+
+const activitysmith = new ActivitySmith({
+  apiKey: process.env.ACTIVITYSMITH_API_KEY,
+});
+
+const start = await activitysmith.liveActivities.start({
+  content_state: {
+    title: "EV Charging",
+    subtitle: "Added 30 mi range",
+    percentage: 15,
+    type: "progress",
+    color: "lime",
+  },
+});
+
+const activityId = start.activity_id;
+```
+
+```python Python
+import os
+from activitysmith import ActivitySmith
+
+activitysmith = ActivitySmith(
+    api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+start = activitysmith.live_activities.start(
+    {
+        "content_state": {
+            "title": "EV Charging",
+            "subtitle": "Added 30 mi range",
+            "percentage": 15,
+            "type": "progress",
+            "color": "lime",
+        }
+    }
+)
+
+activity_id = start.activity_id
+```
+
+```go Go
+package main
+
+import (
+	"log"
+	"os"
+
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
+)
+
+func main() {
+	activitysmith, err := activitysmithsdk.New(os.Getenv("ACTIVITYSMITH_API_KEY"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	startInput := activitysmithsdk.LiveActivityStartInput{
+		Title:      "EV Charging",
+		Subtitle:   "Added 30 mi range",
+		Percentage: 15,
+		Type:       "progress",
+		Color:      "lime",
+	}
+
+	start, err := activitysmith.LiveActivities.Start(startInput)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	activityID := start.GetActivityId()
+	log.Println(activityID)
+}
+```
+
+```php PHP
+<?php
+
+use ActivitySmith\ActivitySmith;
+
+$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+$start = $activitysmith->liveActivities->start([
+    'content_state' => [
+        'title' => 'EV Charging',
+        'subtitle' => 'Added 30 mi range',
+        'percentage' => 15,
+        'type' => 'progress',
+        'color' => 'lime',
+    ],
+]);
+
+$activityId = $start->getActivityId();
+```
+
+```ruby Ruby
+require "activitysmith"
+
+activitysmith = ActivitySmith::Client.new(
+  api_key: ENV.fetch("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+start = activitysmith.live_activities.start(
+  {
+    content_state: {
+      title: "EV Charging",
+      subtitle: "Added 30 mi range",
+      percentage: 15,
+      type: "progress",
+      color: "lime"
+    }
+  }
+)
+
+activity_id = start.activity_id
+```
+
+```bash CLI
+activitysmith activity start \
+  --content-state '{"title":"EV Charging","subtitle":"Added 30 mi range","percentage":15,"type":"progress","color":"lime"}'
+```
+
+</CodeGroup>
+
+#### Update
+
+Update the same activity with `activity_id` and the latest `percentage`, or
+send `value` with `upper_limit`.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-update.png"
+  alt="Progress Live Activity update"
+/>
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://activitysmith.com/api/live-activity/update \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+    "content_state": {
+      "title": "EV Charging",
+      "subtitle": "Added 120 mi range",
+      "percentage": 60
+    }
+  }'
+```
+
+```js Node
+import ActivitySmith from "activitysmith";
+
+const activitysmith = new ActivitySmith({
+  apiKey: process.env.ACTIVITYSMITH_API_KEY,
+});
+
+await activitysmith.liveActivities.update({
+  activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+  content_state: {
+    title: "EV Charging",
+    subtitle: "Added 120 mi range",
+    percentage: 60,
+  },
+});
+```
+
+```python Python
+import os
+from activitysmith import ActivitySmith
+
+activitysmith = ActivitySmith(
+    api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.update(
+    {
+        "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+        "content_state": {
+            "title": "EV Charging",
+            "subtitle": "Added 120 mi range",
+            "percentage": 60,
+        },
+    }
+)
+```
+
+```go Go
+package main
+
+import (
+	"log"
+	"os"
+
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
+)
+
+func main() {
+	activitysmith, err := activitysmithsdk.New(os.Getenv("ACTIVITYSMITH_API_KEY"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	updateInput := activitysmithsdk.LiveActivityUpdateInput{
+		ActivityID: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+		Title:      "EV Charging",
+		Subtitle:   "Added 120 mi range",
+		Percentage: 60,
+	}
+
+	_, err = activitysmith.LiveActivities.Update(updateInput)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+```php PHP
+<?php
+
+use ActivitySmith\ActivitySmith;
+
+$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+$activitysmith->liveActivities->update([
+    'activity_id' => 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',
+    'content_state' => [
+        'title' => 'EV Charging',
+        'subtitle' => 'Added 120 mi range',
+        'percentage' => 60,
+    ],
+]);
+```
+
+```ruby Ruby
+require "activitysmith"
+
+activitysmith = ActivitySmith::Client.new(
+  api_key: ENV.fetch("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.update(
+  {
+    activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+    content_state: {
+      title: "EV Charging",
+      subtitle: "Added 120 mi range",
+      percentage: 60
+    }
+  }
+)
+```
+
+```bash CLI
+activitysmith activity update \
+  --activity-id "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW" \
+  --content-state '{"title":"EV Charging","subtitle":"Added 120 mi range","percentage":60}'
+```
+
+</CodeGroup>
+
+#### End
+
+End the activity with the final value. `auto_dismiss_minutes` is optional.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-end.png"
+  alt="Progress Live Activity end"
+/>
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://activitysmith.com/api/live-activity/end \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+    "content_state": {
+      "title": "EV Charging",
+      "subtitle": "Added 200 mi range",
+      "percentage": 100,
+      "auto_dismiss_minutes": 2
+    }
+  }'
+```
+
+```js Node
+import ActivitySmith from "activitysmith";
+
+const activitysmith = new ActivitySmith({
+  apiKey: process.env.ACTIVITYSMITH_API_KEY,
+});
+
+await activitysmith.liveActivities.end({
+  activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+  content_state: {
+    title: "EV Charging",
+    subtitle: "Added 200 mi range",
+    percentage: 100,
+    auto_dismiss_minutes: 2,
+  },
+});
+```
+
+```python Python
+import os
+from activitysmith import ActivitySmith
+
+activitysmith = ActivitySmith(
+    api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.end(
+    {
+        "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+        "content_state": {
+            "title": "EV Charging",
+            "subtitle": "Added 200 mi range",
+            "percentage": 100,
+            "auto_dismiss_minutes": 2,
+        },
+    }
+)
+```
+
+```go Go
+package main
+
+import (
+	"log"
+	"os"
+
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
+)
+
+func main() {
+	activitysmith, err := activitysmithsdk.New(os.Getenv("ACTIVITYSMITH_API_KEY"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	endInput := activitysmithsdk.LiveActivityEndInput{
+		ActivityID:         "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+		Title:              "EV Charging",
+		Subtitle:           "Added 200 mi range",
+		Percentage:         100,
+		AutoDismissMinutes: 2,
+	}
+
+	_, err = activitysmith.LiveActivities.End(endInput)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+```php PHP
+<?php
+
+use ActivitySmith\ActivitySmith;
+
+$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+$activitysmith->liveActivities->end([
+    'activity_id' => 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',
+    'content_state' => [
+        'title' => 'EV Charging',
+        'subtitle' => 'Added 200 mi range',
+        'percentage' => 100,
+        'auto_dismiss_minutes' => 2,
+    ],
+]);
+```
+
+```ruby Ruby
+require "activitysmith"
+
+activitysmith = ActivitySmith::Client.new(
+  api_key: ENV.fetch("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.end(
+  {
+    activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+    content_state: {
+      title: "EV Charging",
+      subtitle: "Added 200 mi range",
+      percentage: 100,
+      auto_dismiss_minutes: 2
+    }
+  }
+)
+```
+
+```bash CLI
+activitysmith activity end \
+  --activity-id "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW" \
+  --content-state '{"title":"EV Charging","subtitle":"Added 200 mi range","percentage":100,"autoDismissMinutes":2}'
+```
+
+</CodeGroup>
