@@ -199,6 +199,8 @@ You can optionally pass `target.channels` with channel slugs to scope recipients
 For `segmented_progress`, include `title`, `current_step`, `type`, and `number_of_steps`.
 For `progress`, include `title`, `type: "progress"`, and either `percentage` or `value` plus `upper_limit`.
 
+**Segmented Progress type**
+
 <img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Live Activity Start" />
 
 <CodeGroup>
@@ -351,6 +353,12 @@ activitysmith activity start \
 </CodeGroup>
 
 **Progress type**
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-start.png"
+  alt="ProgressLive Activity Start"
+/>
 
 <CodeGroup>
 
@@ -514,6 +522,8 @@ It returns a `activity_id` that you can use to update or end the Live Activity.
 To update the Live Activity, call `live-activity/update` with the `activity_id` and a `content_state` payload (minimum: `title`, `current_step`).
 For segmented activities, send `current_step`. For progress activities, send `percentage` or `value` plus `upper_limit`.
 
+**Segmented Progress type**
+
 <img
   className="image"
   src="https://cdn.activitysmith.com/features/update-live-activity.png"
@@ -648,6 +658,12 @@ activitysmith activity update \
 </CodeGroup>
 
 **Progress type**
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-update.png"
+  alt="ProgressLive Activity Update"
+/>
 
 <CodeGroup>
 
@@ -792,6 +808,8 @@ activitysmith activity update \
 To end the Live Activity, call `live-activity/end` with the `activity_id` and the content state.
 For segmented activities, keep sending `current_step`. For progress activities, send `percentage` or `value` plus `upper_limit`.
 
+**Segmented Progress type**
+
 <img className="image" src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="Live Activity End" />
 
 <CodeGroup>
@@ -927,6 +945,12 @@ activitysmith activity end \
 </CodeGroup>
 
 **Progress type**
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-end.png"
+  alt="ProgressLive Activity End"
+/>
 
 <CodeGroup>
 
