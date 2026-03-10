@@ -50,7 +50,9 @@ console.log(response.devices_notified, response.timestamp);
 
 ### Start a Live Activity
 
-Use `activitysmith.liveActivities.start` with a `content_state` payload. For the segmented progress type, `title`, `number_of_steps`, `current_step`, and `type` are required.
+Use `activitysmith.liveActivities.start` with a `content_state` payload.
+For `segmented_progress`, send `title`, `number_of_steps`, `current_step`, and `type`.
+For `progress`, send `title`, `type: "progress"`, and either `percentage` or `value` plus `upper_limit`.
 
 <img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start Live Activity" />
 
@@ -72,6 +74,7 @@ const activityId = start.activity_id;
 ### Update a Live Activity
 
 Use `activitysmith.liveActivities.update` with the `activity_id` you received from `start`.
+For progress updates, send `percentage` or `value` plus `upper_limit` instead of `current_step`.
 
 <img
   className="image"

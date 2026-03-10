@@ -66,7 +66,9 @@ log.Println(response.GetDevicesNotified())
 
 ### Start a Live Activity
 
-Start a Live Activity with `activitysmith.LiveActivities.Start`. For a segmented progress activity, include `title`, `number_of_steps`, `current_step`, and `type`.
+Start a Live Activity with `activitysmith.LiveActivities.Start`.
+For `segmented_progress`, include `Title`, `NumberOfSteps`, `CurrentStep`, and `Type`.
+For `progress`, set `Type: "progress"` and add `WithPercentage(...)` or `WithValue(...).WithUpperLimit(...)`.
 
 <img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start Live Activity" />
 
@@ -92,6 +94,7 @@ activityID := start.GetActivityId()
 ### Update a Live Activity
 
 Update a Live Activity with `activitysmith.LiveActivities.Update` using the `activityID`.
+For progress updates, use `WithPercentage(...)` or `WithValue(...).WithUpperLimit(...)` instead of `CurrentStep`.
 
 <img
   className="image"
@@ -120,6 +123,7 @@ log.Println(update.GetDevicesNotified())
 
 End a Live Activity with `activitysmith.LiveActivities.End`.
 If `AutoDismissMinutes` is omitted, backend default `3` is used.
+For progress activities, use `WithPercentage(...)` or `WithValue(...).WithUpperLimit(...)`.
 
 <img className="image" src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="End Live Activity" />
 

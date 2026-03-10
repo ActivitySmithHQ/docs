@@ -53,6 +53,8 @@ puts response.devices_notified
 ### Start a Live Activity
 
 Start a Live Activity with `activitysmith.live_activities.start`.
+For `segmented_progress`, send `number_of_steps`, `current_step`, and `type`.
+For `progress`, send `type: "progress"` with `percentage` or `value` plus `upper_limit`.
 
 <img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start Live Activity" />
 
@@ -76,6 +78,7 @@ activity_id = start.activity_id
 ### Update a Live Activity
 
 Update a Live Activity with `activitysmith.live_activities.update` using the `activity_id`.
+For progress updates, send `percentage` or `value` plus `upper_limit` instead of `current_step`.
 
 <img
   className="image"

@@ -55,7 +55,9 @@ echo $response->getDevicesNotified();
 
 ### Start a Live Activity
 
-Start a Live Activity with `\$activitysmith->liveActivities->start`. For a segmented progress activity, include `title`, `number_of_steps`, `current_step`, and `type`.
+Start a Live Activity with `\$activitysmith->liveActivities->start`.
+For `segmented_progress`, include `title`, `number_of_steps`, `current_step`, and `type`.
+For `progress`, include `title`, `type => 'progress'`, and either `percentage` or `value` plus `upper_limit`.
 
 <img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start Live Activity" />
 
@@ -77,6 +79,7 @@ $activityId = $start->getActivityId();
 ### Update a Live Activity
 
 Update a Live Activity with `\$activitysmith->liveActivities->update` using the `activity_id`.
+For progress updates, send `percentage` or `value` plus `upper_limit` instead of `current_step`.
 
 <img
   className="image"
