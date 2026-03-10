@@ -2,3 +2,14 @@
 title: 'Start Live Activity'
 openapi: 'POST /live-activity/start'
 ---
+
+Use this endpoint to create a new Live Activity and get back an `activity_id`.
+You will use that same ID for later update and end calls.
+
+- `segmented_progress`: send `title`, `type`, `number_of_steps`, and `current_step`.
+- `progress`: send `title`, `type`, and either `percentage` or `value` with `upper_limit`.
+- `target.channels` is optional if you want to scope delivery to specific channel slugs.
+
+For `segmented_progress`, `number_of_steps` is not fixed for the full lifecycle.
+You can change it later in update or end calls if the workflow adds or removes
+steps.
