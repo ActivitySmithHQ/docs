@@ -91,6 +91,26 @@ if err != nil {
 activityID := start.GetActivityId()
 ```
 
+**Progress type**
+
+```go Go
+startInput := activitysmithsdk.LiveActivityStartInput{
+	Title:      "EV Charging",
+	Subtitle:   "Added 30 mi range",
+	Percentage: 15,
+	Type:       "progress",
+	Color:      "lime",
+}
+
+start, err := activitysmith.LiveActivities.
+	Start(startInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+activityID := start.GetActivityId()
+```
+
 ### Update a Live Activity
 
 Update a Live Activity with `activitysmith.LiveActivities.Update` using the `activityID`.
@@ -119,6 +139,25 @@ if err != nil {
 log.Println(update.GetDevicesNotified())
 ```
 
+**Progress type**
+
+```go Go
+updateInput := activitysmithsdk.LiveActivityUpdateInput{
+	ActivityID: activityID,
+	Title:      "EV Charging",
+	Subtitle:   "Added 120 mi range",
+	Percentage: 60,
+}
+
+update, err := activitysmith.LiveActivities.
+	Update(updateInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(update.GetDevicesNotified())
+```
+
 ### End a Live Activity
 
 End a Live Activity with `activitysmith.LiveActivities.End`.
@@ -133,6 +172,26 @@ endInput := activitysmithsdk.LiveActivityEndInput{
 	Title:              "Nightly database backup",
 	Subtitle:           "verify restore",
 	CurrentStep: 3,
+	AutoDismissMinutes: 2,
+}
+
+end, err := activitysmith.LiveActivities.
+	End(endInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(end.GetSuccess())
+```
+
+**Progress type**
+
+```go Go
+endInput := activitysmithsdk.LiveActivityEndInput{
+	ActivityID:         activityID,
+	Title:              "EV Charging",
+	Subtitle:           "Added 200 mi range",
+	Percentage:         100,
 	AutoDismissMinutes: 2,
 }
 

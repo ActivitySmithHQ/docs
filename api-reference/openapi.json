@@ -228,7 +228,7 @@
                   "value": {
                     "content_state": {
                       "title": "EV Charging",
-                      "subtitle": "Station A3",
+                      "subtitle": "Added 30 mi range",
                       "percentage": 15,
                       "type": "progress",
                       "color": "lime"
@@ -387,7 +387,7 @@
                     "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
                     "content_state": {
                       "title": "EV Charging",
-                      "subtitle": "Station A3",
+                      "subtitle": "Added 120 mi range",
                       "percentage": 60
                     }
                   }
@@ -480,7 +480,7 @@
                     "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
                     "content_state": {
                       "title": "EV Charging",
-                      "subtitle": "Station A3",
+                      "subtitle": "Added 200 mi range",
                       "percentage": 100,
                       "auto_dismiss_minutes": 2
                     }

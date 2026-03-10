@@ -71,6 +71,22 @@ const start = await activitysmith.liveActivities.start({
 const activityId = start.activity_id;
 ```
 
+**Progress type**
+
+```js Node
+const start = await activitysmith.liveActivities.start({
+  content_state: {
+    title: "EV Charging",
+    subtitle: "Added 30 mi range",
+    percentage: 15,
+    type: "progress",
+    color: "lime",
+  },
+});
+
+const activityId = start.activity_id;
+```
+
 ### Update a Live Activity
 
 Use `activitysmith.liveActivities.update` with the `activity_id` you received from `start`.
@@ -93,6 +109,19 @@ await activitysmith.liveActivities.update({
 });
 ```
 
+**Progress type**
+
+```js Node
+await activitysmith.liveActivities.update({
+  activity_id: activityId,
+  content_state: {
+    title: "EV Charging",
+    subtitle: "Added 120 mi range",
+    percentage: 60,
+  },
+});
+```
+
 ### End a Live Activity
 
 Use `activitysmith.liveActivities.end` with the `activity_id`. You can optionally control how long the ended Live Activity stays visible using `auto_dismiss_minutes` (default `3`, `0` for immediate dismissal).
@@ -106,6 +135,20 @@ await activitysmith.liveActivities.end({
     title: "Nightly database backup",
     subtitle: "verify restore",
     current_step: 3,
+    auto_dismiss_minutes: 2,
+  },
+});
+```
+
+**Progress type**
+
+```js Node
+await activitysmith.liveActivities.end({
+  activity_id: activityId,
+  content_state: {
+    title: "EV Charging",
+    subtitle: "Added 200 mi range",
+    percentage: 100,
     auto_dismiss_minutes: 2,
   },
 });

@@ -75,6 +75,24 @@ start = activitysmith.live_activities.start(
 activity_id = start.activity_id
 ```
 
+**Progress type**
+
+```python Python
+start = activitysmith.live_activities.start(
+    {
+        "content_state": {
+            "title": "EV Charging",
+            "subtitle": "Added 30 mi range",
+            "percentage": 15,
+            "type": "progress",
+            "color": "lime",
+        }
+    }
+)
+
+activity_id = start.activity_id
+```
+
 ### Update a Live Activity
 
 Update a Live Activity with `activitysmith.live_activities.update`.
@@ -101,6 +119,23 @@ update = activitysmith.live_activities.update(
 print(update.devices_notified)
 ```
 
+**Progress type**
+
+```python Python
+update = activitysmith.live_activities.update(
+    {
+        "activity_id": activity_id,
+        "content_state": {
+            "title": "EV Charging",
+            "subtitle": "Added 120 mi range",
+            "percentage": 60,
+        }
+    }
+)
+
+print(update.devices_notified)
+```
+
 ### End a Live Activity
 
 End a Live Activity with `activitysmith.live_activities.end`. You can optionally set `auto_dismiss_minutes` in the `content_state`.
@@ -115,6 +150,24 @@ end = activitysmith.live_activities.end(
             "title": "Nightly database backup",
             "subtitle": "verify restore",
             "current_step": 3,
+            "auto_dismiss_minutes": 2,
+        }
+    }
+)
+
+print(end.success)
+```
+
+**Progress type**
+
+```python Python
+end = activitysmith.live_activities.end(
+    {
+        "activity_id": activity_id,
+        "content_state": {
+            "title": "EV Charging",
+            "subtitle": "Added 200 mi range",
+            "percentage": 100,
             "auto_dismiss_minutes": 2,
         }
     }

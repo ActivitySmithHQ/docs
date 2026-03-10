@@ -76,6 +76,22 @@ $start = $activitysmith->liveActivities->start([
 $activityId = $start->getActivityId();
 ```
 
+**Progress type**
+
+```php PHP
+$start = $activitysmith->liveActivities->start([
+    'content_state' => [
+        'title' => 'EV Charging',
+        'subtitle' => 'Added 30 mi range',
+        'percentage' => 15,
+        'type' => 'progress',
+        'color' => 'lime',
+    ],
+]);
+
+$activityId = $start->getActivityId();
+```
+
 ### Update a Live Activity
 
 Update a Live Activity with `\$activitysmith->liveActivities->update` using the `activity_id`.
@@ -100,6 +116,21 @@ $update = $activitysmith->liveActivities->update([
 echo $update->getDevicesNotified();
 ```
 
+**Progress type**
+
+```php PHP
+$update = $activitysmith->liveActivities->update([
+    'activity_id' => $activityId,
+    'content_state' => [
+        'title' => 'EV Charging',
+        'subtitle' => 'Added 120 mi range',
+        'percentage' => 60,
+    ],
+]);
+
+echo $update->getDevicesNotified();
+```
+
 ### End a Live Activity
 
 End a Live Activity with `\$activitysmith->liveActivities->end`. You can optionally set `auto_dismiss_minutes` in the `content_state`.
@@ -113,6 +144,22 @@ $end = $activitysmith->liveActivities->end([
         'title' => 'Nightly database backup',
         'subtitle' => 'verify restore',
         'current_step' => 3,
+        'auto_dismiss_minutes' => 2,
+    ],
+]);
+
+echo $end->getSuccess() ? 'true' : 'false';
+```
+
+**Progress type**
+
+```php PHP
+$end = $activitysmith->liveActivities->end([
+    'activity_id' => $activityId,
+    'content_state' => [
+        'title' => 'EV Charging',
+        'subtitle' => 'Added 200 mi range',
+        'percentage' => 100,
         'auto_dismiss_minutes' => 2,
     ],
 ]);
