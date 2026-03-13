@@ -40,11 +40,7 @@ activitysmith --api-key "YOUR-API-KEY" push --title "Hello"
 
 Use `activitysmith push` when a deploy fails, a CI run finishes, or a background job needs attention.
 
-<img
-  className="image"
-  src="https://cdn.activitysmith.com/printkit/notification.png"
-  alt="Push notification example"
-/>
+<img className="image" src="https://cdn.activitysmith.com/printkit/notification.png" alt="Push notification example" />
 
 ```bash CLI
 activitysmith push \
@@ -127,7 +123,6 @@ activitysmith activity update \
   --content-state '{
     "title": "Nightly database backup",
     "subtitle": "upload archive",
-    "numberOfSteps": 4,
     "currentStep": 2
   }'
 ```
@@ -148,8 +143,7 @@ activitysmith activity end \
   --content-state '{
     "title": "Nightly database backup",
     "subtitle": "verify restore",
-    "numberOfSteps": 4,
-    "currentStep": 4,
+    "currentStep": 3,
     "autoDismissMinutes": 2
   }'
 ```
@@ -232,19 +226,19 @@ When the payload gets long, format the JSON across multiple lines or move it to 
 
 ### Field Reference
 
-| Field | Description |
-| --- | --- |
-| `title` | Primary label shown in the Live Activity. |
-| `subtitle` | Secondary label shown in the Live Activity. |
-| `type` | Layout type: `segmented_progress` or `progress`. |
-| `numberOfSteps` | Total steps in a segmented progress flow. |
-| `currentStep` | Current step index for segmented progress, starting at `1`. |
-| `percentage` | Progress value from `0` to `100`. |
-| `value` | Current numeric progress value when you want a custom range. |
-| `upperLimit` | Maximum numeric progress value used with `value`. |
-| `color` | Accent color (`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`). |
-| `stepColor` | Segment color for `segmented_progress` (same values as `color`). |
-| `autoDismissMinutes` | Minutes before dismissal after ending. Default `3`, use `0` for immediate dismissal. |
+| Field                | Description                                                                                     |
+| -------------------- | ----------------------------------------------------------------------------------------------- |
+| `title`              | Primary label shown in the Live Activity.                                                       |
+| `subtitle`           | Secondary label shown in the Live Activity.                                                     |
+| `type`               | Layout type: `segmented_progress` or `progress`.                                                |
+| `numberOfSteps`      | Total steps in a segmented progress flow.                                                       |
+| `currentStep`        | Current step index for segmented progress, starting at `1`.                                     |
+| `percentage`         | Progress value from `0` to `100`.                                                               |
+| `value`              | Current numeric progress value when you want a custom range.                                    |
+| `upperLimit`         | Maximum numeric progress value used with `value`.                                               |
+| `color`              | Accent color (`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`). |
+| `stepColor`          | Segment color for `segmented_progress` (same values as `color`).                                |
+| `autoDismissMinutes` | Minutes before dismissal after ending. Default `3`, use `0` for immediate dismissal.            |
 
 ## Channels
 
