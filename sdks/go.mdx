@@ -1,25 +1,26 @@
 ---
 title: "Go"
-description: "ActivitySmith Go SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+description: "Use the ActivitySmith Go SDK to send push notifications and Live Activity progress updates from Go services, workers, and automation jobs."
 icon: "golang"
 og:title: "Go SDK | ActivitySmith"
-og:description: "ActivitySmith Go SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+og:description: "Use the ActivitySmith Go SDK to send push notifications and Live Activity progress updates from Go services, workers, and automation jobs."
 ---
 
 import InstallationGo from "/snippets/installation/go.mdx";
 
 ## Installation
 
-To install the ActivitySmith Go SDK, you can use `go get`:
+Install the ActivitySmith Go SDK with `go get`:
 
 <InstallationGo />
 
 ## Usage
 
 1. [Create an API key](https://activitysmith.com/app/keys)
-2. Pass the API key into `activitysmith.New`.
+2. Pass the API key into `activitysmithsdk.New`.
+3. Reuse the client anywhere you send pushes or Live Activity updates.
 
-Here's an example of how to use the SDK with error handling:
+Create the client once:
 
 ```go Go
 package main
@@ -40,12 +41,12 @@ func main() {
 
 ### Send a Push Notification
 
-Use `activitysmith.Notifications.Send` with an `activitysmithsdk.PushNotificationInput`.
+Use `activitysmith.Notifications.Send` when a deploy finishes, a customer upgrades, or a background job needs attention.
 
 <img
   className="image"
   src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png"
-  alt="Push Notification"
+  alt="Push notification example for a new subscription event"
 />
 
 ```go Go
@@ -64,13 +65,29 @@ log.Println(response.GetSuccess())
 log.Println(response.GetDevicesNotified())
 ```
 
-### Start a Live Activity
+## Live Activities
 
-Start a Live Activity with `activitysmith.LiveActivities.Start`.
-For `segmented_progress`, include `Title`, `NumberOfSteps`, `CurrentStep`, and `Type`.
-For `progress`, set `Type: "progress"` and add `WithPercentage(...)` or `WithValue(...).WithUpperLimit(...)`.
+Live Activities come in two UI types, but the lifecycle stays the same: start the activity, save the returned `activityID`, update it as state changes, then end it when the job is done.
 
-<img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start Live Activity" />
+- `segmented_progress`: best for jobs tracked in steps
+- `progress`: best for jobs tracked as a percentage or numeric range
+
+1. Call `activitysmith.LiveActivities.Start(...)`.
+2. Save the returned `activityID`.
+3. Call `activitysmith.LiveActivities.Update(...)` as progress changes.
+4. Call `activitysmith.LiveActivities.End(...)` when the work is finished.
+
+### Segmented Progress Type
+
+Use `segmented_progress` when "step 2 of 4" is more useful than "50%". It fits deployments, backups, ETL pipelines, and checklists where each stage matters. You can change `NumberOfSteps` later if the workflow grows or shrinks.
+
+#### Start
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/start-live-activity.png"
+  alt="Segmented progress Live Activity start example"
+/>
 
 ```go Go
 startInput := activitysmithsdk.LiveActivityStartInput{
@@ -91,35 +108,14 @@ if err != nil {
 activityID := start.GetActivityId()
 ```
 
-**Progress type**
+#### Update
 
-```go Go
-startInput := activitysmithsdk.LiveActivityStartInput{
-	Title:      "EV Charging",
-	Subtitle:   "Added 30 mi range",
-	Percentage: 15,
-	Type:       "progress",
-	Color:      "lime",
-}
-
-start, err := activitysmith.LiveActivities.
-	Start(startInput)
-if err != nil {
-	log.Fatal(err)
-}
-
-activityID := start.GetActivityId()
-```
-
-### Update a Live Activity
-
-Update a Live Activity with `activitysmith.LiveActivities.Update` using the `activityID`.
-For progress updates, use `WithPercentage(...)` or `WithValue(...).WithUpperLimit(...)` instead of `CurrentStep`.
+Use `activitysmith.LiveActivities.Update` with the `activityID` you received from `Start`.
 
 <img
   className="image"
   src="https://cdn.activitysmith.com/features/update-live-activity.png"
-  alt="Update Live Activity"
+  alt="Segmented progress Live Activity update example"
 />
 
 ```go Go
@@ -139,7 +135,73 @@ if err != nil {
 log.Println(update.GetDevicesNotified())
 ```
 
-**Progress type**
+#### End
+
+Use `activitysmith.LiveActivities.End` with the same `activityID`. If `AutoDismissMinutes` is omitted, the backend default `3` is used. Set it to `0` to dismiss immediately after completion.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/end-live-activity.png"
+  alt="Segmented progress Live Activity end example"
+/>
+
+```go Go
+endInput := activitysmithsdk.LiveActivityEndInput{
+	ActivityID:         activityID,
+	Title:              "Nightly database backup",
+	Subtitle:           "verify restore",
+	CurrentStep:        3,
+	AutoDismissMinutes: 2,
+}
+
+end, err := activitysmith.LiveActivities.
+	End(endInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(end.GetSuccess())
+```
+
+### Progress Type
+
+Use `progress` when the state is naturally continuous. It fits charging, downloads, uploads, sync jobs, timers, and any flow where a percentage or numeric range is the clearest signal. Send either `Percentage` or `Value` plus `UpperLimit`.
+
+#### Start
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-start.png"
+  alt="Progress Live Activity start example"
+/>
+
+```go Go
+startInput := activitysmithsdk.LiveActivityStartInput{
+	Title:      "EV Charging",
+	Subtitle:   "Added 30 mi range",
+	Percentage: 15,
+	Type:       "progress",
+	Color:      "lime",
+}
+
+start, err := activitysmith.LiveActivities.
+	Start(startInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+activityID := start.GetActivityId()
+```
+
+#### Update
+
+For progress updates, send `Percentage` or `Value` plus `UpperLimit` instead of `CurrentStep`.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-update.png"
+  alt="Progress Live Activity update example"
+/>
 
 ```go Go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
@@ -158,33 +220,15 @@ if err != nil {
 log.Println(update.GetDevicesNotified())
 ```
 
-### End a Live Activity
+#### End
 
-End a Live Activity with `activitysmith.LiveActivities.End`.
-If `AutoDismissMinutes` is omitted, backend default `3` is used.
-For progress activities, use `WithPercentage(...)` or `WithValue(...).WithUpperLimit(...)`.
+Use the same `activityID` to end the activity and optionally control dismissal timing.
 
-<img className="image" src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="End Live Activity" />
-
-```go Go
-endInput := activitysmithsdk.LiveActivityEndInput{
-	ActivityID:         activityID,
-	Title:              "Nightly database backup",
-	Subtitle:           "verify restore",
-	CurrentStep: 3,
-	AutoDismissMinutes: 2,
-}
-
-end, err := activitysmith.LiveActivities.
-	End(endInput)
-if err != nil {
-	log.Fatal(err)
-}
-
-log.Println(end.GetSuccess())
-```
-
-**Progress type**
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-end.png"
+  alt="Progress Live Activity end example"
+/>
 
 ```go Go
 endInput := activitysmithsdk.LiveActivityEndInput{
@@ -206,7 +250,7 @@ log.Println(end.GetSuccess())
 
 ## Channels
 
-You can target specific channels when sending a push or starting a Live Activity.
+Target specific channels when sending a push or starting a Live Activity.
 
 ```go Go
 pushInput := activitysmithsdk.PushNotificationInput{
@@ -236,12 +280,12 @@ if err != nil {
 
 ## Error Handling
 
-Handle API errors by checking the returned `error` from SDK calls.
+SDK calls return `response, err`, so check `err` after every call.
 
 ## Additional Resources
 
 <CardGroup cols={2}>
   <Card title="Source Code" icon="github" href="https://github.com/ActivitySmithHQ/activitysmith-go">
-    View the complete source code for the ActivitySmith Go SDK
+    View the Go SDK source on GitHub
   </Card>
 </CardGroup>

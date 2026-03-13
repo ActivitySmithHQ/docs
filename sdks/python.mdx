@@ -1,25 +1,26 @@
 ---
 title: "Python"
-description: "ActivitySmith Python SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+description: "Use the ActivitySmith Python SDK to send push notifications and Live Activity progress updates from Python scripts, jobs, and backend services."
 icon: "python"
 og:title: "Python SDK | ActivitySmith"
-og:description: "ActivitySmith Python SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+og:description: "Use the ActivitySmith Python SDK to send push notifications and Live Activity progress updates from Python scripts, jobs, and backend services."
 ---
 
 import InstallationPython from "/snippets/installation/python.mdx";
 
 ## Installation
 
-To install the ActivitySmith Python SDK, you can use pip:
+Install the ActivitySmith Python SDK with pip:
 
 <InstallationPython />
 
 ## Usage
 
 1. [Create an API key](https://activitysmith.com/app/keys)
-2. Set the API key as an environment variable named `ACTIVITYSMITH_API_KEY` or pass it as a parameter to the `ActivitySmith` class.
+2. Set `ACTIVITYSMITH_API_KEY` or pass it directly to `ActivitySmith`.
+3. Reuse the client anywhere you send pushes or Live Activity updates.
 
-Here's an example of how to use the SDK with error handling:
+Create the client once:
 
 ```python Python
 import os
@@ -30,12 +31,12 @@ activitysmith = ActivitySmith(api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "Y
 
 ### Send a Push Notification
 
-Use `activitysmith.notifications.send` with a push payload. `title` is required; `message` and `subtitle` are optional.
+Use `activitysmith.notifications.send` when a deploy finishes, a customer upgrades, or a background job needs attention. `title` is required. `message` and `subtitle` are optional.
 
 <img
   className="image"
   src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png"
-  alt="Push Notification"
+  alt="Push notification example for a new subscription event"
 />
 
 ```python Python
@@ -50,13 +51,29 @@ print(response.success)
 print(response.devices_notified)
 ```
 
-### Start a Live Activity
+## Live Activities
 
-Start a Live Activity with `activitysmith.live_activities.start`.
-For `segmented_progress`, include `title`, `number_of_steps`, `current_step`, and `type`.
-For `progress`, include `title`, `type: "progress"`, and either `percentage` or `value` plus `upper_limit`.
+Live Activities come in two UI types, but the lifecycle stays the same: start the activity, save the returned `activity_id`, update it as state changes, then end it when the job is done.
 
-<img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start Live Activity" />
+- `segmented_progress`: best for jobs tracked in steps
+- `progress`: best for jobs tracked as a percentage or numeric range
+
+1. Call `activitysmith.live_activities.start(...)`.
+2. Save the returned `activity_id`.
+3. Call `activitysmith.live_activities.update(...)` as progress changes.
+4. Call `activitysmith.live_activities.end(...)` when the work is finished.
+
+### Segmented Progress Type
+
+Use `segmented_progress` when "step 2 of 4" is more useful than "50%". It fits deployments, backups, ETL pipelines, and checklists where each stage matters. You can change `number_of_steps` later if the workflow grows or shrinks.
+
+#### Start
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/start-live-activity.png"
+  alt="Segmented progress Live Activity start example"
+/>
 
 ```python Python
 start = activitysmith.live_activities.start(
@@ -75,33 +92,14 @@ start = activitysmith.live_activities.start(
 activity_id = start.activity_id
 ```
 
-**Progress type**
+#### Update
 
-```python Python
-start = activitysmith.live_activities.start(
-    {
-        "content_state": {
-            "title": "EV Charging",
-            "subtitle": "Added 30 mi range",
-            "percentage": 15,
-            "type": "progress",
-            "color": "lime",
-        }
-    }
-)
-
-activity_id = start.activity_id
-```
-
-### Update a Live Activity
-
-Update a Live Activity with `activitysmith.live_activities.update`.
-Segmented updates require `title` and `current_step`. Progress updates require `title` plus `percentage` or `value` with `upper_limit`.
+Use `activitysmith.live_activities.update` with the `activity_id` you received from `start`.
 
 <img
   className="image"
   src="https://cdn.activitysmith.com/features/update-live-activity.png"
-  alt="Update Live Activity"
+  alt="Segmented progress Live Activity update example"
 />
 
 ```python Python
@@ -119,28 +117,15 @@ update = activitysmith.live_activities.update(
 print(update.devices_notified)
 ```
 
-**Progress type**
+#### End
 
-```python Python
-update = activitysmith.live_activities.update(
-    {
-        "activity_id": activity_id,
-        "content_state": {
-            "title": "EV Charging",
-            "subtitle": "Added 120 mi range",
-            "percentage": 60,
-        }
-    }
-)
+Use `activitysmith.live_activities.end` with the same `activity_id`. Set `auto_dismiss_minutes` if you want to control how long the completed Live Activity stays visible.
 
-print(update.devices_notified)
-```
-
-### End a Live Activity
-
-End a Live Activity with `activitysmith.live_activities.end`. You can optionally set `auto_dismiss_minutes` in the `content_state`.
-
-<img className="image" src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="End Live Activity" />
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/end-live-activity.png"
+  alt="Segmented progress Live Activity end example"
+/>
 
 ```python Python
 end = activitysmith.live_activities.end(
@@ -158,7 +143,68 @@ end = activitysmith.live_activities.end(
 print(end.success)
 ```
 
-**Progress type**
+### Progress Type
+
+Use `progress` when the state is naturally continuous. It fits charging, downloads, uploads, sync jobs, timers, and any flow where a percentage or numeric range is the clearest signal. Send either `percentage` or `value` plus `upper_limit`.
+
+#### Start
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-start.png"
+  alt="Progress Live Activity start example"
+/>
+
+```python Python
+start = activitysmith.live_activities.start(
+    {
+        "content_state": {
+            "title": "EV Charging",
+            "subtitle": "Added 30 mi range",
+            "percentage": 15,
+            "type": "progress",
+            "color": "lime",
+        }
+    }
+)
+
+activity_id = start.activity_id
+```
+
+#### Update
+
+For progress updates, send `percentage` or `value` plus `upper_limit` instead of `current_step`.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-update.png"
+  alt="Progress Live Activity update example"
+/>
+
+```python Python
+update = activitysmith.live_activities.update(
+    {
+        "activity_id": activity_id,
+        "content_state": {
+            "title": "EV Charging",
+            "subtitle": "Added 120 mi range",
+            "percentage": 60,
+        }
+    }
+)
+
+print(update.devices_notified)
+```
+
+#### End
+
+Use the same `activity_id` to end the activity and optionally control dismissal timing.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-end.png"
+  alt="Progress Live Activity end example"
+/>
 
 ```python Python
 end = activitysmith.live_activities.end(
@@ -178,7 +224,7 @@ print(end.success)
 
 ## Channels
 
-You can target specific channels when sending a push or starting a Live Activity.
+Target specific channels when sending a push or starting a Live Activity.
 
 ```python Python
 activitysmith.notifications.send(
@@ -204,15 +250,15 @@ activitysmith.live_activities.start(
 
 ## Error Handling
 
-The SDK raises exceptions for non-2xx responses. Rate limit errors use the `error` and `message` fields, and Live Activity limits include `limit` and `active`. See [Rate Limits](/rate-limits) for details.
+Wrap API calls with `try/except`. The SDK raises exceptions for non-2xx responses. Rate limit errors use the `error` and `message` fields, and Live Activity limit errors include `limit` and `active`. See [Rate Limits](/rate-limits) for details.
 
 ## Additional Resources
 
 <CardGroup cols={2}>
   <Card title="PyPI Package" icon="python" href="https://pypi.org/project/activitysmith/">
-    Download and install the ActivitySmith Python SDK on PyPI
+    Install the ActivitySmith Python SDK from PyPI
   </Card>
   <Card title="Source Code" icon="github" href="https://github.com/ActivitySmithHQ/activitysmith-python">
-    View the complete source code for the ActivitySmith Python SDK
+    View the Python SDK source on GitHub
   </Card>
 </CardGroup>

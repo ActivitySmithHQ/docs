@@ -1,25 +1,26 @@
 ---
-title: "Node"
-description: "ActivitySmith Node SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+title: "Node.js"
+description: "Use the ActivitySmith Node.js SDK to send push notifications and Live Activity progress updates from Node services, jobs, and CI workflows."
 icon: "node"
-og:title: "Node SDK | ActivitySmith"
-og:description: "ActivitySmith Node SDK is a wrapper around the ActivitySmith API to help you easily send push notifications and Live Activities to your iOS devices."
+og:title: "Node.js SDK | ActivitySmith"
+og:description: "Use the ActivitySmith Node.js SDK to send push notifications and Live Activity progress updates from Node services, jobs, and CI workflows."
 ---
 
 import InstallationNode from "/snippets/installation/js.mdx";
 
 ## Installation
 
-To install the ActivitySmith Node SDK, you can use npm:
+Install the ActivitySmith Node.js SDK with npm:
 
 <InstallationNode />
 
 ## Usage
 
 1. [Create an API key](https://activitysmith.com/app/keys)
-2. Set the API key as an environment variable named `ACTIVITYSMITH_API_KEY` or pass it as `apiKey` when creating the client.
+2. Set `ACTIVITYSMITH_API_KEY` or pass `apiKey` when creating the client.
+3. Reuse the client anywhere you send pushes or Live Activity updates.
 
-Here's an example of how to use the SDK with error handling:
+Create the client once:
 
 ```js Node
 import ActivitySmith from "activitysmith";
@@ -31,12 +32,12 @@ const activitysmith = new ActivitySmith({
 
 ### Send a Push Notification
 
-Use `activitysmith.notifications.send` with a push payload. `title` is required; `message` and `subtitle` are optional.
+Use `activitysmith.notifications.send` when a deploy finishes, a customer upgrades, or a background job needs attention. `title` is required. `message` and `subtitle` are optional.
 
 <img
   className="image"
   src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png"
-  alt="Push Notification"
+  alt="Push notification example for a new subscription event"
 />
 
 ```js Node
@@ -48,13 +49,29 @@ const response = await activitysmith.notifications.send({
 console.log(response.devices_notified, response.timestamp);
 ```
 
-### Start a Live Activity
+## Live Activities
 
-Use `activitysmith.liveActivities.start` with a `content_state` payload.
-For `segmented_progress`, send `title`, `number_of_steps`, `current_step`, and `type`.
-For `progress`, send `title`, `type: "progress"`, and either `percentage` or `value` plus `upper_limit`.
+Live Activities come in two UI types, but the lifecycle stays the same: start the activity, save the returned `activity_id`, update it as state changes, then end it when the job is done.
 
-<img className="image" src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start Live Activity" />
+- `segmented_progress`: best for jobs tracked in steps
+- `progress`: best for jobs tracked as a percentage or numeric range
+
+1. Call `activitysmith.liveActivities.start(...)`.
+2. Save the returned `activity_id`.
+3. Call `activitysmith.liveActivities.update(...)` as progress changes.
+4. Call `activitysmith.liveActivities.end(...)` when the work is finished.
+
+### Segmented Progress Type
+
+Use `segmented_progress` when "step 2 of 4" is more useful than "50%". It fits deployments, backups, ETL pipelines, and checklists where each stage matters. You can change `number_of_steps` later if the workflow grows or shrinks.
+
+#### Start
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/start-live-activity.png"
+  alt="Segmented progress Live Activity start example"
+/>
 
 ```js Node
 const start = await activitysmith.liveActivities.start({
@@ -71,7 +88,60 @@ const start = await activitysmith.liveActivities.start({
 const activityId = start.activity_id;
 ```
 
-**Progress type**
+#### Update
+
+Use `activitysmith.liveActivities.update` with the `activity_id` you received from `start`.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/update-live-activity.png"
+  alt="Segmented progress Live Activity update example"
+/>
+
+```js Node
+await activitysmith.liveActivities.update({
+  activity_id: activityId,
+  content_state: {
+    title: "Nightly database backup",
+    subtitle: "upload archive",
+    current_step: 2,
+  },
+});
+```
+
+#### End
+
+Use `activitysmith.liveActivities.end` with the same `activity_id`. `auto_dismiss_minutes` defaults to `3`. Set it to `0` to dismiss immediately after completion.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/end-live-activity.png"
+  alt="Segmented progress Live Activity end example"
+/>
+
+```js Node
+await activitysmith.liveActivities.end({
+  activity_id: activityId,
+  content_state: {
+    title: "Nightly database backup",
+    subtitle: "verify restore",
+    current_step: 3,
+    auto_dismiss_minutes: 2,
+  },
+});
+```
+
+### Progress Type
+
+Use `progress` when the state is naturally continuous. It fits charging, downloads, uploads, sync jobs, timers, and any flow where a percentage or numeric range is the clearest signal. Send either `percentage` or `value` plus `upper_limit`.
+
+#### Start
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-start.png"
+  alt="Progress Live Activity start example"
+/>
 
 ```js Node
 const start = await activitysmith.liveActivities.start({
@@ -87,29 +157,15 @@ const start = await activitysmith.liveActivities.start({
 const activityId = start.activity_id;
 ```
 
-### Update a Live Activity
+#### Update
 
-Use `activitysmith.liveActivities.update` with the `activity_id` you received from `start`.
 For progress updates, send `percentage` or `value` plus `upper_limit` instead of `current_step`.
 
 <img
   className="image"
-  src="https://cdn.activitysmith.com/features/update-live-activity.png"
-  alt="Update Live Activity"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-update.png"
+  alt="Progress Live Activity update example"
 />
-
-```js Node
-await activitysmith.liveActivities.update({
-  activity_id: activityId,
-  content_state: {
-    title: "Nightly database backup",
-    subtitle: "upload archive",
-    current_step: 2,
-  },
-});
-```
-
-**Progress type**
 
 ```js Node
 await activitysmith.liveActivities.update({
@@ -122,25 +178,15 @@ await activitysmith.liveActivities.update({
 });
 ```
 
-### End a Live Activity
+#### End
 
-Use `activitysmith.liveActivities.end` with the `activity_id`. You can optionally control how long the ended Live Activity stays visible using `auto_dismiss_minutes` (default `3`, `0` for immediate dismissal).
+Use the same `activity_id` to end the activity and optionally control dismissal timing.
 
-<img className="image" src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="End Live Activity" />
-
-```js Node
-await activitysmith.liveActivities.end({
-  activity_id: activityId,
-  content_state: {
-    title: "Nightly database backup",
-    subtitle: "verify restore",
-    current_step: 3,
-    auto_dismiss_minutes: 2,
-  },
-});
-```
-
-**Progress type**
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-end.png"
+  alt="Progress Live Activity end example"
+/>
 
 ```js Node
 await activitysmith.liveActivities.end({
@@ -156,7 +202,7 @@ await activitysmith.liveActivities.end({
 
 ## Channels
 
-You can target specific channels when sending a push or starting a Live Activity.
+Target specific channels when sending a push or starting a Live Activity.
 
 ```js Node
 await activitysmith.notifications.send({
@@ -178,7 +224,7 @@ await activitysmith.liveActivities.start({
 
 ## Error Handling
 
-Handle errors with `try/catch` around API calls:
+SDK calls return promises, so wrap API calls with `try/catch`:
 
 ```js Node
 try {
@@ -192,9 +238,9 @@ try {
 
 <CardGroup cols={2}>
   <Card title="NPM Package" icon="npm" href="https://www.npmjs.com/package/activitysmith">
-    Download and install the ActivitySmith Node SDK on NPM
+    Install the ActivitySmith Node.js SDK from npm
   </Card>
   <Card title="Source Code" icon="github" href="https://github.com/ActivitySmithHQ/activitysmith-node">
-    View the complete source code for the ActivitySmith Node SDK
+    View the Node.js SDK source on GitHub
   </Card>
 </CardGroup>
