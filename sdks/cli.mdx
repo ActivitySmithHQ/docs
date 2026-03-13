@@ -1,44 +1,50 @@
 ---
 title: "CLI"
-description: "ActivitySmith CLI lets you send push notifications and manage Live Activities from the terminal."
+description: "Use the ActivitySmith CLI to send push notifications and manage Live Activity progress from shell scripts, CI pipelines, and terminal workflows."
 icon: "terminal"
 og:title: "CLI | ActivitySmith"
-og:description: "ActivitySmith CLI lets you send push notifications and manage Live Activities from the terminal."
+og:description: "Use the ActivitySmith CLI to send push notifications and manage Live Activity progress from shell scripts, CI pipelines, and terminal workflows."
 ---
 
 import InstallationCLI from "/snippets/installation/cli.mdx";
 
 ## Installation
 
-Install the ActivitySmith CLI globally using npm:
+Install the ActivitySmith CLI globally with npm:
 
 <InstallationCLI />
 
 ## Usage
 
 1. [Create an API key](https://activitysmith.com/app/keys)
-2. Authenticate with either `ACTIVITYSMITH_API_KEY` or `--api-key`.
+2. Authenticate with `ACTIVITYSMITH_API_KEY` or pass `--api-key` per command.
+3. Run `activitysmith --help` to inspect available commands.
+
+Use the environment variable when you want the cleanest shell scripts:
 
 ```bash CLI
-# Option 1: set env var (recommended)
 export ACTIVITYSMITH_API_KEY="YOUR-API-KEY"
 
-# Verify authentication
-activitysmith --status
+activitysmith --help
 ```
 
+Or pass the key directly:
+
 ```bash CLI
-# Option 2: pass key per command
-activitysmith --api-key "YOUR-API-KEY" --status
+activitysmith --api-key "YOUR-API-KEY" push --title "Hello"
 ```
 
 ## Commands
 
 ### Push Notification
 
-Sends a push notification to every paired device in your account.
+Use `activitysmith push` when a deploy fails, a CI run finishes, or a background job needs attention.
 
-<img className="image" src="https://cdn.activitysmith.com/printkit/notification.png" alt="Push Notification" />
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/printkit/notification.png"
+  alt="Push notification example"
+/>
 
 ```bash CLI
 activitysmith push \
@@ -47,131 +53,238 @@ activitysmith push \
   --subtitle "main"
 ```
 
-### Live Activity: Start
+### Push Actions and Redirection
 
-Start a Live Activity and get back an `activityId` for updates.
-
-```bash CLI
-activitysmith activity start \
-  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"start","numberOfSteps":4,"currentStep":1,"type":"segmented_progress","color":"yellow"}'
-```
-
-Or use flags:
-
-```bash CLI
-activitysmith activity start \
-  --title "ActivitySmith API Deployment" \
-  --subtitle "start" \
-  --number-of-steps 4 \
-  --current-step 1 \
-  --type segmented_progress \
-  --color yellow
-```
-
-### Live Activity: Update
-
-Update an existing Live Activity using its `activityId`.
-
-```bash CLI
-activitysmith activity update \
-  --activity-id "<activityId>" \
-  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"npm i & pm2","currentStep":3}'
-```
-
-Or use flags:
-
-```bash CLI
-activitysmith activity update \
-  --activity-id "<activityId>" \
-  --title "ActivitySmith API Deployment" \
-  --subtitle "npm i & pm2" \
-  --current-step 3
-```
-
-### Live Activity: End
-
-End a Live Activity and optionally control its dismissal timing.
-
-```bash CLI
-activitysmith activity end \
-  --activity-id "<activityId>" \
-  --content-state '{"title":"ActivitySmith API Deployment","subtitle":"done","currentStep":4,"autoDismissMinutes":3}'
-```
-
-Or use flags:
-
-```bash CLI
-activitysmith activity end \
-  --activity-id "<activityId>" \
-  --title "ActivitySmith API Deployment" \
-  --subtitle "done" \
-  --current-step 4 \
-  --auto-dismiss-minutes 3
-```
-
-## Content State
-
-You can provide content state in two ways:
-
-- JSON: `--content-state '{...}'` or `--content-state-file path/to/payload.json`
-- Flags: `--title`, `--subtitle`, `--type`, `--number-of-steps`, `--current-step`, `--color`, `--step-color`, `--auto-dismiss-minutes`
-
-Use camelCase keys in JSON (for example: `numberOfSteps`, `currentStep`, `autoDismissMinutes`).
-
-### Required Fields
-
-- `activity start`: `title`, `numberOfSteps`, `currentStep`, `type`
-- `activity update`: `title`, `currentStep`
-- `activity end`: `title`, `currentStep`
-
-### Field Reference
-
-| Field                | Description                                                                                     |
-| -------------------- | ----------------------------------------------------------------------------------------------- |
-| `title`              | Primary label shown in the Live Activity.                                                       |
-| `subtitle`           | Secondary label shown in the Live Activity.                                                     |
-| `type`               | Layout type. For now: `segmented_progress`.                                                     |
-| `numberOfSteps`      | Total steps in the progress flow.                                                               |
-| `currentStep`        | Current step index (1-based).                                                                   |
-| `color`              | Accent color (`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`). |
-| `stepColor`          | Color for step segments (same values as `color`).                                               |
-| `autoDismissMinutes` | Minutes before dismissal after ending (default `3`, `0` for immediate).                         |
-
-## Output
-
-Use `--json` to output machine-readable JSON.
-
-## Channels
-
-You can target specific channels for `push` and `activity start` using `--channels`.
+Push notifications can open a URL on tap or expose actions on long press. Webhook actions are executed by the ActivitySmith backend.
 
 ```bash CLI
 activitysmith push \
   --title "Build Failed 🚨" \
   --message "CI pipeline failed on main branch" \
-  --channels "ios-builds,engineering"
+  --redirection "https://github.com/org/repo/actions/runs/123456789" \
+  --actions '[{"title":"Open Failing Run","type":"open_url","url":"https://github.com/org/repo/actions/runs/123456789"},{"title":"Create Incident","type":"webhook","url":"https://hooks.example.com/incidents/create","method":"POST","body":{"service":"payments-api","severity":"high","source":"activitysmith-cli"}}]'
+```
+
+You can also load actions from a file:
+
+```bash CLI
+activitysmith push \
+  --title "Build Failed 🚨" \
+  --message "CI pipeline failed on main branch" \
+  --actions-file "./actions.json"
+```
+
+## Live Activities
+
+Live Activities come in two UI types, but the lifecycle stays the same: start the activity, save the returned `activity_id`, update it as state changes, then end it when the work is done.
+
+- `segmented_progress`: best for jobs tracked in steps
+- `progress`: best for jobs tracked as a percentage or numeric range
+
+1. Run `activitysmith activity start ...`.
+2. Save the returned `activity_id`.
+3. Run `activitysmith activity update ...` as progress changes.
+4. Run `activitysmith activity end ...` when the work is finished.
+
+You can send content state as JSON with `--content-state` or `--content-state-file`, or build the same payload with flags.
+
+### Segmented Progress Type
+
+Use `segmented_progress` when "step 2 of 4" is more useful than "50%". It fits deployments, backups, ETL pipelines, and checklists where each stage matters. `numberOfSteps` is dynamic, so you can increase or decrease it later if the workflow changes.
+
+#### Start
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/start-live-activity.png"
+  alt="Segmented progress start example"
+/>
+
+```bash CLI
+activitysmith activity start \
+  --content-state '{
+    "title": "Nightly database backup",
+    "subtitle": "create snapshot",
+    "numberOfSteps": 3,
+    "currentStep": 1,
+    "type": "segmented_progress",
+    "color": "yellow"
+  }' \
+  --channels "devs,ops"
+```
+
+#### Update
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/update-live-activity.png"
+  alt="Segmented progress update example"
+/>
+
+```bash CLI
+activitysmith activity update \
+  --activity-id "<activityId>" \
+  --content-state '{
+    "title": "Nightly database backup",
+    "subtitle": "upload archive",
+    "numberOfSteps": 4,
+    "currentStep": 2
+  }'
+```
+
+#### End
+
+Use `autoDismissMinutes` to control how long the completed Live Activity stays visible. Default is `3`. Set `0` for immediate dismissal.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/end-live-activity.png"
+  alt="Segmented progress end example"
+/>
+
+```bash CLI
+activitysmith activity end \
+  --activity-id "<activityId>" \
+  --content-state '{
+    "title": "Nightly database backup",
+    "subtitle": "verify restore",
+    "numberOfSteps": 4,
+    "currentStep": 4,
+    "autoDismissMinutes": 2
+  }'
+```
+
+### Progress Type
+
+Use `progress` when the state is naturally continuous. It fits charging, downloads, sync jobs, uploads, timers, and any flow where a percentage or numeric range is the clearest signal.
+
+#### Start
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-start.png"
+  alt="Progress start example"
+/>
+
+```bash CLI
+activitysmith activity start \
+  --content-state '{
+    "title": "EV Charging",
+    "subtitle": "Added 30 mi range",
+    "percentage": 15,
+    "type": "progress",
+    "color": "lime"
+  }'
+```
+
+#### Update
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-update.png"
+  alt="Progress update example"
+/>
+
+```bash CLI
+activitysmith activity update \
+  --activity-id "<activityId>" \
+  --content-state '{
+    "title": "EV Charging",
+    "subtitle": "Added 120 mi range",
+    "percentage": 60
+  }'
+```
+
+#### End
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/progress-live-activity-end.png"
+  alt="Progress end example"
+/>
+
+```bash CLI
+activitysmith activity end \
+  --activity-id "<activityId>" \
+  --content-state '{
+    "title": "EV Charging",
+    "subtitle": "Added 200 mi range",
+    "percentage": 100,
+    "autoDismissMinutes": 2
+  }'
+```
+
+## Content State
+
+For `activity start`, `activity update`, and `activity end`, you can pass content state in two ways:
+
+- JSON: `--content-state '{...}'` or `--content-state-file path/to/payload.json`
+- Flags: `--title`, `--subtitle`, `--type`, `--number-of-steps`, `--current-step`, `--percentage`, `--value`, `--upper-limit`, `--color`, `--step-color`, `--auto-dismiss-minutes`
+
+Use camelCase keys in JSON, for example `numberOfSteps`, `currentStep`, and `autoDismissMinutes`.
+When the payload gets long, format the JSON across multiple lines or move it to `--content-state-file`.
+
+### Required Fields
+
+- `activity start`: `--title`, `--type`, plus either `--number-of-steps` and `--current-step`, or `--percentage`, or `--value` with `--upper-limit`
+- `activity update`: `--title`, plus either `--current-step`, or `--percentage`, or `--value` with `--upper-limit`
+- `activity end`: `--title`, plus either `--current-step`, or `--percentage`, or `--value` with `--upper-limit`
+
+### Field Reference
+
+| Field | Description |
+| --- | --- |
+| `title` | Primary label shown in the Live Activity. |
+| `subtitle` | Secondary label shown in the Live Activity. |
+| `type` | Layout type: `segmented_progress` or `progress`. |
+| `numberOfSteps` | Total steps in a segmented progress flow. |
+| `currentStep` | Current step index for segmented progress, starting at `1`. |
+| `percentage` | Progress value from `0` to `100`. |
+| `value` | Current numeric progress value when you want a custom range. |
+| `upperLimit` | Maximum numeric progress value used with `value`. |
+| `color` | Accent color (`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`). |
+| `stepColor` | Segment color for `segmented_progress` (same values as `color`). |
+| `autoDismissMinutes` | Minutes before dismissal after ending. Default `3`, use `0` for immediate dismissal. |
+
+## Channels
+
+Use `--channels` to target specific channels for `push` and `activity start`.
+
+```bash CLI
+activitysmith push \
+  --title "Build Failed 🚨" \
+  --message "CI pipeline failed on main branch" \
+  --channels "devs,ops"
 ```
 
 ```bash CLI
 activitysmith activity start \
-  --title "ActivitySmith API Deployment" \
+  --title "Nightly database backup" \
+  --type segmented_progress \
   --number-of-steps 4 \
   --current-step 1 \
-  --type segmented_progress \
-  --channels "ios-builds"
+  --channels "devs,ops"
+```
+
+## Output
+
+Use `--json` for machine-readable output:
+
+```bash CLI
+activitysmith push --title "Hello" --json
 ```
 
 ## Error Handling
 
-The CLI exits non-zero on non-2xx responses and prints the API error body (for example, rate limit or Live Activity limit errors).
+The CLI exits non-zero on non-2xx responses and prints the API error body. That includes validation failures, rate limits, and Live Activity limit errors.
 
 ## Additional Resources
 
 <CardGroup cols={2}>
   <Card title="NPM Package" icon="npm" href="https://www.npmjs.com/package/activitysmith-cli">
-    Download and install the ActivitySmith CLI on NPM
+    Install the ActivitySmith CLI from npm
   </Card>
   <Card title="Source Code" icon="github" href="https://github.com/ActivitySmithHQ/activitysmith-cli">
-    View the complete source code for the ActivitySmith CLI
+    View the CLI source on GitHub
   </Card>
 </CardGroup>
