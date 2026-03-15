@@ -65,6 +65,49 @@ log.Println(response.GetSuccess())
 log.Println(response.GetDevicesNotified())
 ```
 
+### Rich Push Notifications with Media
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/rich-push-notification-with-image.png"
+  alt="Rich push notification with image"
+/>
+
+```go Go
+input := activitysmithsdk.PushNotificationInput{
+	Title:       "Homepage ready",
+	Message:     "Your agent finished the redesign.",
+	Media:       "https://cdn.example.com/output/homepage-v2.png",
+	Redirection: "https://github.com/acme/web/pull/482",
+}
+
+response, err := activitysmith.Notifications.
+	Send(input)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(response.GetSuccess())
+log.Println(response.GetDevicesNotified())
+```
+
+Send images, videos, or audio with your push notifications, press and hold to preview media directly from the notification, then tap through to open the linked content.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/rich-push-notification-with-audio.png"
+  alt="Rich push notification with audio"
+/>
+
+What will work:
+
+- direct image URL: `.jpg`, `.png`, `.gif`, etc.
+- direct audio file URL: `.mp3`, `.m4a`, etc.
+- direct video file URL: `.mp4`, `.mov`, etc.
+- URL that responds with a proper media `Content-Type`, even if the path has no extension
+
+`Media` can be combined with `Redirection`, but not with `Actions`.
+
 ## Live Activities
 
 Live Activities come in two UI types, but the lifecycle stays the same: start the activity, save the returned `activityID`, update it as state changes, then end it when the job is done.

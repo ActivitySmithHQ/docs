@@ -54,6 +54,44 @@ echo PHP_EOL;
 echo $response->getDevicesNotified();
 ```
 
+### Rich Push Notifications with Media
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/rich-push-notification-with-image.png"
+  alt="Rich push notification with image"
+/>
+
+```php PHP
+$response = $activitysmith->notifications->send([
+    'title' => 'Homepage ready',
+    'message' => 'Your agent finished the redesign.',
+    'media' => 'https://cdn.example.com/output/homepage-v2.png',
+    'redirection' => 'https://github.com/acme/web/pull/482',
+]);
+
+echo $response->getSuccess() ? 'true' : 'false';
+echo PHP_EOL;
+echo $response->getDevicesNotified();
+```
+
+Send images, videos, or audio with your push notifications, press and hold to preview media directly from the notification, then tap through to open the linked content.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/rich-push-notification-with-audio.png"
+  alt="Rich push notification with audio"
+/>
+
+What will work:
+
+- direct image URL: `.jpg`, `.png`, `.gif`, etc.
+- direct audio file URL: `.mp3`, `.m4a`, etc.
+- direct video file URL: `.mp4`, `.mov`, etc.
+- URL that responds with a proper media `Content-Type`, even if the path has no extension
+
+`media` can be combined with `redirection`, but not with `actions`.
+
 ## Live Activities
 
 Live Activities come in two UI types, but the lifecycle stays the same: start the activity, save the returned `activityId`, update it as state changes, then end it when the job is done.

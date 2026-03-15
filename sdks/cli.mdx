@@ -49,6 +49,39 @@ activitysmith push \
   --subtitle "main"
 ```
 
+### Rich Push Notifications with Media
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/rich-push-notification-with-image.png"
+  alt="Rich push notification with image"
+/>
+
+```bash CLI
+activitysmith push \
+  --title "Homepage ready" \
+  --message "Your agent finished the redesign." \
+  --media "https://cdn.example.com/output/homepage-v2.png" \
+  --redirection "https://github.com/acme/web/pull/482"
+```
+
+Send images, videos, or audio with your push notifications, press and hold to preview media directly from the notification, then tap through to open the linked content.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/rich-push-notification-with-audio.png"
+  alt="Rich push notification with audio"
+/>
+
+What will work:
+
+- direct image URL: `.jpg`, `.png`, `.gif`, etc.
+- direct audio file URL: `.mp3`, `.m4a`, etc.
+- direct video file URL: `.mp4`, `.mov`, etc.
+- URL that responds with a proper media `Content-Type`, even if the path has no extension
+
+`--media` can be combined with `--redirection`, but not with `--actions`.
+
 ### Push Actions and Redirection
 
 Push notifications can open a URL on tap or expose actions on long press. Webhook actions are executed by the ActivitySmith backend.
