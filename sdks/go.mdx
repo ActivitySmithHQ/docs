@@ -55,20 +55,17 @@ input := activitysmithsdk.PushNotificationInput{
 	Message: "Customer upgraded to Pro plan",
 }
 
-response, err := activitysmith.Notifications.
+_, err := activitysmith.Notifications.
 	Send(input)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(response.GetSuccess())
-log.Println(response.GetDevicesNotified())
 ```
 
 ### Rich Push Notifications with Media
 
 <img
-  className="image"
+  className="image image-full-width"
   src="https://cdn.activitysmith.com/features/rich-push-notification-with-image.png"
   alt="Rich push notification with image"
 />
@@ -81,20 +78,17 @@ input := activitysmithsdk.PushNotificationInput{
 	Redirection: "https://github.com/acme/web/pull/482",
 }
 
-response, err := activitysmith.Notifications.
+_, err := activitysmith.Notifications.
 	Send(input)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(response.GetSuccess())
-log.Println(response.GetDevicesNotified())
 ```
 
 Send images, videos, or audio with your push notifications, press and hold to preview media directly from the notification, then tap through to open the linked content.
 
 <img
-  className="image"
+  className="image image-full-width"
   src="https://cdn.activitysmith.com/features/rich-push-notification-with-audio.png"
   alt="Rich push notification with audio"
 />
@@ -107,6 +101,58 @@ What will work:
 - URL that responds with a proper media `Content-Type`, even if the path has no extension
 
 `Media` can be combined with `Redirection`, but not with `Actions`.
+
+### Actionable Push Notifications
+
+<img
+  className="image image-full-width"
+  src="https://cdn.activitysmith.com/features/actionable-push-notifications-2.png"
+  alt="Actionable push notification with redirection and actions"
+/>
+
+Push notification redirection and actions are optional and can be used to redirect the user to a specific URL when they tap the notification or to trigger a specific action when they long-press the notification. Webhooks are executed by ActivitySmith backend.
+
+```go Go
+import (
+	"log"
+
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
+	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+)
+
+crmAction := *generated.NewPushNotificationAction(
+	"Open CRM Profile",
+	generated.PUSHNOTIFICATIONACTIONTYPE_OPEN_URL,
+	"https://crm.example.com/customers/cus_9f3a1d",
+)
+
+onboardingAction := *generated.NewPushNotificationAction(
+	"Start Onboarding Workflow",
+	generated.PUSHNOTIFICATIONACTIONTYPE_WEBHOOK,
+	"https://hooks.example.com/activitysmith/onboarding/start",
+)
+onboardingAction.SetMethod(generated.PUSHNOTIFICATIONACTIONMETHOD_POST)
+onboardingAction.SetBody(map[string]interface{}{
+	"customer_id": "cus_9f3a1d",
+	"plan":        "pro",
+})
+
+input := activitysmithsdk.PushNotificationInput{
+	Title:       "New subscription 💸",
+	Message:     "Customer upgraded to Pro plan",
+	Redirection: "https://crm.example.com/customers/cus_9f3a1d",
+	Actions: []generated.PushNotificationAction{
+		crmAction,
+		onboardingAction,
+	},
+}
+
+_, err := activitysmith.Notifications.
+	Send(input)
+if err != nil {
+	log.Fatal(err)
+}
+```
 
 ## Live Activities
 
@@ -169,13 +215,11 @@ updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	CurrentStep: 2,
 }
 
-update, err := activitysmith.LiveActivities.
+_, err := activitysmith.LiveActivities.
 	Update(updateInput)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(update.GetDevicesNotified())
 ```
 
 #### End
@@ -197,13 +241,11 @@ endInput := activitysmithsdk.LiveActivityEndInput{
 	AutoDismissMinutes: 2,
 }
 
-end, err := activitysmith.LiveActivities.
+_, err := activitysmith.LiveActivities.
 	End(endInput)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(end.GetSuccess())
 ```
 
 ### Progress Type
@@ -254,13 +296,11 @@ updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	Percentage: 60,
 }
 
-update, err := activitysmith.LiveActivities.
+_, err := activitysmith.LiveActivities.
 	Update(updateInput)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(update.GetDevicesNotified())
 ```
 
 #### End
@@ -282,13 +322,11 @@ endInput := activitysmithsdk.LiveActivityEndInput{
 	AutoDismissMinutes: 2,
 }
 
-end, err := activitysmith.LiveActivities.
+_, err := activitysmith.LiveActivities.
 	End(endInput)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(end.GetSuccess())
 ```
 
 ## Channels

@@ -53,6 +53,13 @@ li.navbar-link:has(a[href*="activitysmith.com/app/signup"]) {
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
 }
 
+.image.image-full-width {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  max-height: none;
+}
+
 @media (min-width: 720px) {
   .hero-images {
     flex-wrap: nowrap;

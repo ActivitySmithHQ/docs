@@ -55,11 +55,14 @@ Want an SDK or Integration? Let us know at [adam@activitysmith.com](mailto:adam@
 
 ## Push Notifications
 
-To send a push notification, use the `push-notification` endpoint. It takes `title` and optional fields like `message`, `payload`, `redirection`, `actions`, and `target.channels`.  
+To send a push notification, use the `push-notification` endpoint. It takes `title` and optional fields like `message`, `payload`, `media`, `redirection`, `actions`, and `target.channels`.  
 `target.channels` accepts channel slugs (for example `["devs", "ops"]`).
 
+- `media` attaches an image, audio file, or video that users can preview or play when they expand the notification.
 - `redirection` opens on normal tap.
-- `actions` (up to 4) show on long-press in iOS expanded notification UI.
+- `actions` (up to 4) appear when users expand the notification.
+- `media + redirection` is supported.
+- `media + actions` is not supported in v1.
 
 <img
   className="image"
@@ -86,12 +89,10 @@ const activitysmith = new ActivitySmith({
   apiKey: process.env.ACTIVITYSMITH_API_KEY,
 });
 
-const response = await activitysmith.notifications.send({
+await activitysmith.notifications.send({
   title: "New subscription 💸",
   message: "Customer upgraded to Pro plan",
 });
-
-console.log(response);
 ```
 
 ```python Python
@@ -102,14 +103,12 @@ activitysmith = ActivitySmith(
     api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
 )
 
-response = activitysmith.notifications.send(
+activitysmith.notifications.send(
     {
         "title": "New subscription 💸",
         "message": "Customer upgraded to Pro plan",
     }
 )
-
-print(response)
 ```
 
 ```go Go
@@ -133,12 +132,10 @@ func main() {
 		Message: "Customer upgraded to Pro plan",
 	}
 
-	response, err := activitysmith.Notifications.Send(input)
+	_, err := activitysmith.Notifications.Send(input)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Println(response)
 }
 ```
 
@@ -149,12 +146,10 @@ use ActivitySmith\ActivitySmith;
 
 $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
 
-$response = $activitysmith->notifications->send([
+$activitysmith->notifications->send([
     'title' => 'New subscription 💸',
     'message' => 'Customer upgraded to Pro plan',
 ]);
-
-var_dump($response);
 ```
 
 ```ruby Ruby
@@ -164,14 +159,12 @@ activitysmith = ActivitySmith::Client.new(
   api_key: ENV.fetch("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
 )
 
-response = activitysmith.notifications.send(
+activitysmith.notifications.send(
   {
     title: "New subscription 💸",
     message: "Customer upgraded to Pro plan"
   }
 )
-
-p response
 ```
 
 ```bash CLI
