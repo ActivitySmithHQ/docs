@@ -250,6 +250,22 @@
                     }
                   }
                 },
+                "open_url_action": {
+                  "value": {
+                    "content_state": {
+                      "title": "Deploying payments-api",
+                      "subtitle": "Running database migrations",
+                      "number_of_steps": 5,
+                      "current_step": 3,
+                      "type": "segmented_progress"
+                    },
+                    "action": {
+                      "title": "Open Workflow",
+                      "type": "open_url",
+                      "url": "https://github.com/acme/payments-api/actions/runs/1234567890"
+                    }
+                  }
+                },
                 "segmented_progress_channel_targeted": {
                   "value": {
                     "content_state": {
@@ -407,6 +423,28 @@
                       "percentage": 60
                     }
                   }
+                },
+                "webhook_action": {
+                  "value": {
+                    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                    "content_state": {
+                      "title": "Reindexing product search",
+                      "subtitle": "Shard 7 of 12",
+                      "number_of_steps": 12,
+                      "current_step": 7
+                    },
+                    "action": {
+                      "title": "Pause Reindex",
+                      "type": "webhook",
+                      "url": "https://ops.example.com/hooks/search/reindex/pause",
+                      "method": "POST",
+                      "body": {
+                        "job_id": "reindex-2026-03-19",
+                        "requested_by": "activitysmith_live_activity",
+                        "reason": "paused_from_ios_live_activity"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -499,6 +537,23 @@
                       "subtitle": "Added 200 mi range",
                       "percentage": 100,
                       "auto_dismiss_minutes": 2
+                    }
+                  }
+                },
+                "open_url_action": {
+                  "value": {
+                    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                    "content_state": {
+                      "title": "Deploying payments-api",
+                      "subtitle": "Production rollout complete",
+                      "number_of_steps": 5,
+                      "current_step": 5,
+                      "auto_dismiss_minutes": 10
+                    },
+                    "action": {
+                      "title": "Open Workflow",
+                      "type": "open_url",
+                      "url": "https://github.com/acme/payments-api/actions/runs/1234567890"
                     }
                   }
                 }
@@ -799,6 +854,43 @@
         "required": ["title", "type", "url"],
         "additionalProperties": false
       },
+      "LiveActivityActionType": {
+        "type": "string",
+        "enum": ["open_url", "webhook"]
+      },
+      "LiveActivityWebhookMethod": {
+        "type": "string",
+        "enum": ["GET", "POST"],
+        "default": "POST"
+      },
+      "LiveActivityAction": {
+        "type": "object",
+        "description": "Optional single action button shown in the Live Activity UI.",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Button title displayed in the Live Activity UI."
+          },
+          "type": { "$ref": "#/components/schemas/LiveActivityActionType" },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://",
+            "description": "HTTPS URL. For open_url it is opened in browser. For webhook it is called by ActivitySmith backend."
+          },
+          "method": {
+            "$ref": "#/components/schemas/LiveActivityWebhookMethod",
+            "description": "Webhook HTTP method. Used only when type=webhook."
+          },
+          "body": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Optional webhook payload body. Used only when type=webhook."
+          }
+        },
+        "required": ["title", "type", "url"],
+        "additionalProperties": false
+      },
       "PushNotificationRequest": {
         "type": "object",
         "required": ["title"],
@@ -855,6 +947,7 @@
         "required": ["content_state"],
         "properties": {
           "content_state": { "$ref": "#/components/schemas/ContentStateStart" },
+          "action": { "$ref": "#/components/schemas/LiveActivityAction" },
           "alert": { "$ref": "#/components/schemas/AlertPayload" },
           "target": { "$ref": "#/components/schemas/ChannelTarget" }
         },
@@ -937,7 +1030,8 @@
         "required": ["activity_id", "content_state"],
         "properties": {
           "activity_id": { "type": "string" },
-          "content_state": { "$ref": "#/components/schemas/ContentStateUpdate" }
+          "content_state": { "$ref": "#/components/schemas/ContentStateUpdate" },
+          "action": { "$ref": "#/components/schemas/LiveActivityAction" }
         },
         "additionalProperties": false
       },
@@ -960,7 +1054,8 @@
         "required": ["activity_id", "content_state"],
         "properties": {
           "activity_id": { "type": "string" },
-          "content_state": { "$ref": "#/components/schemas/ContentStateEnd" }
+          "content_state": { "$ref": "#/components/schemas/ContentStateEnd" },
+          "action": { "$ref": "#/components/schemas/LiveActivityAction" }
         },
         "additionalProperties": false
       },
