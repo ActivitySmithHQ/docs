@@ -7,6 +7,7 @@ Use this endpoint to end an existing Live Activity by `activity_id`.
 
 - `segmented_progress`: send the final `current_step` and optionally the latest `number_of_steps`.
 - `progress`: send the final `percentage`, or `value` with `upper_limit`.
+- `action` is optional if you want the ended state to keep showing a button before dismissal.
 - `auto_dismiss_minutes` is optional if you want to control how long the ended Live Activity stays visible.
 
 For `segmented_progress`, the final payload can include an updated

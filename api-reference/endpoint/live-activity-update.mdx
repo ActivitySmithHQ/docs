@@ -7,6 +7,7 @@ Use this endpoint to update an existing Live Activity by `activity_id`.
 
 - `segmented_progress`: send the latest `current_step` and, if needed, an updated `number_of_steps`.
 - `progress`: send the latest `percentage`, or `value` with `upper_limit`.
+- `action` is optional if you want to set or replace the Live Activity button.
 - `type` is optional on update if the existing Live Activity already has a type.
 
 For `segmented_progress`, you can update both `current_step` and

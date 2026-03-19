@@ -43,7 +43,7 @@ Want an SDK or Integration? Let us know at [adam@activitysmith.com](mailto:adam@
 ### Features
 
 - [**Push Notifications**](#push-notifications): send push notifications to all paired devices or target specific channels.
-- [**Live Activities**](#live-activities): start, update and end a Live Activity on your lock screen or dynamic island, with optional channel targeting.
+- [**Live Activities**](#live-activities): start, update and end a Live Activity on your lock screen or dynamic island, with optional channel targeting and one optional action button.
 
 ### Powerful Capabilities
 
@@ -211,6 +211,10 @@ changes, then end it when the work is done.
 For `segmented_progress`, `number_of_steps` does not need to stay fixed. You
 can increase or decrease it in later update or end calls if the workflow
 changes.
+
+Live Activities can also include one optional `action` button. Use `open_url`
+when the button should open a browser destination, or `webhook` when
+ActivitySmith backend should call your HTTPS webhook.
 
 ### Shared flow
 

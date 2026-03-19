@@ -8,6 +8,7 @@ You will use that same ID for later update and end calls.
 
 - `segmented_progress`: send `title`, `type`, `number_of_steps`, and `current_step`.
 - `progress`: send `title`, `type`, and either `percentage` or `value` with `upper_limit`.
+- `action` is optional if you want the Live Activity to show one button that opens a URL or triggers a webhook.
 - `target.channels` is optional if you want to scope delivery to specific channel slugs.
 
 For `segmented_progress`, `number_of_steps` is not fixed for the full lifecycle.
