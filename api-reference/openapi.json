@@ -215,11 +215,342 @@
         }
       }
     },
+    "/live-activity/stream/{stream_key}": {
+      "put": {
+        "tags": ["LiveActivities"],
+        "summary": "Send a stream update",
+        "description": "Use this endpoint when you want the easiest, stateless way to trigger Live Activities. You do not need to store activity_id or manage the Live Activity lifecycle yourself. Send the latest state for a stable stream_key and ActivitySmith will handle the rest for you: if there is no Live Activity yet, it starts one; if there is already one for this stream, it updates it. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.",
+        "operationId": "reconcileLiveActivityStream",
+        "parameters": [
+          {
+            "name": "stream_key",
+            "in": "path",
+            "required": true,
+            "description": "Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.",
+            "schema": {
+              "type": "string",
+              "maxLength": 255,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LiveActivityStreamRequest" },
+              "examples": {
+                "metrics": {
+                  "value": {
+                    "content_state": {
+                      "title": "Server Health",
+                      "subtitle": "prod-web-1",
+                      "type": "metrics",
+                      "metrics": [
+                        {
+                          "label": "CPU",
+                          "value": 27,
+                          "unit": "%"
+                        },
+                        {
+                          "label": "MEM",
+                          "value": 64,
+                          "unit": "%"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "channel_targeted": {
+                  "value": {
+                    "channels": ["ops"],
+                    "content_state": {
+                      "title": "Server Health",
+                      "subtitle": "prod-web-1",
+                      "type": "metrics",
+                      "metrics": [
+                        {
+                          "label": "CPU",
+                          "value": 27,
+                          "unit": "%"
+                        },
+                        {
+                          "label": "MEM",
+                          "value": 64,
+                          "unit": "%"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stream reconciled",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LiveActivityStreamPutResponse" },
+                "examples": {
+                  "started": {
+                    "value": {
+                      "success": true,
+                      "operation": "started",
+                      "stream_key": "linode-vps",
+                      "activity_id": "h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034",
+                      "devices_notified": 2,
+                      "timestamp": "2025-08-12T12:00:00.000Z"
+                    }
+                  },
+                  "noop": {
+                    "value": {
+                      "success": true,
+                      "operation": "noop",
+                      "stream_key": "linode-vps",
+                      "activity_id": "h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034",
+                      "timestamp": "2025-08-12T12:05:00.000Z"
+                    }
+                  },
+                  "paused": {
+                    "value": {
+                      "success": true,
+                      "operation": "paused",
+                      "stream_key": "linode-vps",
+                      "activity_id": null,
+                      "timestamp": "2025-08-12T12:10:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid stream_key, payload, action, or channel targeting input)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BadRequestError" },
+                "examples": {
+                  "invalid_stream_key": {
+                    "value": {
+                      "error": "Invalid stream_key",
+                      "message": "stream_key must contain only letters, numbers, underscores, and hyphens"
+                    }
+                  },
+                  "invalid_target": {
+                    "value": {
+                      "error": "Invalid channel targeting",
+                      "message": "channels must contain at least one channel"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden (API key scope or channel assignment violation)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ForbiddenError" },
+                "examples": {
+                  "channel_scope_violation": {
+                    "value": {
+                      "error": "Invalid channel targeting",
+                      "message": "This API key can only target assigned channels. Requested channels include channels outside this key scope."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No recipients found for effective channel target",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NoRecipientsError" },
+                "examples": {
+                  "no_devices": {
+                    "value": {
+                      "error": "No recipients found",
+                      "message": "No Live Activity devices matched the effective channel target",
+                      "effective_channel_slugs": ["ops"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/RateLimitError" },
+                    { "$ref": "#/components/schemas/LiveActivityLimitError" }
+                  ]
+                },
+                "examples": {
+                  "rate_limited": {
+                    "value": {
+                      "error": "Rate limit exceeded",
+                      "message": "Too many requests, please try again later."
+                    }
+                  },
+                  "concurrent_live_activity_limit_reached": {
+                    "value": {
+                      "error": "Live Activity limit reached",
+                      "message": "Only 4 concurrent Live Activities are allowed per account",
+                      "limit": 4,
+                      "active": 4
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["LiveActivities"],
+        "summary": "End a stream",
+        "description": "Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.",
+        "operationId": "endLiveActivityStream",
+        "parameters": [
+          {
+            "name": "stream_key",
+            "in": "path",
+            "required": true,
+            "description": "Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.",
+            "schema": {
+              "type": "string",
+              "maxLength": 255,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LiveActivityStreamDeleteRequest" },
+              "examples": {
+                "default": {
+                  "value": {}
+                },
+                "with_content_state": {
+                  "value": {
+                    "content_state": {
+                      "title": "Server Health",
+                      "subtitle": "prod-web-1",
+                      "type": "metrics",
+                      "metrics": [
+                        {
+                          "label": "CPU",
+                          "value": 0,
+                          "unit": "%"
+                        },
+                        {
+                          "label": "MEM",
+                          "value": 0,
+                          "unit": "%"
+                        }
+                      ],
+                      "auto_dismiss_minutes": 2
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Managed stream ended",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LiveActivityStreamDeleteResponse" },
+                "examples": {
+                  "ended": {
+                    "value": {
+                      "success": true,
+                      "operation": "ended",
+                      "stream_key": "linode-vps",
+                      "activity_id": "h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034",
+                      "devices_queued": 1,
+                      "timestamp": "2025-08-12T12:10:00.000Z"
+                    }
+                  },
+                  "already_inactive": {
+                    "value": {
+                      "success": true,
+                      "operation": "ended",
+                      "stream_key": "linode-vps",
+                      "activity_id": null,
+                      "timestamp": "2025-08-12T12:10:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid stream_key or action)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BadRequestError" },
+                "examples": {
+                  "invalid_stream_key": {
+                    "value": {
+                      "error": "Invalid stream_key",
+                      "message": "stream_key must contain only letters, numbers, underscores, and hyphens"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Managed stream not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NotFoundError" },
+                "examples": {
+                  "not_found": {
+                    "value": {
+                      "error": "Live Activity stream not found",
+                      "message": "No Live Activity stream found for stream_key: linode-vps"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RateLimitError" },
+                "examples": {
+                  "rate_limited": {
+                    "value": {
+                      "error": "Rate limit exceeded",
+                      "message": "Too many requests, please try again later."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/live-activity/start": {
       "post": {
         "tags": ["LiveActivities"],
         "summary": "Start a Live Activity",
-        "description": "Starts a Live Activity on devices matched by API key scope and optional target channels. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.",
+        "description": "Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.",
         "operationId": "startLiveActivity",
         "requestBody": {
           "required": true,
@@ -247,6 +578,27 @@
                       "percentage": 15,
                       "type": "progress",
                       "color": "lime"
+                    }
+                  }
+                },
+                "metrics": {
+                  "value": {
+                    "content_state": {
+                      "title": "Server Health",
+                      "subtitle": "prod-web-1",
+                      "type": "metrics",
+                      "metrics": [
+                        {
+                          "label": "CPU",
+                          "value": 21,
+                          "unit": "%"
+                        },
+                        {
+                          "label": "MEM",
+                          "value": 64,
+                          "unit": "%"
+                        }
+                      ]
                     }
                   }
                 },
@@ -395,7 +747,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "Update a Live Activity",
-        "description": "Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.",
+        "description": "Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.",
         "operationId": "updateLiveActivity",
         "requestBody": {
           "required": true,
@@ -421,6 +773,28 @@
                       "title": "EV Charging",
                       "subtitle": "Added 120 mi range",
                       "percentage": 60
+                    }
+                  }
+                },
+                "metrics": {
+                  "value": {
+                    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                    "content_state": {
+                      "title": "Server Health",
+                      "subtitle": "prod-web-1",
+                      "type": "metrics",
+                      "metrics": [
+                        {
+                          "label": "CPU",
+                          "value": 25,
+                          "unit": "%"
+                        },
+                        {
+                          "label": "MEM",
+                          "value": 67,
+                          "unit": "%"
+                        }
+                      ]
                     }
                   }
                 },
@@ -509,7 +883,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "End a Live Activity",
-        "description": "Ends a Live Activity and archives its lifecycle. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.",
+        "description": "Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.",
         "operationId": "endLiveActivity",
         "requestBody": {
           "required": true,
@@ -536,6 +910,29 @@
                       "title": "EV Charging",
                       "subtitle": "Added 200 mi range",
                       "percentage": 100,
+                      "auto_dismiss_minutes": 2
+                    }
+                  }
+                },
+                "metrics": {
+                  "value": {
+                    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                    "content_state": {
+                      "title": "Server Health",
+                      "subtitle": "prod-web-1",
+                      "type": "metrics",
+                      "metrics": [
+                        {
+                          "label": "CPU",
+                          "value": 0,
+                          "unit": "%"
+                        },
+                        {
+                          "label": "MEM",
+                          "value": 0,
+                          "unit": "%"
+                        }
+                      ],
                       "auto_dismiss_minutes": 2
                     }
                   }
@@ -629,7 +1026,7 @@
     "schemas": {
       "ContentStateStart": {
         "type": "object",
-        "description": "Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.",
+        "description": "Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown types also use current_step and number_of_steps. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.",
         "required": ["title", "type"],
         "properties": {
           "title": { "type": "string" },
@@ -659,9 +1056,15 @@
             "exclusiveMinimum": 0,
             "description": "Maximum progress value. Use with value for type=progress."
           },
+          "metrics": {
+            "type": "array",
+            "description": "Use for type=metrics.",
+            "minItems": 1,
+            "items": { "$ref": "#/components/schemas/ActivityMetric" }
+          },
           "type": {
             "type": "string",
-            "enum": ["segmented_progress", "progress"]
+            "enum": ["segmented_progress", "progress", "metrics", "counter", "timer", "countdown"]
           },
           "color": {
             "type": "string",
@@ -673,6 +1076,14 @@
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
             "description": "Optional. Overrides color for the current step. Only applies to type=segmented_progress."
+          },
+          "step_colors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"]
+            },
+            "description": "Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step."
           }
         },
         "dependentRequired": {
@@ -683,7 +1094,7 @@
       },
       "ContentStateUpdate": {
         "type": "object",
-        "description": "Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.",
+        "description": "Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown types also use current_step and number_of_steps. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.",
         "required": ["title"],
         "properties": {
           "title": { "type": "string" },
@@ -713,9 +1124,15 @@
             "exclusiveMinimum": 0,
             "description": "Maximum progress value. Use with value for type=progress."
           },
+          "metrics": {
+            "type": "array",
+            "description": "Use for type=metrics.",
+            "minItems": 1,
+            "items": { "$ref": "#/components/schemas/ActivityMetric" }
+          },
           "type": {
             "type": "string",
-            "enum": ["segmented_progress", "progress"],
+            "enum": ["segmented_progress", "progress", "metrics", "counter", "timer", "countdown"],
             "description": "Optional. When omitted, the API uses the existing Live Activity type."
           },
           "color": {
@@ -728,6 +1145,14 @@
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
             "description": "Optional. Overrides color for the current step. Only applies to type=segmented_progress."
+          },
+          "step_colors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"]
+            },
+            "description": "Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step."
           }
         },
         "dependentRequired": {
@@ -738,7 +1163,7 @@
       },
       "ContentStateEnd": {
         "type": "object",
-        "description": "End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.",
+        "description": "End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown types also use current_step and number_of_steps. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.",
         "required": ["title"],
         "properties": {
           "title": { "type": "string" },
@@ -768,9 +1193,15 @@
             "exclusiveMinimum": 0,
             "description": "Maximum progress value. Use with value for type=progress."
           },
+          "metrics": {
+            "type": "array",
+            "description": "Use for type=metrics.",
+            "minItems": 1,
+            "items": { "$ref": "#/components/schemas/ActivityMetric" }
+          },
           "type": {
             "type": "string",
-            "enum": ["segmented_progress", "progress"],
+            "enum": ["segmented_progress", "progress", "metrics", "counter", "timer", "countdown"],
             "description": "Optional. When omitted, the API uses the existing Live Activity type."
           },
           "color": {
@@ -784,6 +1215,14 @@
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
             "description": "Optional. Overrides color for the current step. Only applies to type=segmented_progress."
           },
+          "step_colors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"]
+            },
+            "description": "Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step."
+          },
           "auto_dismiss_minutes": {
             "type": "integer",
             "minimum": 0,
@@ -794,6 +1233,99 @@
         "dependentRequired": {
           "value": ["upper_limit"],
           "upper_limit": ["value"]
+        },
+        "additionalProperties": false
+      },
+      "StreamContentState": {
+        "type": "object",
+        "description": "Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based types.",
+        "required": ["title"],
+        "properties": {
+          "title": { "type": "string" },
+          "subtitle": { "type": "string" },
+          "number_of_steps": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Use for segmented_progress, counter, timer, and countdown."
+          },
+          "current_step": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Use for segmented_progress, counter, timer, and countdown."
+          },
+          "percentage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Use for progress. Takes precedence over value/upper_limit if both are provided."
+          },
+          "value": {
+            "type": "number",
+            "description": "Current progress value. Use with upper_limit for progress."
+          },
+          "upper_limit": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Maximum progress value. Use with value for progress."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["segmented_progress", "progress", "metrics", "counter", "timer", "countdown"],
+            "description": "Required on the first PUT or whenever the stream cannot infer the current activity type."
+          },
+          "color": {
+            "type": "string",
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "description": "Optional. Accent color for the Live Activity. Defaults to blue.",
+            "default": "blue"
+          },
+          "step_color": {
+            "type": "string",
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "description": "Optional. Overrides color for the current step. Only applies to segmented_progress."
+          },
+          "step_colors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"]
+            },
+            "description": "Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step."
+          },
+          "metrics": {
+            "type": "array",
+            "description": "Use for metrics activities.",
+            "minItems": 1,
+            "items": { "$ref": "#/components/schemas/ActivityMetric" }
+          },
+          "auto_dismiss_seconds": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Optional. Seconds before the ended Live Activity is dismissed."
+          },
+          "auto_dismiss_minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Optional. Minutes before the ended Live Activity is dismissed."
+          }
+        },
+        "dependentRequired": {
+          "value": ["upper_limit"],
+          "upper_limit": ["value"]
+        },
+        "additionalProperties": false
+      },
+      "ActivityMetric": {
+        "type": "object",
+        "required": ["label", "value"],
+        "properties": {
+          "label": { "type": "string", "minLength": 1 },
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "unit": { "type": "string" }
         },
         "additionalProperties": false
       },
@@ -970,6 +1502,76 @@
         "required": ["success", "activity_id", "timestamp"],
         "additionalProperties": false
       },
+      "LiveActivityStreamRequest": {
+        "type": "object",
+        "description": "Send the latest state for a managed Live Activity stream. channels is the streamlined form for stream targeting. target.channels is also accepted for compatibility. If both are provided, they must match.",
+        "required": ["content_state"],
+        "properties": {
+          "content_state": { "$ref": "#/components/schemas/StreamContentState" },
+          "action": { "$ref": "#/components/schemas/LiveActivityAction" },
+          "alert": { "$ref": "#/components/schemas/AlertPayload" },
+          "channels": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1,
+            "description": "Channel slugs. When omitted, API key scope determines recipients."
+          },
+          "target": { "$ref": "#/components/schemas/ChannelTarget" }
+        },
+        "additionalProperties": false
+      },
+      "LiveActivityStreamPutResponse": {
+        "type": "object",
+        "description": "Returned after a managed stream request is reconciled.",
+        "properties": {
+          "success": { "type": "boolean" },
+          "operation": {
+            "type": "string",
+            "enum": ["started", "updated", "rotated", "noop", "paused"]
+          },
+          "stream_key": { "type": "string" },
+          "activity_id": { "type": ["string", "null"] },
+          "previous_activity_id": { "type": "string" },
+          "devices_notified": { "type": "integer" },
+          "devices_queued": { "type": "integer" },
+          "users_notified": { "type": "integer" },
+          "effective_channel_slugs": {
+            "type": ["array", "null"],
+            "items": { "type": "string" }
+          },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["success", "operation", "stream_key", "timestamp"],
+        "additionalProperties": false
+      },
+      "LiveActivityStreamDeleteRequest": {
+        "type": "object",
+        "description": "Optional payload for ending a managed stream. When omitted, ActivitySmith ends the stream using the latest known state when possible.",
+        "properties": {
+          "content_state": { "$ref": "#/components/schemas/StreamContentState" },
+          "action": { "$ref": "#/components/schemas/LiveActivityAction" },
+          "alert": { "$ref": "#/components/schemas/AlertPayload" }
+        },
+        "additionalProperties": false
+      },
+      "LiveActivityStreamDeleteResponse": {
+        "type": "object",
+        "description": "Returned after a managed stream is ended and removed.",
+        "properties": {
+          "success": { "type": "boolean" },
+          "operation": {
+            "type": "string",
+            "enum": ["ended"]
+          },
+          "stream_key": { "type": "string" },
+          "activity_id": { "type": ["string", "null"] },
+          "devices_queued": { "type": "integer" },
+          "devices_notified": { "type": "integer" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["success", "operation", "stream_key", "timestamp"],
+        "additionalProperties": false
+      },
       "BadRequestError": {
         "type": "object",
         "properties": {
@@ -997,6 +1599,15 @@
             "type": ["array", "null"],
             "items": { "type": "string" }
           }
+        },
+        "required": ["error", "message"],
+        "additionalProperties": true
+      },
+      "NotFoundError": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" }
         },
         "required": ["error", "message"],
         "additionalProperties": true
