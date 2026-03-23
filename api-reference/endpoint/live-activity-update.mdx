@@ -5,6 +5,7 @@ openapi: 'POST /live-activity/update'
 
 Use this endpoint to update an existing Live Activity by `activity_id`.
 
+- `metrics`: send the latest `metrics` array.
 - `segmented_progress`: send the latest `current_step` and, if needed, an updated `number_of_steps`.
 - `progress`: send the latest `percentage`, or `value` with `upper_limit`.
 - `action` is optional if you want to set or replace the Live Activity button.

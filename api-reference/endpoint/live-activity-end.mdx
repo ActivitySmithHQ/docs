@@ -5,6 +5,7 @@ openapi: 'POST /live-activity/end'
 
 Use this endpoint to end an existing Live Activity by `activity_id`.
 
+- `metrics`: send the final `metrics` array if you want the ended state to show final values.
 - `segmented_progress`: send the final `current_step` and optionally the latest `number_of_steps`.
 - `progress`: send the final `percentage`, or `value` with `upper_limit`.
 - `action` is optional if you want the ended state to keep showing a button before dismissal.
