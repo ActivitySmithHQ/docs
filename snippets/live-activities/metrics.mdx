@@ -1,0 +1,312 @@
+### Metrics Type
+
+Use `metrics` to keep a small set of live numbers visible on the Lock Screen
+and Dynamic Island. It fits server health, queue pressure, replica lag, worker
+saturation, and similar backend state you want to glance at without opening a
+dashboard.
+
+Each entry in the `metrics` array takes a `label`, a numeric `value`, and an
+optional `unit`.
+
+#### Stream
+
+Use a stable `stream_key` (such as a server, deployment, or job name) and send
+the latest values whenever they change. ActivitySmith starts the Live Activity
+on the first call and updates it on subsequent calls - you do not need to track
+`activity_id`.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
+  alt="Metrics Live Activity stream"
+/>
+
+<CodeGroup>
+
+```bash cURL
+curl -X PUT https://activitysmith.com/api/live-activity/stream/prod-web-1 \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content_state": {
+      "title": "Server Health",
+      "subtitle": "prod-web-1",
+      "type": "metrics",
+      "metrics": [
+        { "label": "CPU", "value": 9, "unit": "%" },
+        { "label": "MEM", "value": 45, "unit": "%" }
+      ]
+    }
+  }'
+```
+
+```js Node
+import ActivitySmith from "activitysmith";
+
+const activitysmith = new ActivitySmith({
+  apiKey: process.env.ACTIVITYSMITH_API_KEY,
+});
+
+await activitysmith.liveActivities.stream("prod-web-1", {
+  content_state: {
+    title: "Server Health",
+    subtitle: "prod-web-1",
+    type: "metrics",
+    metrics: [
+      { label: "CPU", value: 9, unit: "%" },
+      { label: "MEM", value: 45, unit: "%" },
+    ],
+  },
+});
+```
+
+```python Python
+import os
+from activitysmith import ActivitySmith
+
+activitysmith = ActivitySmith(
+    api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.stream(
+    "prod-web-1",
+    {
+        "content_state": {
+            "title": "Server Health",
+            "subtitle": "prod-web-1",
+            "type": "metrics",
+            "metrics": [
+                {"label": "CPU", "value": 9, "unit": "%"},
+                {"label": "MEM", "value": 45, "unit": "%"},
+            ],
+        },
+    },
+)
+```
+
+```go Go
+package main
+
+import (
+	"log"
+	"os"
+
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
+	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+)
+
+func main() {
+	activitysmith, err := activitysmithsdk.New(os.Getenv("ACTIVITYSMITH_API_KEY"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	streamInput := activitysmithsdk.LiveActivityStreamInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Metrics: []generated.ActivityMetric{
+			{Label: "CPU", Value: 9, Unit: generated.PtrString("%")},
+			{Label: "MEM", Value: 45, Unit: generated.PtrString("%")},
+		},
+	}
+
+	_, err = activitysmith.LiveActivities.Stream("prod-web-1", streamInput)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+```php PHP
+<?php
+
+use ActivitySmith\ActivitySmith;
+
+$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+$activitysmith->liveActivities->stream('prod-web-1', [
+    'content_state' => [
+        'title' => 'Server Health',
+        'subtitle' => 'prod-web-1',
+        'type' => 'metrics',
+        'metrics' => [
+            ['label' => 'CPU', 'value' => 9, 'unit' => '%'],
+            ['label' => 'MEM', 'value' => 45, 'unit' => '%'],
+        ],
+    ],
+]);
+```
+
+```ruby Ruby
+require "activitysmith"
+
+activitysmith = ActivitySmith::Client.new(
+  api_key: ENV.fetch("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.stream(
+  "prod-web-1",
+  {
+    content_state: {
+      title: "Server Health",
+      subtitle: "prod-web-1",
+      type: "metrics",
+      metrics: [
+        { label: "CPU", value: 9, unit: "%" },
+        { label: "MEM", value: 45, unit: "%" }
+      ]
+    }
+  }
+)
+```
+
+```bash CLI
+activitysmith activity stream prod-web-1 \
+  --content-state '{
+    "title": "Server Health",
+    "subtitle": "prod-web-1",
+    "type": "metrics",
+    "metrics": [
+      { "label": "CPU", "value": 9, "unit": "%" },
+      { "label": "MEM", "value": 45, "unit": "%" }
+    ]
+  }'
+```
+
+</CodeGroup>
+
+Call the same `stream_key` again whenever values change to update the Live
+Activity in place.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/metrics-live-activity-update.png"
+  alt="Metrics Live Activity stream update"
+/>
+
+#### End the stream
+
+When the tracked process is finished, end the stream so the Live Activity is
+removed from devices. `content_state` is optional - include it to end with a
+final state.
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://activitysmith.com/api/live-activity/stream/prod-web-1 \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content_state": {
+      "title": "Server Health",
+      "subtitle": "prod-web-1",
+      "type": "metrics",
+      "metrics": [
+        { "label": "CPU", "value": 7, "unit": "%" },
+        { "label": "MEM", "value": 38, "unit": "%" }
+      ],
+      "auto_dismiss_minutes": 2
+    }
+  }'
+```
+
+```js Node
+await activitysmith.liveActivities.endStream("prod-web-1", {
+  content_state: {
+    title: "Server Health",
+    subtitle: "prod-web-1",
+    type: "metrics",
+    metrics: [
+      { label: "CPU", value: 7, unit: "%" },
+      { label: "MEM", value: 38, unit: "%" },
+    ],
+    auto_dismiss_minutes: 2,
+  },
+});
+```
+
+```python Python
+activitysmith.live_activities.end_stream(
+    "prod-web-1",
+    {
+        "content_state": {
+            "title": "Server Health",
+            "subtitle": "prod-web-1",
+            "type": "metrics",
+            "metrics": [
+                {"label": "CPU", "value": 7, "unit": "%"},
+                {"label": "MEM", "value": 38, "unit": "%"},
+            ],
+            "auto_dismiss_minutes": 2,
+        },
+    },
+)
+```
+
+```go Go
+endInput := activitysmithsdk.LiveActivityEndStreamInput{
+	Title:    "Server Health",
+	Subtitle: "prod-web-1",
+	Type:     "metrics",
+	Metrics: []generated.ActivityMetric{
+		{Label: "CPU", Value: 7, Unit: generated.PtrString("%")},
+		{Label: "MEM", Value: 38, Unit: generated.PtrString("%")},
+	},
+	AutoDismissMinutes: 2,
+}
+
+_, err := activitysmith.LiveActivities.EndStream("prod-web-1", endInput)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+```php PHP
+$activitysmith->liveActivities->endStream('prod-web-1', [
+    'content_state' => [
+        'title' => 'Server Health',
+        'subtitle' => 'prod-web-1',
+        'type' => 'metrics',
+        'metrics' => [
+            ['label' => 'CPU', 'value' => 7, 'unit' => '%'],
+            ['label' => 'MEM', 'value' => 38, 'unit' => '%'],
+        ],
+        'auto_dismiss_minutes' => 2,
+    ],
+]);
+```
+
+```ruby Ruby
+activitysmith.live_activities.end_stream(
+  "prod-web-1",
+  {
+    content_state: {
+      title: "Server Health",
+      subtitle: "prod-web-1",
+      type: "metrics",
+      metrics: [
+        { label: "CPU", value: 7, unit: "%" },
+        { label: "MEM", value: 38, unit: "%" }
+      ],
+      auto_dismiss_minutes: 2
+    }
+  }
+)
+```
+
+```bash CLI
+activitysmith activity end-stream prod-web-1 \
+  --content-state '{
+    "title": "Server Health",
+    "subtitle": "prod-web-1",
+    "type": "metrics",
+    "metrics": [
+      { "label": "CPU", "value": 7, "unit": "%" },
+      { "label": "MEM", "value": 38, "unit": "%" }
+    ],
+    "autoDismissMinutes": 2
+  }'
+```
+
+</CodeGroup>

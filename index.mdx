@@ -5,6 +5,7 @@ og:title: "Quickstart | ActivitySmith"
 og:description: "ActivitySmith Send Live Activities and push notifications to your iOS devices from any backend"
 ---
 
+import MetricsLiveActivity from "/snippets/live-activities/metrics.mdx";
 import SegmentedProgressLiveActivity from "/snippets/live-activities/segmented-progress.mdx";
 import ProgressLiveActivity from "/snippets/live-activities/progress.mdx";
 
@@ -188,15 +189,19 @@ activitysmith push \
 
 ## Live Activities
 
-Live Activities come in two UI types, but the delivery flow stays the same:
-start the activity, keep the returned `activity_id`, update it as state
-changes, then end it when the work is done.
+There are three types of Live Activities:
 
 | Type                 | Best for                      | Required state                                                      |
 | -------------------- | ----------------------------- | ------------------------------------------------------------------- |
+| `metrics`            | Live operational stats        | `title`, `type`, and a non-empty `metrics` array                    |
 | `segmented_progress` | Jobs tracked in steps         | `title`, `type`, `number_of_steps`, `current_step`                  |
 | `progress`           | Jobs with continuous progress | `title`, `type`, and either `percentage` or `value` + `upper_limit` |
 
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
+  alt="Metrics Live Activity update"
+/>
 <img
   className="image"
   src="https://cdn.activitysmith.com/features/progress-live-activity-update.png"
@@ -208,15 +213,24 @@ changes, then end it when the work is done.
   alt="Segmented Progress Live Activity update"
 />
 
-For `segmented_progress`, `number_of_steps` does not need to stay fixed. You
-can increase or decrease it in later update or end calls if the workflow
-changes.
+When working with Live Activities via our API, you have two approaches tailored
+to different needs.
 
-Live Activities can also include one optional `action` button. Use `open_url`
-when the button should open a browser destination, or `webhook` when
-ActivitySmith backend should call your HTTPS webhook.
+### Simple: stream updates
 
-### Shared flow
+Use stream updates when you want the easiest, stateless flow.
+
+- [`PUT /live-activity/stream/:stream_key`](/stream)
+- [`DELETE /live-activity/stream/:stream_key`](/stream)
+
+Send the latest state for a stable `stream_key`, and ActivitySmith starts or
+updates the Live Activity for you. You do not need to store `activity_id` or
+manage the lifecycle yourself.
+
+### Advanced: full lifecycle control
+
+Use the lifecycle endpoints when you want full control over a specific Live
+Activity instance.
 
 1. Call [`POST /live-activity/start`](/api-reference/endpoint/live-activity-start).
 2. Save the returned `activity_id`.
@@ -238,22 +252,113 @@ updates and for the final end call.
 }
 ```
 
-### Update and end response
-
-Update and end calls return the same activity ID plus the delivery result.
-
-```json
-{
-  "success": true,
-  "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
-  "devices_notified": 2,
-  "timestamp": "2026-01-28T09:57:26.056Z"
-}
-```
+<MetricsLiveActivity />
 
 <SegmentedProgressLiveActivity />
 
 <ProgressLiveActivity />
+
+### Action Button
+
+Live Activities support one optional `action` button shown on the Lock Screen. Use it to have a one-tap path from a long-running
+job to the place where you can act on it. The `action` field is accepted on
+`start`, `update`, and `end` calls, and works with all Live Activity types.
+
+<div style={{ display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap", margin: "16px 0" }}>
+  <img
+    style={{
+      flex: "1 1 0",
+      minWidth: "240px",
+      maxWidth: "100%",
+      borderRadius: "12px",
+      boxShadow: "0 14px 28px rgba(0, 0, 0, 0.18)",
+    }}
+    src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1"
+    alt="Live Activity with an action button on iPhone"
+  />
+  <img
+    style={{
+      flex: "1 1 0",
+      minWidth: "240px",
+      maxWidth: "100%",
+      borderRadius: "12px",
+      boxShadow: "0 14px 28px rgba(0, 0, 0, 0.18)",
+    }}
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png"
+    alt="Metrics Live Activity with an action button"
+  />
+</div>
+
+There are two action types:
+
+- `open_url`: opens the provided HTTPS URL in the browser.
+- `webhook`: ActivitySmith's backend calls your HTTPS webhook with `GET` or `POST`.
+
+The `action` object accepts:
+
+| Field    | Required     | Description                                          |
+| -------- | ------------ | ---------------------------------------------------- |
+| `title`  | yes          | Button label shown on the Live Activity.             |
+| `type`   | yes          | Either `open_url` or `webhook`.                      |
+| `url`    | yes          | HTTPS endpoint to open or call.                      |
+| `method` | webhook only | `GET` or `POST`.                                     |
+| `body`   | webhook only | Optional JSON payload sent with the webhook request. |
+
+#### open_url
+
+Use `open_url` when the button should jump the user to a dashboard, run page,
+or any browser destination tied to the work.
+
+```json
+{
+  "content_state": {
+    "title": "Deploying payments-api",
+    "subtitle": "Running database migrations",
+    "number_of_steps": 5,
+    "current_step": 3,
+    "type": "segmented_progress"
+  },
+  "action": {
+    "title": "Open Workflow",
+    "type": "open_url",
+    "url": "https://github.com/acme/payments-api/actions/runs/1234567890"
+  }
+}
+```
+
+#### webhook
+
+Use `webhook` when the button should trigger an action in your backend, like
+pausing a job, acknowledging an alert, or canceling a workflow. ActivitySmith
+calls the URL server-side, so the user does not leave the Lock Screen.
+
+```json
+{
+  "content_state": {
+    "title": "Reindexing product search",
+    "subtitle": "Shard 7 of 12",
+    "number_of_steps": 12,
+    "current_step": 7,
+    "type": "segmented_progress"
+  },
+  "action": {
+    "title": "Pause Reindex",
+    "type": "webhook",
+    "url": "https://ops.example.com/hooks/search/reindex/pause",
+    "method": "POST",
+    "body": {
+      "job_id": "reindex-2026-03-19",
+      "requested_by": "activitysmith"
+    }
+  }
+}
+```
+
+Notes:
+
+- Only HTTPS URLs are supported for both action types.
+- One button per Live Activity.
+- Pass `action` on an update call to set or replace the button on an active Live Activity.
 
 ## Channel Targeting
 
