@@ -15,7 +15,7 @@
         "groups": [
           {
             "group": "Get started",
-            "pages": ["index", "api-keys", "live-activity-stream", "rate-limits"]
+            "pages": ["index", "api-keys", "live-activity-stream", "inbound-webhooks", "rate-limits"]
           },
           {
             "group": "Workspace",
