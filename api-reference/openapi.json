@@ -1059,12 +1059,6 @@
                   "value": {
                     "value": "healthy"
                   }
-                },
-                "timestamp": {
-                  "value": {
-                    "value": 99.9,
-                    "timestamp": "2026-05-03T12:30:00.000Z"
-                  }
                 }
               }
             }
@@ -1087,7 +1081,7 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid key, value, or timestamp)",
+            "description": "Bad request (invalid key or value)",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/MetricError" },
@@ -1095,11 +1089,6 @@
                   "invalid_value": {
                     "value": {
                       "error": "value must be a finite number"
-                    }
-                  },
-                  "invalid_timestamp": {
-                    "value": {
-                      "error": "timestamp must be a valid ISO date"
                     }
                   }
                 }
@@ -1705,11 +1694,6 @@
         "properties": {
           "value": {
             "oneOf": [{ "type": "number" }, { "type": "string", "minLength": 1, "maxLength": 64 }]
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Optional ISO timestamp for when the metric value was measured. Defaults to the server receive time."
           }
         },
         "required": ["value"],

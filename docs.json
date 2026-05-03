@@ -73,6 +73,10 @@
             ]
           },
           {
+            "group": "Widgets Endpoints",
+            "pages": ["api-reference/endpoint/metric-value-update"]
+          },
+          {
             "group": "Resources",
             "pages": ["llms-full.txt"]
           }
