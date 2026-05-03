@@ -17,10 +17,16 @@
   ],
   "tags": [
     {
-      "name": "PushNotifications"
+      "name": "PushNotifications",
+      "description": "Send push notifications to paired devices."
     },
     {
-      "name": "LiveActivities"
+      "name": "LiveActivities",
+      "description": "Start, update, stream, and end Live Activities."
+    },
+    {
+      "name": "Metrics",
+      "description": "Update metric values shown in ActivitySmith widgets."
     }
   ],
   "paths": {
@@ -720,7 +726,12 @@
             "description": "Rate limit exceeded",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/RateLimitError" },
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/RateLimitError" },
+                    { "$ref": "#/components/schemas/LiveActivityLimitError" }
+                  ]
+                },
                 "examples": {
                   "rate_limited": {
                     "value": {
@@ -988,6 +999,151 @@
                     "value": {
                       "error": "Forbidden",
                       "message": "This API key cannot end this Live Activity"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RateLimitError" },
+                "examples": {
+                  "rate_limited": {
+                    "value": {
+                      "error": "Rate limit exceeded",
+                      "message": "Too many requests, please try again later."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metrics/{key}/value": {
+      "post": {
+        "tags": ["Metrics"],
+        "summary": "Update a widget metric value",
+        "description": "Updates the latest value for a metric configured in ActivitySmith widgets. Create the metric in the web app first, then write values using its key. Numeric metric formats accept finite numbers. String metrics accept non-empty text up to 64 characters.",
+        "operationId": "updateMetricValue",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "description": "Metric key configured in the web app. Lowercase letters, numbers, dots, underscores, and dashes are allowed.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^[a-z0-9][a-z0-9_.-]{0,63}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MetricValueUpdateRequest" },
+              "examples": {
+                "number": {
+                  "value": {
+                    "value": 42
+                  }
+                },
+                "string": {
+                  "value": {
+                    "value": "healthy"
+                  }
+                },
+                "timestamp": {
+                  "value": {
+                    "value": 99.9,
+                    "timestamp": "2026-05-03T12:30:00.000Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Metric value updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MetricValueUpdateResponse" },
+                "examples": {
+                  "number": {
+                    "value": {
+                      "metric": {
+                        "public_id": "m1p94J8hQz2wKfR7aBcD",
+                        "key": "deploy.success_rate",
+                        "label": "Success Rate",
+                        "currency_code": null,
+                        "unit": null,
+                        "unit_spacing": "none",
+                        "format": "percent",
+                        "latest_value": 99.9,
+                        "latest_value_at": "2026-05-03T12:30:00.000Z",
+                        "created_at": "2026-05-03T09:00:00.000Z",
+                        "updated_at": "2026-05-03T12:30:00.000Z"
+                      }
+                    }
+                  },
+                  "string": {
+                    "value": {
+                      "metric": {
+                        "public_id": "9xK2hYbQp0aLmN6vR3tS",
+                        "key": "prod.status",
+                        "label": "Production Status",
+                        "currency_code": null,
+                        "unit": null,
+                        "unit_spacing": "none",
+                        "format": "string",
+                        "latest_value": "healthy",
+                        "latest_value_at": "2026-05-03T12:30:00.000Z",
+                        "created_at": "2026-05-03T09:00:00.000Z",
+                        "updated_at": "2026-05-03T12:30:00.000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid key, value, or timestamp)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MetricError" },
+                "examples": {
+                  "invalid_value": {
+                    "value": {
+                      "error": "value must be a finite number"
+                    }
+                  },
+                  "invalid_timestamp": {
+                    "value": {
+                      "error": "timestamp must be a valid ISO date"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Metric not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MetricError" },
+                "examples": {
+                  "not_found": {
+                    "value": {
+                      "error": "Metric not found"
                     }
                   }
                 }
@@ -1571,6 +1727,103 @@
         },
         "required": ["success", "operation", "stream_key", "timestamp"],
         "additionalProperties": false
+      },
+      "MetricFormat": {
+        "type": "string",
+        "enum": ["number", "currency", "percent", "unit", "string"]
+      },
+      "MetricUnitSpacing": {
+        "type": "string",
+        "enum": ["none", "space"]
+      },
+      "WidgetMetric": {
+        "type": "object",
+        "description": "A metric configured for ActivitySmith widgets.",
+        "properties": {
+          "public_id": { "type": "string" },
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-z0-9][a-z0-9_.-]{0,63}$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "currency_code": {
+            "type": ["string", "null"],
+            "minLength": 3,
+            "maxLength": 3,
+            "pattern": "^[A-Z]{3}$",
+            "description": "Present when format is currency."
+          },
+          "unit": {
+            "type": ["string", "null"],
+            "maxLength": 16,
+            "description": "Present when format is unit."
+          },
+          "unit_spacing": { "$ref": "#/components/schemas/MetricUnitSpacing" },
+          "format": { "$ref": "#/components/schemas/MetricFormat" },
+          "latest_value": {
+            "type": ["number", "string", "null"],
+            "description": "Latest metric value. Numeric formats return a number. String metrics return text."
+          },
+          "latest_value_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        },
+        "required": [
+          "public_id",
+          "key",
+          "label",
+          "currency_code",
+          "unit",
+          "unit_spacing",
+          "format",
+          "latest_value",
+          "latest_value_at",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "MetricValueUpdateRequest": {
+        "type": "object",
+        "description": "Latest metric value to display in widgets.",
+        "properties": {
+          "value": {
+            "oneOf": [{ "type": "number" }, { "type": "string", "minLength": 1, "maxLength": 64 }]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Optional ISO timestamp for when the metric value was measured. Defaults to the server receive time."
+          }
+        },
+        "required": ["value"],
+        "additionalProperties": false
+      },
+      "MetricValueUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "metric": { "$ref": "#/components/schemas/WidgetMetric" }
+        },
+        "required": ["metric"],
+        "additionalProperties": false
+      },
+      "MetricError": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "required": ["error"],
+        "additionalProperties": true
       },
       "BadRequestError": {
         "type": "object",
