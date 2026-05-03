@@ -36,6 +36,38 @@
         "summary": "Send a push notification",
         "description": "Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. `media` cannot be combined with `actions`.",
         "operationId": "sendPushNotification",
+        "x-codeSamples": [
+          {
+            "lang": "javascript",
+            "label": "Node",
+            "source": "import ActivitySmith from \"activitysmith\";\n\nconst activitysmith = new ActivitySmith({\n  apiKey: process.env.ACTIVITYSMITH_API_KEY,\n});\n\nawait activitysmith.notifications.send({\n  title: \"New subscription 💸\",\n  message: \"Customer upgraded to Pro plan\",\n});"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nfrom activitysmith import ActivitySmith\n\nactivitysmith = ActivitySmith(api_key=os.environ[\"ACTIVITYSMITH_API_KEY\"])\n\nactivitysmith.notifications.send({\n    \"title\": \"New subscription 💸\",\n    \"message\": \"Customer upgraded to Pro plan\",\n})"
+          },
+          {
+            "lang": "go",
+            "label": "Go",
+            "source": "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\")\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{\n\t\tTitle:   \"New subscription 💸\",\n\t\tMessage: \"Customer upgraded to Pro plan\",\n\t})\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n\nuse ActivitySmith\\ActivitySmith;\n\n$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);\n\n$activitysmith->notifications->send([\n    'title' => 'New subscription 💸',\n    'message' => 'Customer upgraded to Pro plan',\n]);"
+          },
+          {
+            "lang": "ruby",
+            "label": "Ruby",
+            "source": "require \"activitysmith\"\n\nactivitysmith = ActivitySmith::Client.new(api_key: ENV.fetch(\"ACTIVITYSMITH_API_KEY\"))\n\nactivitysmith.notifications.send(\n  title: \"New subscription 💸\",\n  message: \"Customer upgraded to Pro plan\"\n)"
+          },
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -X POST \"https://activitysmith.com/api/push-notification\" \\\n  -H \"Authorization: Bearer $ACTIVITYSMITH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"title\": \"New subscription 💸\",\n    \"message\": \"Customer upgraded to Pro plan\"\n  }'"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -227,6 +259,38 @@
         "summary": "Send a stream update",
         "description": "Use this endpoint when you want the easiest, stateless way to trigger Live Activities. You do not need to store activity_id or manage the Live Activity lifecycle yourself. Send the latest state for a stable stream_key and ActivitySmith will handle the rest for you: if there is no Live Activity yet, it starts one; if there is already one for this stream, it updates it. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.",
         "operationId": "reconcileLiveActivityStream",
+        "x-codeSamples": [
+          {
+            "lang": "javascript",
+            "label": "Node",
+            "source": "import ActivitySmith from \"activitysmith\";\n\nconst activitysmith = new ActivitySmith({\n  apiKey: process.env.ACTIVITYSMITH_API_KEY,\n});\n\nawait activitysmith.liveActivities.stream(\"search-reindex\", {\n  content_state: {\n    title: \"Search Reindex\",\n    subtitle: \"catalog-v2\",\n    type: \"progress\",\n    percentage: 42,\n  },\n});"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nfrom activitysmith import ActivitySmith\n\nactivitysmith = ActivitySmith(api_key=os.environ[\"ACTIVITYSMITH_API_KEY\"])\n\nactivitysmith.live_activities.stream(\n    \"search-reindex\",\n    {\n        \"content_state\": {\n            \"title\": \"Search Reindex\",\n            \"subtitle\": \"catalog-v2\",\n            \"type\": \"progress\",\n            \"percentage\": 42,\n        },\n    },\n)"
+          },
+          {
+            "lang": "go",
+            "label": "Go",
+            "source": "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\")\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.LiveActivities.Stream(\"search-reindex\", activitysmithsdk.LiveActivityStreamInput{\n\t\tTitle:      \"Search Reindex\",\n\t\tSubtitle:   \"catalog-v2\",\n\t\tType:       \"progress\",\n\t\tPercentage: 42,\n\t})\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n\nuse ActivitySmith\\ActivitySmith;\n\n$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);\n\n$activitysmith->liveActivities->stream('search-reindex', [\n    'content_state' => [\n        'title' => 'Search Reindex',\n        'subtitle' => 'catalog-v2',\n        'type' => 'progress',\n        'percentage' => 42,\n    ],\n]);"
+          },
+          {
+            "lang": "ruby",
+            "label": "Ruby",
+            "source": "require \"activitysmith\"\n\nactivitysmith = ActivitySmith::Client.new(api_key: ENV.fetch(\"ACTIVITYSMITH_API_KEY\"))\n\nactivitysmith.live_activities.stream(\n  \"search-reindex\",\n  content_state: {\n    title: \"Search Reindex\",\n    subtitle: \"catalog-v2\",\n    type: \"progress\",\n    percentage: 42\n  }\n)"
+          },
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -X PUT \"https://activitysmith.com/api/live-activity/stream/search-reindex\" \\\n  -H \"Authorization: Bearer $ACTIVITYSMITH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"content_state\": {\n      \"title\": \"Search Reindex\",\n      \"subtitle\": \"catalog-v2\",\n      \"type\": \"progress\",\n      \"percentage\": 42\n    }\n  }'"
+          }
+        ],
         "parameters": [
           {
             "name": "stream_key",
@@ -423,6 +487,38 @@
         "summary": "End a stream",
         "description": "Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.",
         "operationId": "endLiveActivityStream",
+        "x-codeSamples": [
+          {
+            "lang": "javascript",
+            "label": "Node",
+            "source": "import ActivitySmith from \"activitysmith\";\n\nconst activitysmith = new ActivitySmith({\n  apiKey: process.env.ACTIVITYSMITH_API_KEY,\n});\n\nawait activitysmith.liveActivities.endStream(\"prod-web-1\", {\n  content_state: {\n    title: \"Server Health\",\n    subtitle: \"prod-web-1\",\n    type: \"metrics\",\n    metrics: [\n      { label: \"CPU\", value: 7, unit: \"%\" },\n      { label: \"MEM\", value: 38, unit: \"%\" },\n    ],\n  },\n});"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nfrom activitysmith import ActivitySmith\n\nactivitysmith = ActivitySmith(api_key=os.environ[\"ACTIVITYSMITH_API_KEY\"])\n\nactivitysmith.live_activities.end_stream(\n    \"prod-web-1\",\n    {\n        \"content_state\": {\n            \"title\": \"Server Health\",\n            \"subtitle\": \"prod-web-1\",\n            \"type\": \"metrics\",\n            \"metrics\": [\n                {\"label\": \"CPU\", \"value\": 7, \"unit\": \"%\"},\n                {\"label\": \"MEM\", \"value\": 38, \"unit\": \"%\"},\n            ],\n        },\n    },\n)"
+          },
+          {
+            "lang": "go",
+            "label": "Go",
+            "source": "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\n\t\"github.com/ActivitySmithHQ/activitysmith-go/generated\"\n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\")\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.LiveActivities.EndStream(\"prod-web-1\", activitysmithsdk.LiveActivityStreamEndInput{\n\t\tTitle:    \"Server Health\",\n\t\tSubtitle: \"prod-web-1\",\n\t\tType:     \"metrics\",\n\t\tMetrics: []generated.ActivityMetric{\n\t\t\t{Label: \"CPU\", Value: 7, Unit: generated.PtrString(\"%\")},\n\t\t\t{Label: \"MEM\", Value: 38, Unit: generated.PtrString(\"%\")},\n\t\t},\n\t})\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n\nuse ActivitySmith\\ActivitySmith;\n\n$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);\n\n$activitysmith->liveActivities->endStream('prod-web-1', [\n    'content_state' => [\n        'title' => 'Server Health',\n        'subtitle' => 'prod-web-1',\n        'type' => 'metrics',\n        'metrics' => [\n            ['label' => 'CPU', 'value' => 7, 'unit' => '%'],\n            ['label' => 'MEM', 'value' => 38, 'unit' => '%'],\n        ],\n    ],\n]);"
+          },
+          {
+            "lang": "ruby",
+            "label": "Ruby",
+            "source": "require \"activitysmith\"\n\nactivitysmith = ActivitySmith::Client.new(api_key: ENV.fetch(\"ACTIVITYSMITH_API_KEY\"))\n\nactivitysmith.live_activities.end_stream(\n  \"prod-web-1\",\n  {\n    content_state: {\n      title: \"Server Health\",\n      subtitle: \"prod-web-1\",\n      type: \"metrics\",\n      metrics: [\n        { label: \"CPU\", value: 7, unit: \"%\" },\n        { label: \"MEM\", value: 38, unit: \"%\" }\n      ]\n    }\n  }\n)"
+          },
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -X DELETE \"https://activitysmith.com/api/live-activity/stream/prod-web-1\" \\\n  -H \"Authorization: Bearer $ACTIVITYSMITH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"content_state\": {\n      \"title\": \"Server Health\",\n      \"subtitle\": \"prod-web-1\",\n      \"type\": \"metrics\",\n      \"metrics\": [\n        { \"label\": \"CPU\", \"value\": 7, \"unit\": \"%\" },\n        { \"label\": \"MEM\", \"value\": 38, \"unit\": \"%\" }\n      ]\n    }\n  }'"
+          }
+        ],
         "parameters": [
           {
             "name": "stream_key",
@@ -558,6 +654,38 @@
         "summary": "Start a Live Activity",
         "description": "Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.",
         "operationId": "startLiveActivity",
+        "x-codeSamples": [
+          {
+            "lang": "javascript",
+            "label": "Node",
+            "source": "import ActivitySmith from \"activitysmith\";\n\nconst activitysmith = new ActivitySmith({\n  apiKey: process.env.ACTIVITYSMITH_API_KEY,\n});\n\nconst start = await activitysmith.liveActivities.start({\n  content_state: {\n    title: \"Nightly database backup\",\n    subtitle: \"create snapshot\",\n    number_of_steps: 3,\n    current_step: 1,\n    type: \"segmented_progress\",\n    color: \"yellow\",\n  },\n});\n\nconst activityId = start.activity_id;"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nfrom activitysmith import ActivitySmith\n\nactivitysmith = ActivitySmith(api_key=os.environ[\"ACTIVITYSMITH_API_KEY\"])\n\nstart = activitysmith.live_activities.start({\n    \"content_state\": {\n        \"title\": \"Nightly database backup\",\n        \"subtitle\": \"create snapshot\",\n        \"number_of_steps\": 3,\n        \"current_step\": 1,\n        \"type\": \"segmented_progress\",\n        \"color\": \"yellow\",\n    },\n})\n\nactivity_id = start.activity_id"
+          },
+          {
+            "lang": "go",
+            "label": "Go",
+            "source": "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\")\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\tstart, err := activitysmith.LiveActivities.Start(activitysmithsdk.LiveActivityStartInput{\n\t\tTitle:         \"Nightly database backup\",\n\t\tSubtitle:      \"create snapshot\",\n\t\tNumberOfSteps: 3,\n\t\tCurrentStep:   1,\n\t\tType:          \"segmented_progress\",\n\t\tColor:         \"yellow\",\n\t})\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\tactivityID := start.GetActivityId()\n\t_ = activityID\n}"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n\nuse ActivitySmith\\ActivitySmith;\n\n$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);\n\n$start = $activitysmith->liveActivities->start([\n    'content_state' => [\n        'title' => 'Nightly database backup',\n        'subtitle' => 'create snapshot',\n        'number_of_steps' => 3,\n        'current_step' => 1,\n        'type' => 'segmented_progress',\n        'color' => 'yellow',\n    ],\n]);\n\n$activityId = $start->getActivityId();"
+          },
+          {
+            "lang": "ruby",
+            "label": "Ruby",
+            "source": "require \"activitysmith\"\n\nactivitysmith = ActivitySmith::Client.new(api_key: ENV.fetch(\"ACTIVITYSMITH_API_KEY\"))\n\nstart = activitysmith.live_activities.start(\n  content_state: {\n    title: \"Nightly database backup\",\n    subtitle: \"create snapshot\",\n    number_of_steps: 3,\n    current_step: 1,\n    type: \"segmented_progress\",\n    color: \"yellow\"\n  }\n)\n\nactivity_id = start.activity_id"
+          },
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -X POST \"https://activitysmith.com/api/live-activity/start\" \\\n  -H \"Authorization: Bearer $ACTIVITYSMITH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"content_state\": {\n      \"title\": \"Nightly database backup\",\n      \"subtitle\": \"create snapshot\",\n      \"number_of_steps\": 3,\n      \"current_step\": 1,\n      \"type\": \"segmented_progress\",\n      \"color\": \"yellow\"\n    }\n  }'"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -760,6 +888,38 @@
         "summary": "Update a Live Activity",
         "description": "Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.",
         "operationId": "updateLiveActivity",
+        "x-codeSamples": [
+          {
+            "lang": "javascript",
+            "label": "Node",
+            "source": "import ActivitySmith from \"activitysmith\";\n\nconst activitysmith = new ActivitySmith({\n  apiKey: process.env.ACTIVITYSMITH_API_KEY,\n});\n\nawait activitysmith.liveActivities.update({\n  activity_id: \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n  content_state: {\n    title: \"Nightly database backup\",\n    subtitle: \"upload archive\",\n    number_of_steps: 3,\n    current_step: 2,\n  },\n});"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nfrom activitysmith import ActivitySmith\n\nactivitysmith = ActivitySmith(api_key=os.environ[\"ACTIVITYSMITH_API_KEY\"])\n\nactivitysmith.live_activities.update({\n    \"activity_id\": \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n    \"content_state\": {\n        \"title\": \"Nightly database backup\",\n        \"subtitle\": \"upload archive\",\n        \"number_of_steps\": 3,\n        \"current_step\": 2,\n    },\n})"
+          },
+          {
+            "lang": "go",
+            "label": "Go",
+            "source": "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\")\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.LiveActivities.Update(activitysmithsdk.LiveActivityUpdateInput{\n\t\tActivityID:    \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n\t\tTitle:         \"Nightly database backup\",\n\t\tSubtitle:      \"upload archive\",\n\t\tNumberOfSteps: 3,\n\t\tCurrentStep:   2,\n\t})\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n\nuse ActivitySmith\\ActivitySmith;\n\n$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);\n\n$activitysmith->liveActivities->update([\n    'activity_id' => 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',\n    'content_state' => [\n        'title' => 'Nightly database backup',\n        'subtitle' => 'upload archive',\n        'number_of_steps' => 3,\n        'current_step' => 2,\n    ],\n]);"
+          },
+          {
+            "lang": "ruby",
+            "label": "Ruby",
+            "source": "require \"activitysmith\"\n\nactivitysmith = ActivitySmith::Client.new(api_key: ENV.fetch(\"ACTIVITYSMITH_API_KEY\"))\n\nactivitysmith.live_activities.update(\n  activity_id: \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n  content_state: {\n    title: \"Nightly database backup\",\n    subtitle: \"upload archive\",\n    number_of_steps: 3,\n    current_step: 2\n  }\n)"
+          },
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -X POST \"https://activitysmith.com/api/live-activity/update\" \\\n  -H \"Authorization: Bearer $ACTIVITYSMITH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"activity_id\": \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n    \"content_state\": {\n      \"title\": \"Nightly database backup\",\n      \"subtitle\": \"upload archive\",\n      \"number_of_steps\": 3,\n      \"current_step\": 2\n    }\n  }'"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -896,6 +1056,38 @@
         "summary": "End a Live Activity",
         "description": "Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.",
         "operationId": "endLiveActivity",
+        "x-codeSamples": [
+          {
+            "lang": "javascript",
+            "label": "Node",
+            "source": "import ActivitySmith from \"activitysmith\";\n\nconst activitysmith = new ActivitySmith({\n  apiKey: process.env.ACTIVITYSMITH_API_KEY,\n});\n\nawait activitysmith.liveActivities.end({\n  activity_id: \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n  content_state: {\n    title: \"Nightly database backup\",\n    subtitle: \"verify restore\",\n    number_of_steps: 3,\n    current_step: 3,\n    auto_dismiss_minutes: 2,\n  },\n});"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nfrom activitysmith import ActivitySmith\n\nactivitysmith = ActivitySmith(api_key=os.environ[\"ACTIVITYSMITH_API_KEY\"])\n\nactivitysmith.live_activities.end({\n    \"activity_id\": \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n    \"content_state\": {\n        \"title\": \"Nightly database backup\",\n        \"subtitle\": \"verify restore\",\n        \"number_of_steps\": 3,\n        \"current_step\": 3,\n        \"auto_dismiss_minutes\": 2,\n    },\n})"
+          },
+          {
+            "lang": "go",
+            "label": "Go",
+            "source": "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\")\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.LiveActivities.End(activitysmithsdk.LiveActivityEndInput{\n\t\tActivityID:         \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n\t\tTitle:              \"Nightly database backup\",\n\t\tSubtitle:           \"verify restore\",\n\t\tNumberOfSteps:      3,\n\t\tCurrentStep:        3,\n\t\tAutoDismissMinutes: 2,\n\t})\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n\nuse ActivitySmith\\ActivitySmith;\n\n$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);\n\n$activitysmith->liveActivities->end([\n    'activity_id' => 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',\n    'content_state' => [\n        'title' => 'Nightly database backup',\n        'subtitle' => 'verify restore',\n        'number_of_steps' => 3,\n        'current_step' => 3,\n        'auto_dismiss_minutes' => 2,\n    ],\n]);"
+          },
+          {
+            "lang": "ruby",
+            "label": "Ruby",
+            "source": "require \"activitysmith\"\n\nactivitysmith = ActivitySmith::Client.new(api_key: ENV.fetch(\"ACTIVITYSMITH_API_KEY\"))\n\nactivitysmith.live_activities.end(\n  activity_id: \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n  content_state: {\n    title: \"Nightly database backup\",\n    subtitle: \"verify restore\",\n    number_of_steps: 3,\n    current_step: 3,\n    auto_dismiss_minutes: 2\n  }\n)"
+          },
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -X POST \"https://activitysmith.com/api/live-activity/end\" \\\n  -H \"Authorization: Bearer $ACTIVITYSMITH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"activity_id\": \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n    \"content_state\": {\n      \"title\": \"Nightly database backup\",\n      \"subtitle\": \"verify restore\",\n      \"number_of_steps\": 3,\n      \"current_step\": 3,\n      \"auto_dismiss_minutes\": 2\n    }\n  }'"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1030,6 +1222,38 @@
         "summary": "Update a widget metric value",
         "description": "Updates the latest value for a metric displayed in ActivitySmith widgets. Create the metric in the web app first, then update its value using the key.",
         "operationId": "updateMetricValue",
+        "x-codeSamples": [
+          {
+            "lang": "javascript",
+            "label": "Node",
+            "source": "import ActivitySmith from \"activitysmith\";\n\nconst activitysmith = new ActivitySmith({\n  apiKey: process.env.ACTIVITYSMITH_API_KEY,\n});\n\nawait activitysmith.metrics.update(\"deploy.success_rate\", 99.9);"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nfrom activitysmith import ActivitySmith\n\nactivitysmith = ActivitySmith(api_key=os.environ[\"ACTIVITYSMITH_API_KEY\"])\n\nactivitysmith.metrics.update(\"deploy.success_rate\", 99.9)"
+          },
+          {
+            "lang": "go",
+            "label": "Go",
+            "source": "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\")\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.Metrics.Update(\"deploy.success_rate\", 99.9)\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n\nuse ActivitySmith\\ActivitySmith;\n\n$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);\n\n$activitysmith->metrics->update('deploy.success_rate', 99.9);"
+          },
+          {
+            "lang": "ruby",
+            "label": "Ruby",
+            "source": "require \"activitysmith\"\n\nactivitysmith = ActivitySmith::Client.new(api_key: ENV.fetch(\"ACTIVITYSMITH_API_KEY\"))\n\nactivitysmith.metrics.update(\"deploy.success_rate\", 99.9)"
+          },
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -X POST \"https://activitysmith.com/api/metrics/deploy.success_rate/value\" \\\n  -H \"Authorization: Bearer $ACTIVITYSMITH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"value\": 99.9 }'"
+          }
+        ],
         "parameters": [
           {
             "name": "key",

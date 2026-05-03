@@ -118,6 +118,11 @@
   "contextual": {
     "options": ["copy", "view", "chatgpt", "claude", "cursor"]
   },
+  "api": {
+    "examples": {
+      "autogenerate": false
+    }
+  },
   "footer": {
     "socials": {
       "x": "https://x.com/ActivitySmithHQ",
