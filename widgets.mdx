@@ -1,0 +1,104 @@
+---
+title: "Widgets"
+description: "ActivitySmith lets you display any value on your Lock Screen with widgets - SaaS metrics, revenue, signups, uptime, habits, or anything else you want to track."
+og:title: "Widgets | ActivitySmith"
+og:description: "Track any value on your Lock Screen with ActivitySmith widgets."
+og:image: "https://cdn.activitysmith.com/changelog/lock-screen-widgets.png"
+---
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/lock-screen-widgets.png"
+  alt="ActivitySmith Lock Screen widgets"
+/>
+
+## How It Works
+
+1. Create a metric in the <a href="https://activitysmith.com/app/widgets" target="_blank" rel="noopener noreferrer">web app</a>.
+2. Update the value using API anytime it changes.
+3. Add the widget to your iPhone Lock Screen.
+4. The widget fetches the latest value about every 15 minutes. iOS manages the refresh schedule.
+
+When creating a metric, you can choose the format: number, currency, percent, unit, or string.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/create-widget-metric.png"
+  alt="Create a widget metric in ActivitySmith"
+/>
+
+## Updating Metric Value
+
+Use the metric key when sending updates. Values can be numbers or strings.
+
+<CodeGroup>
+
+```js Node
+import ActivitySmith from "activitysmith";
+
+const activitysmith = new ActivitySmith({
+  apiKey: process.env.ACTIVITYSMITH_API_KEY,
+});
+
+await activitysmith.metrics.update("deploy.success_rate", 99.9);
+```
+
+```python Python
+import os
+from activitysmith import ActivitySmith
+
+activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+activitysmith.metrics.update("deploy.success_rate", 99.9)
+```
+
+```go Go
+package main
+
+import (
+	"log"
+
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
+)
+
+func main() {
+	activitysmith, err := activitysmithsdk.New("YOUR-API-KEY")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = activitysmith.Metrics.Update("deploy.success_rate", 99.9)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+```php PHP
+<?php
+
+use ActivitySmith\ActivitySmith;
+
+$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+$activitysmith->metrics->update('deploy.success_rate', 99.9);
+```
+
+```ruby Ruby
+require "activitysmith"
+
+activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+activitysmith.metrics.update("deploy.success_rate", 99.9)
+```
+
+```bash cURL
+curl -X POST "https://activitysmith.com/api/metrics/deploy.success_rate/value" \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "value": 99.9 }'
+```
+
+</CodeGroup>
+
+For the full API reference, see [Update Metric Value](/api-reference/endpoint/metric-value-update).
