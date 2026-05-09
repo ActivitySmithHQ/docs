@@ -1665,11 +1665,14 @@
         "properties": {
           "label": { "type": "string", "minLength": 1 },
           "value": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 100
+            "oneOf": [{ "type": "number", "minimum": 0 }, { "type": "string", "minLength": 1, "maxLength": 64 }]
           },
-          "unit": { "type": "string" }
+          "unit": { "type": "string" },
+          "color": {
+            "type": "string",
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "description": "Optional per-metric accent color for metrics and stats activities."
+          }
         },
         "additionalProperties": false
       },
