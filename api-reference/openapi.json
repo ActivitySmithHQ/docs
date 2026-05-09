@@ -1922,6 +1922,11 @@
         "properties": {
           "value": {
             "oneOf": [{ "type": "number" }, { "type": "string", "minLength": 1, "maxLength": 64 }]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Optional ISO timestamp for when the metric value was measured. Defaults to the server receive time."
           }
         },
         "required": ["value"],
