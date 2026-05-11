@@ -1,9 +1,9 @@
 ---
 title: "CLI"
-description: "Use the ActivitySmith CLI to send push notifications and manage Live Activity progress from shell scripts, CI pipelines, and terminal workflows."
+description: "Use the ActivitySmith CLI to send push notifications, update widgets, and manage Live Activities from shell scripts, CI pipelines, and terminal workflows."
 icon: "terminal"
 og:title: "CLI | ActivitySmith"
-og:description: "Use the ActivitySmith CLI to send push notifications and manage Live Activity progress from shell scripts, CI pipelines, and terminal workflows."
+og:description: "Use the ActivitySmith CLI to send push notifications, update widgets, and manage Live Activities from shell scripts, CI pipelines, and terminal workflows."
 ---
 
 import InstallationCLI from "/snippets/installation/cli.mdx";
@@ -129,11 +129,16 @@ activitysmith push \
 ## Live Activities
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png" alt="Metrics Live Activity screenshot" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png"
+    alt="Metrics Live Activity screenshot"
+    width="680"
+  />
 </p>
 
-There are three types of Live Activities:
+There are four types of Live Activities:
 
+- `stats`: best for business or product stats like revenue, number of users, conversion, uptime, or any metric set you want visible at a glance
 - `metrics`: best for live operational stats like server CPU and memory, queue depth, or replica lag
 - `segmented_progress`: best for step-based workflows like deployments, backups, and ETL pipelines
 - `progress`: best for continuous jobs like uploads, reindexes, and long-running migrations tracked as a percentage
@@ -160,10 +165,37 @@ such as a server, deployment, build pipeline, cron job, or charging session.
 This is especially useful for cron jobs and other scheduled tasks where you do
 not want to store `activity_id` between runs.
 
+#### Stats
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/stats-live-activity.png" alt="Stats stream example" width="680" />
+</p>
+
+```bash
+activitysmith activity stream sales-hourly \
+  --content-state '{
+    "title": "Sales",
+    "subtitle": "last hour",
+    "type": "stats",
+    "metrics": [
+      { "label": "Revenue", "value": "$2430", "color": "blue" },
+      { "label": "Orders", "value": "37", "color": "green" },
+      { "label": "Conversion", "value": "4.8%", "color": "magenta" },
+      { "label": "Avg Order", "value": "$65.68", "color": "yellow" },
+      { "label": "Refunds", "value": "$84", "color": "red" },
+      { "label": "New Buyers", "value": "18", "color": "cyan" }
+    ]
+  }'
+```
+
 #### Metrics
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png" alt="Metrics stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
+    alt="Metrics stream example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -182,7 +214,11 @@ activitysmith activity stream prod-web-1 \
 #### Segmented progress
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Segmented progress stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/update-live-activity.png"
+    alt="Segmented progress stream example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -199,7 +235,11 @@ activitysmith activity stream nightly-backup \
 #### Progress
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity.png" alt="Progress stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity.png"
+    alt="Progress stream example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -255,8 +295,83 @@ Use these commands when you want to manage the Live Activity lifecycle yourself:
 3. Run `activitysmith activity update ...` as progress changes.
 4. Run `activitysmith activity end ...` when the work is finished.
 
-You can use `--content-state <json>` for the examples below, or build the same
-payload with flags as documented in `Content State Options`.
+Use `--content-state <json>` for the examples below.
+
+### Stats
+
+Keep your key numbers on your Lock Screen. `stats` fits up to 8 labeled values,
+such as revenue, orders, conversion, uptime, or any other business metric you
+want visible at a glance. Each metric can use a formatted string or number as
+its `value`. Add `color` to a metric to show an accent dot next to its label;
+omit `color` to show the label without a dot.
+
+#### Start
+
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/stats-live-activity.png"
+    alt="Stats Live Activity with sales revenue, orders, conversion, and average order value"
+    width="680"
+  />
+</p>
+
+```bash
+activitysmith activity start \
+  --content-state '{
+    "title": "Sales",
+    "subtitle": "last hour",
+    "type": "stats",
+    "metrics": [
+      { "label": "Revenue", "value": "$2430", "color": "blue" },
+      { "label": "Orders", "value": "37", "color": "green" },
+      { "label": "Conversion", "value": "4.8%", "color": "magenta" },
+      { "label": "Avg Order", "value": "$65.68", "color": "yellow" },
+      { "label": "Refunds", "value": "$84", "color": "red" },
+      { "label": "New Buyers", "value": "18", "color": "cyan" }
+    ]
+  }'
+```
+
+#### Update
+
+```bash
+activitysmith activity update \
+  --activity-id "<activityId>" \
+  --content-state '{
+    "title": "Sales",
+    "subtitle": "last hour",
+    "type": "stats",
+    "metrics": [
+      { "label": "Revenue", "value": "$3180", "color": "blue" },
+      { "label": "Orders", "value": "51", "color": "green" },
+      { "label": "Conversion", "value": "5.2%", "color": "magenta" },
+      { "label": "Avg Order", "value": "$62.35", "color": "yellow" },
+      { "label": "Refunds", "value": "$126", "color": "red" },
+      { "label": "New Buyers", "value": "24", "color": "cyan" }
+    ]
+  }'
+```
+
+#### End
+
+```bash
+activitysmith activity end \
+  --activity-id "<activityId>" \
+  --content-state '{
+    "title": "Sales",
+    "subtitle": "last hour",
+    "type": "stats",
+    "metrics": [
+      { "label": "Revenue", "value": "$3460", "color": "blue" },
+      { "label": "Orders", "value": "58", "color": "green" },
+      { "label": "Conversion", "value": "5.4%", "color": "magenta" },
+      { "label": "Avg Order", "value": "$59.66", "color": "yellow" },
+      { "label": "Refunds", "value": "$92", "color": "red" },
+      { "label": "New Buyers", "value": "31", "color": "cyan" }
+    ],
+    "autoDismissMinutes": 2
+  }'
+```
 
 ### Metrics Type
 
@@ -266,7 +381,11 @@ server health, queue pressure, or database load.
 #### Start
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png" alt="Metrics start example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
+    alt="Metrics start example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -285,7 +404,11 @@ activitysmith activity start \
 #### Update
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-update.png" alt="Metrics update example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-update.png"
+    alt="Metrics update example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -305,7 +428,11 @@ activitysmith activity update \
 #### End
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-end.png" alt="Metrics end example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-end.png"
+    alt="Metrics end example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -333,7 +460,11 @@ workflow changes.
 #### Start
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Segmented progress start example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/start-live-activity.png"
+    alt="Segmented progress start example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -351,7 +482,11 @@ activitysmith activity start \
 #### Update
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Segmented progress update example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/update-live-activity.png"
+    alt="Segmented progress update example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -368,7 +503,11 @@ activitysmith activity update \
 #### End
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="Segmented progress end example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/end-live-activity.png"
+    alt="Segmented progress end example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -392,7 +531,11 @@ numeric range is the clearest signal.
 #### Start
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-start.png" alt="Progress start example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity-start.png"
+    alt="Progress start example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -408,7 +551,11 @@ activitysmith activity start \
 #### Update
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-update.png" alt="Progress update example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity-update.png"
+    alt="Progress update example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -424,7 +571,11 @@ activitysmith activity update \
 #### End
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-end.png" alt="Progress end example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity-end.png"
+    alt="Progress end example"
+    width="680"
+  />
 </p>
 
 ```bash
@@ -442,33 +593,45 @@ activitysmith activity end \
 
 Just like Actionable Push Notifications, Live Activities can have a button that opens provided URL in a browser or triggers a webhook. Webhooks are executed by the ActivitySmith backend.
 
-<img
-  className="image image-full-width"
-  src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1"
-  alt="Live Activity with action"
-/>
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png"
+    alt="Metrics Live Activity with action"
+    width="680"
+  />
+</p>
 
 #### Open URL action
 
-```bash CLI
+```bash
 activitysmith activity start \
   --content-state '{
-    "title": "Deploying payments-api",
-    "subtitle": "Running database migrations",
-    "numberOfSteps": 5,
-    "currentStep": 3,
-    "type": "segmented_progress"
+    "title": "Server Health",
+    "subtitle": "prod-web-1",
+    "type": "metrics",
+    "metrics": [
+      { "label": "CPU", "value": 76, "unit": "%" },
+      { "label": "MEM", "value": 52, "unit": "%" }
+    ]
   }' \
   --action '{
-    "title": "Open Workflow",
+    "title": "Open Dashboard",
     "type": "open_url",
-    "url": "https://github.com/acme/payments-api/actions/runs/1234567890"
+    "url": "https://ops.example.com/servers/prod-web-1"
   }'
 ```
 
 #### Webhook action
 
-```bash CLI
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1"
+    alt="Live Activity with action"
+    width="680"
+  />
+</p>
+
+```bash
 activitysmith activity update \
   --activity-id "<activityId>" \
   --content-state '{
@@ -489,43 +652,6 @@ activitysmith activity update \
   }'
 ```
 
-## Content State
-
-For `activity start`, `activity update`, and `activity end`, you can pass content state in two ways:
-
-- JSON: `--content-state '{...}'` or `--content-state-file path/to/payload.json`
-- Flags: `--title`, `--subtitle`, `--type`, `--number-of-steps`, `--current-step`, `--percentage`, `--value`, `--upper-limit`, `--color`, `--step-color`, `--auto-dismiss-minutes`
-
-Live Activity action options:
-
-- `--action '{...}'`
-- `--action-file path/to/action.json`
-
-Use camelCase keys in JSON, for example `numberOfSteps`, `currentStep`, and `autoDismissMinutes`.
-When the payload gets long, format the JSON across multiple lines or move it to `--content-state-file`.
-
-### Required Fields
-
-- `activity start`: `--title`, `--type`, plus either `--number-of-steps` and `--current-step`, or `--percentage`, or `--value` with `--upper-limit`
-- `activity update`: `--title`, plus either `--current-step`, or `--percentage`, or `--value` with `--upper-limit`
-- `activity end`: `--title`, plus either `--current-step`, or `--percentage`, or `--value` with `--upper-limit`
-
-### Field Reference
-
-| Field                | Description                                                                                     |
-| -------------------- | ----------------------------------------------------------------------------------------------- |
-| `title`              | Primary label shown in the Live Activity.                                                       |
-| `subtitle`           | Secondary label shown in the Live Activity.                                                     |
-| `type`               | Layout type: `segmented_progress` or `progress`.                                                |
-| `numberOfSteps`      | Total steps in a segmented progress flow.                                                       |
-| `currentStep`        | Current step index for segmented progress, starting at `1`.                                     |
-| `percentage`         | Progress value from `0` to `100`.                                                               |
-| `value`              | Current numeric progress value when you want a custom range.                                    |
-| `upperLimit`         | Maximum numeric progress value used with `value`.                                               |
-| `color`              | Accent color (`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`). |
-| `stepColor`          | Segment color for `segmented_progress` (same values as `color`).                                |
-| `autoDismissMinutes` | Minutes before dismissal after ending. Default `3`, use `0` for immediate dismissal.            |
-
 ## Channels
 
 Use `--channels` to target specific channels for `push` and `activity start`.
@@ -544,6 +670,30 @@ activitysmith activity start \
   --number-of-steps 4 \
   --current-step 1 \
   --channels "devs,ops"
+```
+
+## Widgets
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/lock-screen-widgets.png" alt="Lock screen widgets" width="680" />
+</p>
+
+ActivitySmith lets you display any value on your Lock Screen with widgets - SaaS metrics, revenue, signups, uptime, habits, or anything else you want to track. Create a metric in the <a href="https://activitysmith.com/app/widgets" target="_blank" rel="noopener noreferrer">web app</a>, then update the metric value using our API, add a widget to your lock screen and it will fetch the latest update automatically.
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/create-widget-metric.png" alt="Create widget metric" width="680" />
+</p>
+
+Use the metric key to update its value.
+
+```bash
+activitysmith metrics update deploy.success_rate 99.9
+```
+
+String metric values work too.
+
+```bash
+activitysmith metrics update prod.status healthy
 ```
 
 ## Output
