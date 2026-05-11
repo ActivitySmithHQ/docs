@@ -157,11 +157,16 @@ if err != nil {
 ## Live Activities
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png" alt="Metrics Live Activity screenshot" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png"
+    alt="Metrics Live Activity screenshot"
+    width="680"
+  />
 </p>
 
-There are three types of Live Activities:
+There are four types of Live Activities:
 
+- `stats`: best for business or product stats like revenue, number of users, conversion, uptime, or any metric set you want visible at a glance
 - `metrics`: best for live operational stats like server CPU and memory, queue depth, or replica lag
 - `segmented_progress`: best for step-based workflows like deployments, backups, and ETL pipelines
 - `progress`: best for continuous jobs like uploads, reindexes, and long-running migrations tracked as a percentage
@@ -188,10 +193,41 @@ such as a server, deployment, build pipeline, cron job, or charging session.
 This is especially useful for cron jobs and other scheduled tasks where you do
 not want to store `activityID` between runs.
 
+#### Stats
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/stats-live-activity.png" alt="Stats stream example" width="680" />
+</p>
+
+```go
+streamInput := activitysmithsdk.LiveActivityStreamInput{
+	Title:    "Sales",
+	Subtitle: "last hour",
+	Type:     "stats",
+	Metrics: []generated.ActivityMetric{
+		{Label: "Revenue", Value: "$2430", Color: generated.PtrString("blue")},
+		{Label: "Orders", Value: "37", Color: generated.PtrString("green")},
+		{Label: "Conversion", Value: "4.8%", Color: generated.PtrString("magenta")},
+		{Label: "Avg Order", Value: "$65.68", Color: generated.PtrString("yellow")},
+		{Label: "Refunds", Value: "$84", Color: generated.PtrString("red")},
+		{Label: "New Buyers", Value: "18", Color: generated.PtrString("cyan")},
+	},
+}
+
+status, err := activitysmith.LiveActivities.Stream("sales-hourly", streamInput)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
 #### Metrics
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png" alt="Metrics stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
+    alt="Metrics stream example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -214,7 +250,11 @@ if err != nil {
 #### Segmented progress
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Segmented progress stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/update-live-activity.png"
+    alt="Segmented progress stream example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -235,7 +275,11 @@ if err != nil {
 #### Progress
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity.png" alt="Progress stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity.png"
+    alt="Progress stream example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -298,6 +342,96 @@ Use these methods when you want to manage the Live Activity lifecycle yourself:
 3. Call `activitysmith.LiveActivities.Update(...)` as progress changes.
 4. Call `activitysmith.LiveActivities.End(...)` when the work is finished.
 
+### Stats Type
+
+Keep your key numbers on your Lock Screen. `stats` fits up to 8 labeled values,
+such as revenue, orders, conversion, uptime, or any other business metric you
+want visible at a glance. Each metric can use a formatted string or number as
+its `Value`. Add `Color` to a metric to show an accent dot next to its label;
+omit `Color` to show the label without a dot.
+
+#### Start
+
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/stats-live-activity.png"
+    alt="Stats Live Activity with sales revenue, orders, conversion, and average order value"
+    width="680"
+  />
+</p>
+
+```go
+startInput := activitysmithsdk.LiveActivityStartInput{
+	Title:    "Sales",
+	Subtitle: "last hour",
+	Type:     "stats",
+	Metrics: []generated.ActivityMetric{
+		{Label: "Revenue", Value: "$2430", Color: generated.PtrString("blue")},
+		{Label: "Orders", Value: "37", Color: generated.PtrString("green")},
+		{Label: "Conversion", Value: "4.8%", Color: generated.PtrString("magenta")},
+		{Label: "Avg Order", Value: "$65.68", Color: generated.PtrString("yellow")},
+		{Label: "Refunds", Value: "$84", Color: generated.PtrString("red")},
+		{Label: "New Buyers", Value: "18", Color: generated.PtrString("cyan")},
+	},
+}
+
+start, err := activitysmith.LiveActivities.Start(startInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+activityID := start.GetActivityId()
+```
+
+#### Update
+
+```go
+updateInput := activitysmithsdk.LiveActivityUpdateInput{
+	ActivityID: activityID,
+	Title:      "Sales",
+	Subtitle:   "last hour",
+	Type:       "stats",
+	Metrics: []generated.ActivityMetric{
+		{Label: "Revenue", Value: "$3180", Color: generated.PtrString("blue")},
+		{Label: "Orders", Value: "51", Color: generated.PtrString("green")},
+		{Label: "Conversion", Value: "5.2%", Color: generated.PtrString("magenta")},
+		{Label: "Avg Order", Value: "$62.35", Color: generated.PtrString("yellow")},
+		{Label: "Refunds", Value: "$126", Color: generated.PtrString("red")},
+		{Label: "New Buyers", Value: "24", Color: generated.PtrString("cyan")},
+	},
+}
+
+_, err := activitysmith.LiveActivities.Update(updateInput)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+#### End
+
+```go
+endInput := activitysmithsdk.LiveActivityEndInput{
+	ActivityID: activityID,
+	Title:      "Sales",
+	Subtitle:   "last hour",
+	Type:       "stats",
+	Metrics: []generated.ActivityMetric{
+		{Label: "Revenue", Value: "$3460", Color: generated.PtrString("blue")},
+		{Label: "Orders", Value: "58", Color: generated.PtrString("green")},
+		{Label: "Conversion", Value: "5.4%", Color: generated.PtrString("magenta")},
+		{Label: "Avg Order", Value: "$59.66", Color: generated.PtrString("yellow")},
+		{Label: "Refunds", Value: "$92", Color: generated.PtrString("red")},
+		{Label: "New Buyers", Value: "31", Color: generated.PtrString("cyan")},
+	},
+	AutoDismissMinutes: 2,
+}
+
+_, err := activitysmith.LiveActivities.End(endInput)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
 ### Metrics Type
 
 Use `metrics` when you want to keep a small set of live stats visible, such as
@@ -306,7 +440,11 @@ server health, queue pressure, or database load.
 #### Start
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png" alt="Metrics start example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
+    alt="Metrics start example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -331,7 +469,11 @@ activityID := start.GetActivityId()
 #### Update
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-update.png" alt="Metrics update example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-update.png"
+    alt="Metrics update example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -355,7 +497,11 @@ if err != nil {
 #### End
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-end.png" alt="Metrics end example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-end.png"
+    alt="Metrics end example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -387,7 +533,11 @@ workflow changes.
 #### Start
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Segmented progress start example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/start-live-activity.png"
+    alt="Segmented progress start example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -411,7 +561,11 @@ activityID := start.GetActivityId()
 #### Update
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Segmented progress update example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/update-live-activity.png"
+    alt="Segmented progress update example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -432,7 +586,11 @@ if err != nil {
 #### End
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="Segmented progress end example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/end-live-activity.png"
+    alt="Segmented progress end example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -460,7 +618,11 @@ numeric range is the clearest signal.
 #### Start
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-start.png" alt="Progress start example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity-start.png"
+    alt="Progress start example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -482,7 +644,11 @@ activityID := start.GetActivityId()
 #### Update
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-update.png" alt="Progress update example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity-update.png"
+    alt="Progress update example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -502,7 +668,11 @@ if err != nil {
 #### End
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-end.png" alt="Progress end example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity-end.png"
+    alt="Progress end example"
+    width="680"
+  />
 </p>
 
 ```go
@@ -524,25 +694,29 @@ if err != nil {
 
 Just like Actionable Push Notifications, Live Activities can have a button that opens provided URL in a browser or triggers a webhook. Webhooks are executed by the ActivitySmith backend.
 
-<img
-  className="image image-full-width"
-  src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1"
-  alt="Live Activity with action"
-/>
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png"
+    alt="Metrics Live Activity with action"
+    width="680"
+  />
+</p>
 
 #### Open URL action
 
-```go Go
+```go
 startInput := activitysmithsdk.LiveActivityStartInput{
-	Title:         "Deploying payments-api",
-	Subtitle:      "Running database migrations",
-	NumberOfSteps: 5,
-	CurrentStep:   3,
-	Type:          "segmented_progress",
+	Title:    "Server Health",
+	Subtitle: "prod-web-1",
+	Type:     "metrics",
+	Metrics: []generated.ActivityMetric{
+		{Label: "CPU", Value: 76, Unit: generated.PtrString("%")},
+		{Label: "MEM", Value: 52, Unit: generated.PtrString("%")},
+	},
 	Action: &activitysmithsdk.LiveActivityActionInput{
-		Title: "Open Workflow",
+		Title: "Open Dashboard",
 		Type:  "open_url",
-		URL:   "https://github.com/acme/payments-api/actions/runs/1234567890",
+		URL:   "https://ops.example.com/servers/prod-web-1",
 	},
 }
 
@@ -556,13 +730,21 @@ activityID := start.GetActivityId()
 
 #### Webhook action
 
-```go Go
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1"
+    alt="Live Activity with action"
+    width="680"
+  />
+</p>
+
+```go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
-	ActivityID:    activityID,
-	Title:         "Reindexing product search",
-	Subtitle:      "Shard 7 of 12",
+	ActivityID: activityID,
+	Title:      "Reindexing product search",
+	Subtitle:   "Shard 7 of 12",
 	NumberOfSteps: 12,
-	CurrentStep:   7,
+	CurrentStep: 7,
 	Action: &activitysmithsdk.LiveActivityActionInput{
 		Title:  "Pause Reindex",
 		Type:   "webhook",

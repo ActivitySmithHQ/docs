@@ -124,11 +124,16 @@ activitysmith.notifications.send(
 ## Live Activities
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png" alt="Metrics Live Activity screenshot" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png"
+    alt="Metrics Live Activity screenshot"
+    width="680"
+  />
 </p>
 
-There are three types of Live Activities:
+There are four types of Live Activities:
 
+- `stats`: best for business or product stats like revenue, number of users, conversion, uptime, or any metric set you want visible at a glance
 - `metrics`: best for live operational stats like server CPU and memory, queue depth, or replica lag
 - `segmented_progress`: best for step-based workflows like deployments, backups, and ETL pipelines
 - `progress`: best for continuous jobs like uploads, reindexes, and long-running migrations tracked as a percentage
@@ -155,10 +160,41 @@ such as a server, deployment, build pipeline, cron job, or charging session.
 This is especially useful for cron jobs and other scheduled tasks where you do
 not want to store `activity_id` between runs.
 
+#### Stats
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/stats-live-activity.png" alt="Stats stream example" width="680" />
+</p>
+
+```ruby
+status = activitysmith.live_activities.stream(
+  "sales-hourly",
+  {
+    content_state: {
+      title: "Sales",
+      subtitle: "last hour",
+      type: "stats",
+      metrics: [
+        { label: "Revenue", value: "$2430", color: "blue" },
+        { label: "Orders", value: "37", color: "green" },
+        { label: "Conversion", value: "4.8%", color: "magenta" },
+        { label: "Avg Order", value: "$65.68", color: "yellow" },
+        { label: "Refunds", value: "$84", color: "red" },
+        { label: "New Buyers", value: "18", color: "cyan" }
+      ]
+    }
+  }
+)
+```
+
 #### Metrics
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png" alt="Metrics stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
+    alt="Metrics stream example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -181,7 +217,11 @@ status = activitysmith.live_activities.stream(
 #### Segmented progress
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Segmented progress stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/update-live-activity.png"
+    alt="Segmented progress stream example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -202,7 +242,11 @@ activitysmith.live_activities.stream(
 #### Progress
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity.png" alt="Progress stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity.png"
+    alt="Progress stream example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -265,6 +309,93 @@ Use these methods when you want to manage the Live Activity lifecycle yourself:
 3. Call `activitysmith.live_activities.update(...)` as progress changes.
 4. Call `activitysmith.live_activities.end(...)` when the work is finished.
 
+### Stats Type
+
+Keep your key numbers on your Lock Screen. `stats` fits up to 8 labeled values,
+such as revenue, orders, conversion, uptime, or any other business metric you
+want visible at a glance. Each metric can use a formatted string or number as
+its `value`. Add `color` to a metric to show an accent dot next to its label;
+omit `color` to show the label without a dot.
+
+#### Start
+
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/stats-live-activity.png"
+    alt="Stats Live Activity with sales revenue, orders, conversion, and average order value"
+    width="680"
+  />
+</p>
+
+```ruby
+start = activitysmith.live_activities.start(
+  {
+    content_state: {
+      title: "Sales",
+      subtitle: "last hour",
+      type: "stats",
+      metrics: [
+        { label: "Revenue", value: "$2430", color: "blue" },
+        { label: "Orders", value: "37", color: "green" },
+        { label: "Conversion", value: "4.8%", color: "magenta" },
+        { label: "Avg Order", value: "$65.68", color: "yellow" },
+        { label: "Refunds", value: "$84", color: "red" },
+        { label: "New Buyers", value: "18", color: "cyan" }
+      ]
+    }
+  }
+)
+
+activity_id = start.activity_id
+```
+
+#### Update
+
+```ruby
+activitysmith.live_activities.update(
+  {
+    activity_id: activity_id,
+    content_state: {
+      title: "Sales",
+      subtitle: "last hour",
+      type: "stats",
+      metrics: [
+        { label: "Revenue", value: "$3180", color: "blue" },
+        { label: "Orders", value: "51", color: "green" },
+        { label: "Conversion", value: "5.2%", color: "magenta" },
+        { label: "Avg Order", value: "$62.35", color: "yellow" },
+        { label: "Refunds", value: "$126", color: "red" },
+        { label: "New Buyers", value: "24", color: "cyan" }
+      ]
+    }
+  }
+)
+```
+
+#### End
+
+```ruby
+activitysmith.live_activities.end(
+  {
+    activity_id: activity_id,
+    content_state: {
+      title: "Sales",
+      subtitle: "last hour",
+      type: "stats",
+      metrics: [
+        { label: "Revenue", value: "$3460", color: "blue" },
+        { label: "Orders", value: "58", color: "green" },
+        { label: "Conversion", value: "5.4%", color: "magenta" },
+        { label: "Avg Order", value: "$59.66", color: "yellow" },
+        { label: "Refunds", value: "$92", color: "red" },
+        { label: "New Buyers", value: "31", color: "cyan" }
+      ],
+      auto_dismiss_minutes: 2
+    }
+  }
+)
+```
+
 ### Metrics Type
 
 Use `metrics` when you want to keep a small set of live stats visible, such as
@@ -273,7 +404,11 @@ server health, queue pressure, or database load.
 #### Start
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png" alt="Metrics start example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
+    alt="Metrics start example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -297,7 +432,11 @@ activity_id = start.activity_id
 #### Update
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-update.png" alt="Metrics update example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-update.png"
+    alt="Metrics update example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -320,7 +459,11 @@ activitysmith.live_activities.update(
 #### End
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-end.png" alt="Metrics end example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-end.png"
+    alt="Metrics end example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -351,7 +494,11 @@ workflow changes.
 #### Start
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Segmented progress start example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/start-live-activity.png"
+    alt="Segmented progress start example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -374,7 +521,11 @@ activity_id = start.activity_id
 #### Update
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Segmented progress update example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/update-live-activity.png"
+    alt="Segmented progress update example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -394,7 +545,11 @@ activitysmith.live_activities.update(
 #### End
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="Segmented progress end example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/end-live-activity.png"
+    alt="Segmented progress end example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -421,7 +576,11 @@ numeric range is the clearest signal.
 #### Start
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-start.png" alt="Progress start example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity-start.png"
+    alt="Progress start example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -442,7 +601,11 @@ activity_id = start.activity_id
 #### Update
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-update.png" alt="Progress update example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity-update.png"
+    alt="Progress update example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -461,7 +624,11 @@ activitysmith.live_activities.update(
 #### End
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-end.png" alt="Progress end example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity-end.png"
+    alt="Progress end example"
+    width="680"
+  />
 </p>
 
 ```ruby
@@ -482,28 +649,32 @@ activitysmith.live_activities.end(
 
 Just like Actionable Push Notifications, Live Activities can have a button that opens provided URL in a browser or triggers a webhook. Webhooks are executed by the ActivitySmith backend.
 
-<img
-  className="image image-full-width"
-  src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1"
-  alt="Live Activity with action"
-/>
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png"
+    alt="Metrics Live Activity with action"
+    width="680"
+  />
+</p>
 
 #### Open URL action
 
-```ruby Ruby
+```ruby
 start = activitysmith.live_activities.start(
   {
     content_state: {
-      title: "Deploying payments-api",
-      subtitle: "Running database migrations",
-      number_of_steps: 5,
-      current_step: 3,
-      type: "segmented_progress"
+      title: "Server Health",
+      subtitle: "prod-web-1",
+      type: "metrics",
+      metrics: [
+        { label: "CPU", value: 76, unit: "%" },
+        { label: "MEM", value: 52, unit: "%" }
+      ]
     },
     action: {
-      title: "Open Workflow",
+      title: "Open Dashboard",
       type: "open_url",
-      url: "https://github.com/acme/payments-api/actions/runs/1234567890"
+      url: "https://ops.example.com/servers/prod-web-1"
     }
   }
 )
@@ -513,7 +684,15 @@ activity_id = start.activity_id
 
 #### Webhook action
 
-```ruby Ruby
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1"
+    alt="Live Activity with action"
+    width="680"
+  />
+</p>
+
+```ruby
 activitysmith.live_activities.update(
   {
     activity_id: activity_id,

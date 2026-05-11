@@ -1,0 +1,199 @@
+### Stats Type
+
+Stats supports up to 8 items in the `metrics` array. Each metric takes a
+`label`, and a formatted string or numeric `value`. Add an optional color when you want a small visual cue. Leave it out when you want plain text.
+
+#### Stream
+
+Use a stable `stream_key` and send the latest values whenever they change.
+ActivitySmith starts the Live Activity on the first call and updates it on
+subsequent calls, so you do not need to store `activity_id`.
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/stats-live-activity.png"
+  alt="Stats Live Activity stream"
+/>
+
+<CodeGroup>
+
+```bash cURL
+curl -X PUT https://activitysmith.com/api/live-activity/stream/sales-hourly \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content_state": {
+      "title": "Sales",
+      "subtitle": "last hour",
+      "type": "stats",
+      "metrics": [
+        { "label": "Revenue", "value": "$2430", "color": "blue" },
+        { "label": "Orders", "value": "37", "color": "green" },
+        { "label": "Conversion", "value": "4.8%", "color": "magenta" },
+        { "label": "Avg Order", "value": "$65.68", "color": "yellow" },
+        { "label": "Refunds", "value": "$84", "color": "red" },
+        { "label": "New Buyers", "value": "18", "color": "cyan" }
+      ]
+    }
+  }'
+```
+
+```js Node
+import ActivitySmith from "activitysmith";
+
+const activitysmith = new ActivitySmith({
+  apiKey: process.env.ACTIVITYSMITH_API_KEY,
+});
+
+await activitysmith.liveActivities.stream("sales-hourly", {
+  content_state: {
+    title: "Sales",
+    subtitle: "last hour",
+    type: "stats",
+    metrics: [
+      { label: "Revenue", value: "$2430", color: "blue" },
+      { label: "Orders", value: "37", color: "green" },
+      { label: "Conversion", value: "4.8%", color: "magenta" },
+      { label: "Avg Order", value: "$65.68", color: "yellow" },
+      { label: "Refunds", value: "$84", color: "red" },
+      { label: "New Buyers", value: "18", color: "cyan" },
+    ],
+  },
+});
+```
+
+```python Python
+import os
+from activitysmith import ActivitySmith
+
+activitysmith = ActivitySmith(
+    api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.stream(
+    "sales-hourly",
+    {
+        "content_state": {
+            "title": "Sales",
+            "subtitle": "last hour",
+            "type": "stats",
+            "metrics": [
+                {"label": "Revenue", "value": "$2430", "color": "blue"},
+                {"label": "Orders", "value": "37", "color": "green"},
+                {"label": "Conversion", "value": "4.8%", "color": "magenta"},
+                {"label": "Avg Order", "value": "$65.68", "color": "yellow"},
+                {"label": "Refunds", "value": "$84", "color": "red"},
+                {"label": "New Buyers", "value": "18", "color": "cyan"},
+            ],
+        },
+    },
+)
+```
+
+```go Go
+package main
+
+import (
+	"log"
+	"os"
+
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
+	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+)
+
+func main() {
+	activitysmith, err := activitysmithsdk.New(os.Getenv("ACTIVITYSMITH_API_KEY"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	streamInput := activitysmithsdk.LiveActivityStreamInput{
+		Title:    "Sales",
+		Subtitle: "last hour",
+		Type:     "stats",
+		Metrics: []generated.ActivityMetric{
+			{Label: "Revenue", Value: "$2430", Color: generated.PtrString("blue")},
+			{Label: "Orders", Value: "37", Color: generated.PtrString("green")},
+			{Label: "Conversion", Value: "4.8%", Color: generated.PtrString("magenta")},
+			{Label: "Avg Order", Value: "$65.68", Color: generated.PtrString("yellow")},
+			{Label: "Refunds", Value: "$84", Color: generated.PtrString("red")},
+			{Label: "New Buyers", Value: "18", Color: generated.PtrString("cyan")},
+		},
+	}
+
+	_, err = activitysmith.LiveActivities.Stream("sales-hourly", streamInput)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+```php PHP
+<?php
+
+use ActivitySmith\ActivitySmith;
+
+$activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+$activitysmith->liveActivities->stream('sales-hourly', [
+    'content_state' => [
+        'title' => 'Sales',
+        'subtitle' => 'last hour',
+        'type' => 'stats',
+        'metrics' => [
+            ['label' => 'Revenue', 'value' => '$2430', 'color' => 'blue'],
+            ['label' => 'Orders', 'value' => '37', 'color' => 'green'],
+            ['label' => 'Conversion', 'value' => '4.8%', 'color' => 'magenta'],
+            ['label' => 'Avg Order', 'value' => '$65.68', 'color' => 'yellow'],
+            ['label' => 'Refunds', 'value' => '$84', 'color' => 'red'],
+            ['label' => 'New Buyers', 'value' => '18', 'color' => 'cyan'],
+        ],
+    ],
+]);
+```
+
+```ruby Ruby
+require "activitysmith"
+
+activitysmith = ActivitySmith::Client.new(
+  api_key: ENV.fetch("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
+)
+
+activitysmith.live_activities.stream(
+  "sales-hourly",
+  {
+    content_state: {
+      title: "Sales",
+      subtitle: "last hour",
+      type: "stats",
+      metrics: [
+        { label: "Revenue", value: "$2430", color: "blue" },
+        { label: "Orders", value: "37", color: "green" },
+        { label: "Conversion", value: "4.8%", color: "magenta" },
+        { label: "Avg Order", value: "$65.68", color: "yellow" },
+        { label: "Refunds", value: "$84", color: "red" },
+        { label: "New Buyers", value: "18", color: "cyan" }
+      ]
+    }
+  }
+)
+```
+
+```bash CLI
+activitysmith activity stream sales-hourly \
+  --content-state '{
+    "title": "Sales",
+    "subtitle": "last hour",
+    "type": "stats",
+    "metrics": [
+      { "label": "Revenue", "value": "$2430", "color": "blue" },
+      { "label": "Orders", "value": "37", "color": "green" },
+      { "label": "Conversion", "value": "4.8%", "color": "magenta" },
+      { "label": "Avg Order", "value": "$65.68", "color": "yellow" },
+      { "label": "Refunds", "value": "$84", "color": "red" },
+      { "label": "New Buyers", "value": "18", "color": "cyan" }
+    ]
+  }'
+```
+
+</CodeGroup>

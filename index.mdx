@@ -6,6 +6,7 @@ og:description: "ActivitySmith Send Live Activities and push notifications to yo
 ---
 
 import MetricsLiveActivity from "/snippets/live-activities/metrics.mdx";
+import StatsLiveActivity from "/snippets/live-activities/stats.mdx";
 import SegmentedProgressLiveActivity from "/snippets/live-activities/segmented-progress.mdx";
 import ProgressLiveActivity from "/snippets/live-activities/progress.mdx";
 
@@ -191,14 +192,20 @@ activitysmith push \
 
 ## Live Activities
 
-There are three types of Live Activities:
+There are four types of Live Activities:
 
 | Type                 | Best for                      | Required state                                                      |
 | -------------------- | ----------------------------- | ------------------------------------------------------------------- |
+| `stats`              | up to 8 labeled values         | `title`, `type`, and a non-empty `metrics` array                    |
 | `metrics`            | Live operational stats        | `title`, `type`, and a non-empty `metrics` array                    |
 | `segmented_progress` | Jobs tracked in steps         | `title`, `type`, `number_of_steps`, `current_step`                  |
 | `progress`           | Jobs with continuous progress | `title`, `type`, and either `percentage` or `value` + `upper_limit` |
 
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/stats-live-activity.png"
+  alt="Stats Live Activity"
+/>
 <img
   className="image"
   src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
@@ -253,6 +260,8 @@ updates and for the final end call.
   "timestamp": "2026-01-28T09:57:22.929Z"
 }
 ```
+
+<StatsLiveActivity />
 
 <MetricsLiveActivity />
 

@@ -7,6 +7,7 @@ Use this endpoint to create a new Live Activity and get back an `activity_id`.
 You will use that same ID for later update and end calls.
 
 - `metrics`: send `title`, `type`, and a non-empty `metrics` array.
+- `stats`: send `title`, `type`, and a non-empty `metrics` array for up to 8 labeled values.
 - `segmented_progress`: send `title`, `type`, `number_of_steps`, and `current_step`.
 - `progress`: send `title`, `type`, and either `percentage` or `value` with `upper_limit`.
 - `action` is optional if you want the Live Activity to show one button that opens a URL or triggers a webhook.
