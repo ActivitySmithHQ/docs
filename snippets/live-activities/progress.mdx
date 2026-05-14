@@ -54,22 +54,20 @@ const activityId = start.activity_id;
 
 ```python Python
 import os
-from activitysmith import ActivitySmith
+from activitysmith import ActivitySmith, content_state
 
 activitysmith = ActivitySmith(
     api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
 )
 
 start = activitysmith.live_activities.start(
-    {
-        "content_state": {
-            "title": "EV Charging",
-            "subtitle": "Added 30 mi range",
-            "percentage": 15,
-            "type": "progress",
-            "color": "lime",
-        }
-    }
+    content_state=content_state(
+        title="EV Charging",
+        subtitle="Added 30 mi range",
+        percentage=15,
+        type="progress",
+        color="lime",
+    )
 )
 
 activity_id = start.activity_id
@@ -113,18 +111,19 @@ func main() {
 <?php
 
 use ActivitySmith\ActivitySmith;
+use ActivitySmith\LiveActivityContentState;
 
 $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
 
-$start = $activitysmith->liveActivities->start([
-    'content_state' => [
-        'title' => 'EV Charging',
-        'subtitle' => 'Added 30 mi range',
-        'percentage' => 15,
-        'type' => 'progress',
-        'color' => 'lime',
-    ],
-]);
+$start = $activitysmith->liveActivities->start(
+    contentState: LiveActivityContentState::make(
+        title: 'EV Charging',
+        subtitle: 'Added 30 mi range',
+        percentage: 15,
+        type: 'progress',
+        color: 'lime',
+    ),
+);
 
 $activityId = $start->getActivityId();
 ```
@@ -204,21 +203,19 @@ await activitysmith.liveActivities.update({
 
 ```python Python
 import os
-from activitysmith import ActivitySmith
+from activitysmith import ActivitySmith, content_state
 
 activitysmith = ActivitySmith(
     api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
 )
 
 activitysmith.live_activities.update(
-    {
-        "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
-        "content_state": {
-            "title": "EV Charging",
-            "subtitle": "Added 120 mi range",
-            "percentage": 60,
-        },
-    }
+    activity_id="pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+    content_state=content_state(
+        title="EV Charging",
+        subtitle="Added 120 mi range",
+        percentage=60,
+    ),
 )
 ```
 
@@ -256,17 +253,18 @@ func main() {
 <?php
 
 use ActivitySmith\ActivitySmith;
+use ActivitySmith\LiveActivityContentState;
 
 $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
 
-$activitysmith->liveActivities->update([
-    'activity_id' => 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',
-    'content_state' => [
-        'title' => 'EV Charging',
-        'subtitle' => 'Added 120 mi range',
-        'percentage' => 60,
-    ],
-]);
+$activitysmith->liveActivities->update(
+    activityId: 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',
+    contentState: LiveActivityContentState::make(
+        title: 'EV Charging',
+        subtitle: 'Added 120 mi range',
+        percentage: 60,
+    ),
+);
 ```
 
 ```ruby Ruby
@@ -343,22 +341,20 @@ await activitysmith.liveActivities.end({
 
 ```python Python
 import os
-from activitysmith import ActivitySmith
+from activitysmith import ActivitySmith, content_state
 
 activitysmith = ActivitySmith(
     api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
 )
 
 activitysmith.live_activities.end(
-    {
-        "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
-        "content_state": {
-            "title": "EV Charging",
-            "subtitle": "Added 200 mi range",
-            "percentage": 100,
-            "auto_dismiss_minutes": 2,
-        },
-    }
+    activity_id="pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+    content_state=content_state(
+        title="EV Charging",
+        subtitle="Added 200 mi range",
+        percentage=100,
+        auto_dismiss_minutes=2,
+    ),
 )
 ```
 
@@ -397,18 +393,19 @@ func main() {
 <?php
 
 use ActivitySmith\ActivitySmith;
+use ActivitySmith\LiveActivityContentState;
 
 $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
 
-$activitysmith->liveActivities->end([
-    'activity_id' => 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',
-    'content_state' => [
-        'title' => 'EV Charging',
-        'subtitle' => 'Added 200 mi range',
-        'percentage' => 100,
-        'auto_dismiss_minutes' => 2,
-    ],
-]);
+$activitysmith->liveActivities->end(
+    activityId: 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',
+    contentState: LiveActivityContentState::make(
+        title: 'EV Charging',
+        subtitle: 'Added 200 mi range',
+        percentage: 100,
+        autoDismissMinutes: 2,
+    ),
+);
 ```
 
 ```ruby Ruby

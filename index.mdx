@@ -108,10 +108,8 @@ activitysmith = ActivitySmith(
 )
 
 activitysmith.notifications.send(
-    {
-        "title": "New subscription 💸",
-        "message": "Customer upgraded to Pro plan",
-    }
+    title="New subscription 💸",
+    message="Customer upgraded to Pro plan",
 )
 ```
 
@@ -150,10 +148,10 @@ use ActivitySmith\ActivitySmith;
 
 $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
 
-$activitysmith->notifications->send([
-    'title' => 'New subscription 💸',
-    'message' => 'Customer upgraded to Pro plan',
-]);
+$activitysmith->notifications->send(
+    title: 'New subscription 💸',
+    message: 'Customer upgraded to Pro plan',
+);
 ```
 
 ```ruby Ruby

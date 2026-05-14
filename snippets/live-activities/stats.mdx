@@ -64,7 +64,7 @@ await activitysmith.liveActivities.stream("sales-hourly", {
 
 ```python Python
 import os
-from activitysmith import ActivitySmith
+from activitysmith import ActivitySmith, content_state, metric
 
 activitysmith = ActivitySmith(
     api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
@@ -72,21 +72,19 @@ activitysmith = ActivitySmith(
 
 activitysmith.live_activities.stream(
     "sales-hourly",
-    {
-        "content_state": {
-            "title": "Sales",
-            "subtitle": "last hour",
-            "type": "stats",
-            "metrics": [
-                {"label": "Revenue", "value": "$2430", "color": "blue"},
-                {"label": "Orders", "value": "37", "color": "green"},
-                {"label": "Conversion", "value": "4.8%", "color": "magenta"},
-                {"label": "Avg Order", "value": "$65.68", "color": "yellow"},
-                {"label": "Refunds", "value": "$84", "color": "red"},
-                {"label": "New Buyers", "value": "18", "color": "cyan"},
-            ],
-        },
-    },
+    content_state=content_state(
+        title="Sales",
+        subtitle="last hour",
+        type="stats",
+        metrics=[
+            metric(label="Revenue", value="$2430", color="blue"),
+            metric(label="Orders", value="37", color="green"),
+            metric(label="Conversion", value="4.8%", color="magenta"),
+            metric(label="Avg Order", value="$65.68", color="yellow"),
+            metric(label="Refunds", value="$84", color="red"),
+            metric(label="New Buyers", value="18", color="cyan"),
+        ],
+    ),
 )
 ```
 
@@ -98,7 +96,6 @@ import (
 	"os"
 
 	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
-	"github.com/ActivitySmithHQ/activitysmith-go/generated"
 )
 
 func main() {
@@ -111,13 +108,13 @@ func main() {
 		Title:    "Sales",
 		Subtitle: "last hour",
 		Type:     "stats",
-		Metrics: []generated.ActivityMetric{
-			{Label: "Revenue", Value: "$2430", Color: generated.PtrString("blue")},
-			{Label: "Orders", Value: "37", Color: generated.PtrString("green")},
-			{Label: "Conversion", Value: "4.8%", Color: generated.PtrString("magenta")},
-			{Label: "Avg Order", Value: "$65.68", Color: generated.PtrString("yellow")},
-			{Label: "Refunds", Value: "$84", Color: generated.PtrString("red")},
-			{Label: "New Buyers", Value: "18", Color: generated.PtrString("cyan")},
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("Revenue", "$2430", activitysmithsdk.MetricColor("blue")),
+			activitysmithsdk.Metric("Orders", "37", activitysmithsdk.MetricColor("green")),
+			activitysmithsdk.Metric("Conversion", "4.8%", activitysmithsdk.MetricColor("magenta")),
+			activitysmithsdk.Metric("Avg Order", "$65.68", activitysmithsdk.MetricColor("yellow")),
+			activitysmithsdk.Metric("Refunds", "$84", activitysmithsdk.MetricColor("red")),
+			activitysmithsdk.Metric("New Buyers", "18", activitysmithsdk.MetricColor("cyan")),
 		},
 	}
 
@@ -132,24 +129,27 @@ func main() {
 <?php
 
 use ActivitySmith\ActivitySmith;
+use ActivitySmith\LiveActivityContentState;
+use ActivitySmith\LiveActivityMetric;
 
 $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
 
-$activitysmith->liveActivities->stream('sales-hourly', [
-    'content_state' => [
-        'title' => 'Sales',
-        'subtitle' => 'last hour',
-        'type' => 'stats',
-        'metrics' => [
-            ['label' => 'Revenue', 'value' => '$2430', 'color' => 'blue'],
-            ['label' => 'Orders', 'value' => '37', 'color' => 'green'],
-            ['label' => 'Conversion', 'value' => '4.8%', 'color' => 'magenta'],
-            ['label' => 'Avg Order', 'value' => '$65.68', 'color' => 'yellow'],
-            ['label' => 'Refunds', 'value' => '$84', 'color' => 'red'],
-            ['label' => 'New Buyers', 'value' => '18', 'color' => 'cyan'],
+$activitysmith->liveActivities->stream(
+    'sales-hourly',
+    contentState: LiveActivityContentState::make(
+        title: 'Sales',
+        subtitle: 'last hour',
+        type: 'stats',
+        metrics: [
+            LiveActivityMetric::make(label: 'Revenue', value: '$2430', color: 'blue'),
+            LiveActivityMetric::make(label: 'Orders', value: '37', color: 'green'),
+            LiveActivityMetric::make(label: 'Conversion', value: '4.8%', color: 'magenta'),
+            LiveActivityMetric::make(label: 'Avg Order', value: '$65.68', color: 'yellow'),
+            LiveActivityMetric::make(label: 'Refunds', value: '$84', color: 'red'),
+            LiveActivityMetric::make(label: 'New Buyers', value: '18', color: 'cyan'),
         ],
-    ],
-]);
+    ),
+);
 ```
 
 ```ruby Ruby

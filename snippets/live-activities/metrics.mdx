@@ -62,7 +62,7 @@ await activitysmith.liveActivities.stream("prod-web-1", {
 
 ```python Python
 import os
-from activitysmith import ActivitySmith
+from activitysmith import ActivitySmith, content_state, metric
 
 activitysmith = ActivitySmith(
     api_key=os.environ.get("ACTIVITYSMITH_API_KEY", "YOUR-API-KEY")
@@ -70,17 +70,15 @@ activitysmith = ActivitySmith(
 
 activitysmith.live_activities.stream(
     "prod-web-1",
-    {
-        "content_state": {
-            "title": "Server Health",
-            "subtitle": "prod-web-1",
-            "type": "metrics",
-            "metrics": [
-                {"label": "CPU", "value": 9, "unit": "%"},
-                {"label": "MEM", "value": 45, "unit": "%"},
-            ],
-        },
-    },
+    content_state=content_state(
+        title="Server Health",
+        subtitle="prod-web-1",
+        type="metrics",
+        metrics=[
+            metric(label="CPU", value=9, unit="%"),
+            metric(label="MEM", value=45, unit="%"),
+        ],
+    ),
 )
 ```
 
@@ -92,7 +90,6 @@ import (
 	"os"
 
 	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
-	"github.com/ActivitySmithHQ/activitysmith-go/generated"
 )
 
 func main() {
@@ -105,9 +102,9 @@ func main() {
 		Title:    "Server Health",
 		Subtitle: "prod-web-1",
 		Type:     "metrics",
-		Metrics: []generated.ActivityMetric{
-			{Label: "CPU", Value: 9, Unit: generated.PtrString("%")},
-			{Label: "MEM", Value: 45, Unit: generated.PtrString("%")},
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("CPU", 9, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("MEM", 45, activitysmithsdk.MetricUnit("%")),
 		},
 	}
 
@@ -122,20 +119,23 @@ func main() {
 <?php
 
 use ActivitySmith\ActivitySmith;
+use ActivitySmith\LiveActivityContentState;
+use ActivitySmith\LiveActivityMetric;
 
 $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
 
-$activitysmith->liveActivities->stream('prod-web-1', [
-    'content_state' => [
-        'title' => 'Server Health',
-        'subtitle' => 'prod-web-1',
-        'type' => 'metrics',
-        'metrics' => [
-            ['label' => 'CPU', 'value' => 9, 'unit' => '%'],
-            ['label' => 'MEM', 'value' => 45, 'unit' => '%'],
+$activitysmith->liveActivities->stream(
+    'prod-web-1',
+    contentState: LiveActivityContentState::make(
+        title: 'Server Health',
+        subtitle: 'prod-web-1',
+        type: 'metrics',
+        metrics: [
+            LiveActivityMetric::make(label: 'CPU', value: 9, unit: '%'),
+            LiveActivityMetric::make(label: 'MEM', value: 45, unit: '%'),
         ],
-    ],
-]);
+    ),
+);
 ```
 
 ```ruby Ruby
@@ -229,18 +229,16 @@ await activitysmith.liveActivities.endStream("prod-web-1", {
 ```python Python
 activitysmith.live_activities.end_stream(
     "prod-web-1",
-    {
-        "content_state": {
-            "title": "Server Health",
-            "subtitle": "prod-web-1",
-            "type": "metrics",
-            "metrics": [
-                {"label": "CPU", "value": 7, "unit": "%"},
-                {"label": "MEM", "value": 38, "unit": "%"},
-            ],
-            "auto_dismiss_minutes": 2,
-        },
-    },
+    content_state=content_state(
+        title="Server Health",
+        subtitle="prod-web-1",
+        type="metrics",
+        metrics=[
+            metric(label="CPU", value=7, unit="%"),
+            metric(label="MEM", value=38, unit="%"),
+        ],
+        auto_dismiss_minutes=2,
+    ),
 )
 ```
 
@@ -249,9 +247,9 @@ endInput := activitysmithsdk.LiveActivityEndStreamInput{
 	Title:    "Server Health",
 	Subtitle: "prod-web-1",
 	Type:     "metrics",
-	Metrics: []generated.ActivityMetric{
-		{Label: "CPU", Value: 7, Unit: generated.PtrString("%")},
-		{Label: "MEM", Value: 38, Unit: generated.PtrString("%")},
+	Metrics: []activitysmithsdk.ActivityMetric{
+		activitysmithsdk.Metric("CPU", 7, activitysmithsdk.MetricUnit("%")),
+		activitysmithsdk.Metric("MEM", 38, activitysmithsdk.MetricUnit("%")),
 	},
 	AutoDismissMinutes: 2,
 }
@@ -263,18 +261,19 @@ if err != nil {
 ```
 
 ```php PHP
-$activitysmith->liveActivities->endStream('prod-web-1', [
-    'content_state' => [
-        'title' => 'Server Health',
-        'subtitle' => 'prod-web-1',
-        'type' => 'metrics',
-        'metrics' => [
-            ['label' => 'CPU', 'value' => 7, 'unit' => '%'],
-            ['label' => 'MEM', 'value' => 38, 'unit' => '%'],
+$activitysmith->liveActivities->endStream(
+    'prod-web-1',
+    contentState: LiveActivityContentState::make(
+        title: 'Server Health',
+        subtitle: 'prod-web-1',
+        type: 'metrics',
+        metrics: [
+            LiveActivityMetric::make(label: 'CPU', value: 7, unit: '%'),
+            LiveActivityMetric::make(label: 'MEM', value: 38, unit: '%'),
         ],
-        'auto_dismiss_minutes' => 2,
-    ],
-]);
+        autoDismissMinutes: 2,
+    ),
+);
 ```
 
 ```ruby Ruby
