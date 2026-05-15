@@ -5,11 +5,6 @@ og:title: "Quickstart | ActivitySmith"
 og:description: "ActivitySmith Send Live Activities and push notifications to your iOS devices from any backend"
 ---
 
-import MetricsLiveActivity from "/snippets/live-activities/metrics.mdx";
-import StatsLiveActivity from "/snippets/live-activities/stats.mdx";
-import SegmentedProgressLiveActivity from "/snippets/live-activities/segmented-progress.mdx";
-import ProgressLiveActivity from "/snippets/live-activities/progress.mdx";
-
 <div className="hero-images">
   <img
     className="hero-image"
@@ -220,58 +215,28 @@ There are four types of Live Activities:
   alt="Segmented Progress Live Activity update"
 />
 
-When working with Live Activities via our API, you have two approaches tailored
-to different needs.
+### Start & Update Live Activity
 
-### Simple: stream updates
-
-Use stream updates when you want the easiest, stateless flow.
+Use stream updates to start, update, and dismiss Live Activities with a stable
+`stream_key`.
 
 - [`PUT /live-activity/stream/:stream_key`](/stream)
 - [`DELETE /live-activity/stream/:stream_key`](/stream)
 
 Send the latest state for a stable `stream_key`, and ActivitySmith starts or
-updates the Live Activity for you. You do not need to store `activity_id` or
-manage the lifecycle yourself.
+updates the Live Activity. You do not need to keep local state between updates.
 
-### Advanced: full lifecycle control
-
-Use the lifecycle endpoints when you want full control over a specific Live
-Activity instance.
-
-1. Call [`POST /live-activity/start`](/api-reference/endpoint/live-activity-start).
-2. Save the returned `activity_id`.
-3. Call [`POST /live-activity/update`](/api-reference/endpoint/live-activity-update) whenever progress changes.
-4. Call [`POST /live-activity/end`](/api-reference/endpoint/live-activity-end) when the work is finished.
-
-### Start response
-
-Starting a Live Activity returns the `activity_id` you will use for later
-updates and for the final end call.
-
-```json
-{
-  "success": true,
-  "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
-  "devices_notified": 2,
-  "users_notified": 1,
-  "timestamp": "2026-01-28T09:57:22.929Z"
-}
-```
-
-<StatsLiveActivity />
-
-<MetricsLiveActivity />
-
-<SegmentedProgressLiveActivity />
-
-<ProgressLiveActivity />
+When the work is done, call `DELETE /live-activity/stream/:stream_key` with the
+same `stream_key` to dismiss the Live Activity. You can include final values
+before it is removed. By default, iOS removes the Live Activity after two
+minutes. Set `auto_dismiss_minutes` to choose a different dismissal time,
+including `0` for immediate dismissal.
 
 ### Action Button
 
 Live Activities support one optional `action` button shown on the Lock Screen. Use it to have a one-tap path from a long-running
 job to the place where you can act on it. The `action` field is accepted on
-`start`, `update`, and `end` calls, and works with all Live Activity types.
+stream updates and works with all Live Activity types.
 
 <div style={{ display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap", margin: "16px 0" }}>
   <img

@@ -3,8 +3,12 @@ title: 'Start Live Activity'
 openapi: 'POST /live-activity/start'
 ---
 
-Use this endpoint to create a new Live Activity and get back an `activity_id`.
-You will use that same ID for later update and end calls.
+Use this manual lifecycle endpoint only when you need direct control over a
+specific Live Activity instance. For new integrations, prefer
+[`PUT /live-activity/stream/{stream_key}`](/api-reference/endpoint/live-activity-stream).
+
+This endpoint creates a new Live Activity and returns an `activity_id`. You will
+use that same ID for later update and end calls.
 
 - `metrics`: send `title`, `type`, and a non-empty `metrics` array.
 - `stats`: send `title`, `type`, and a non-empty `metrics` array for up to 8 labeled values.

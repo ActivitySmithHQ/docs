@@ -3,7 +3,11 @@ title: 'Update Live Activity'
 openapi: 'POST /live-activity/update'
 ---
 
-Use this endpoint to update an existing Live Activity by `activity_id`.
+Use this manual lifecycle endpoint only when you need direct control over a
+specific Live Activity instance. For new integrations, prefer
+[`PUT /live-activity/stream/{stream_key}`](/api-reference/endpoint/live-activity-stream).
+
+This endpoint updates an existing Live Activity by `activity_id`.
 
 - `metrics`: send the latest `metrics` array.
 - `stats`: send the latest `metrics` array for up to 8 labeled values.

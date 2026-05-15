@@ -1,48 +1,16 @@
 ---
 title: "Live Activity Stream"
-description: "Use stream updates when you want ActivitySmith to manage the Live Activity for you."
+description: "Start, update, and dismiss Live Activities with a stable stream key."
 og:title: "Live Activity Stream | ActivitySmith"
-og:description: "Use stream updates when you want ActivitySmith to manage the Live Activity for you."
+og:description: "Start, update, and dismiss Live Activities with a stable stream key."
 ---
 
-Send the latest state for a stable `stream_key`, and ActivitySmith handles the
-rest for you:
+Live Activity streams use a stable `stream_key` for the thing you want to keep
+visible. Send the latest state to that key whenever the data changes.
 
-- if the Live Activity does not exist yet, ActivitySmith starts it
-- if it already exists, ActivitySmith updates it
-
-You don't need to store `activity_id` or manage the lifecycle yourself.
-
-You can read about real world use case example in the following blog post: [How I Track VPS System Health on My Lock Screen with a Cron Job](https://activitysmith.com/blog/track-vps-system-health-on-your-lock-screen-from-a-cron-job).
-
-## Two approaches to run Live Activities
-
-### Simple: stream updates
-
-Use stream updates when you want the easiest, stateless flow:
-
-- `PUT /live-activity/stream/:stream_key`
-- `DELETE /live-activity/stream/:stream_key`
-
-This is a good fit for:
-
-- cron jobs
-- scheduled tasks
-- CI workflows
-- monitoring jobs
-- background workers
-
-### Advanced: full lifecycle control
-
-Use the lifecycle endpoints when you want to manage one specific Live Activity
-instance yourself:
-
-- `POST /live-activity/start`
-- `POST /live-activity/update`
-- `POST /live-activity/end`
-
-With this approach, you save the returned `activity_id` and reuse it for later
-updates and the final end call.
+- The first `PUT` starts the Live Activity.
+- Next `PUT` request with the same `stream_key` updates it.
+- `DELETE` ends the Live Activity when the work is done.
 
 ## What is a `stream_key`?
 
@@ -56,13 +24,6 @@ Examples:
 - `ev-charging`
 
 Use one `stream_key` for one system, workflow, or process.
-
-Allowed characters:
-
-- letters
-- numbers
-- `_`
-- `-`
 
 ## Example
 
@@ -94,10 +55,14 @@ curl -X PUT https://activitysmith.com/api/live-activity/stream/prod-web-1 \
 Call the same endpoint again with the same `stream_key` whenever the state
 changes.
 
-## Ending a stream
+## End Live Activity
 
-Use `DELETE` when the tracked process is finished and you no longer want the
-Live Activity on devices.
+Use `DELETE /live-activity/stream/:stream_key` when the tracked process is
+finished and you want to dismiss the Live Activity. You can include final
+values before it is removed.
+By default, iOS removes the Live Activity after two minutes. Set
+`auto_dismiss_minutes` to choose a different dismissal time, including `0` for
+immediate dismissal.
 
 ```bash
 curl -X DELETE https://activitysmith.com/api/live-activity/stream/prod-web-1 \
@@ -119,18 +84,16 @@ curl -X DELETE https://activitysmith.com/api/live-activity/stream/prod-web-1 \
           "value": 38,
           "unit": "%"
         }
-      ]
+      ],
+      "auto_dismiss_minutes": 2
     }
   }'
 ```
 
-`content_state` is optional here. Include it if you want to end the stream
-with a final state.
+`content_state` is optional here. Include it if you want one last update before the Live Activity is dismissed.
 
 If you later send another `PUT` request with the same `stream_key`,
-ActivitySmith starts a new Live Activity for that stream again.
-
-This way you can keep a live activity running on your lock screen for as long as you want, as opposed to the iOS limit of 8 hours. The battery usage is noticeable but not significant.
+ActivitySmith starts a new Live Activity.
 
 ## Stream responses
 
@@ -138,22 +101,5 @@ Stream responses include an `operation` field:
 
 - `started`: ActivitySmith started a new Live Activity for this `stream_key`
 - `updated`: ActivitySmith updated the current Live Activity
-- `rotated`: ActivitySmith ended the previous Live Activity and started a new one
 - `noop`: the incoming state matched the current state, so no update was sent
-- `paused`: the stream is paused, so no Live Activity was started or updated
 - `ended`: returned by `DELETE /live-activity/stream/:stream_key`
-
-## Which approach should you choose?
-
-Choose stream updates if:
-
-- you want the easiest setup
-- you only know the latest state
-- you do not want to store `activity_id`
-- you are sending repeated updates from scripts, cron, CI, or workers
-
-Choose lifecycle endpoints if:
-
-- you want to explicitly decide when to start, update, and end
-- you already store `activity_id`
-- your application wants direct control over one specific Live Activity instance

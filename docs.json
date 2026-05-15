@@ -67,6 +67,7 @@
             "group": "Live Activities Endpoints",
             "pages": [
               "api-reference/endpoint/live-activity-stream",
+              "api-reference/endpoint/live-activity-stream-end",
               "api-reference/endpoint/live-activity-start",
               "api-reference/endpoint/live-activity-update",
               "api-reference/endpoint/live-activity-end"

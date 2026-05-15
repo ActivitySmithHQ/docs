@@ -9,10 +9,10 @@ you.
 - Send the latest state for a stable `stream_key`.
 - If the Live Activity does not exist yet, ActivitySmith starts it.
 - If it already exists, ActivitySmith updates it.
-- You do not need to store `activity_id` or manage the lifecycle yourself.
+- You do not need to keep local state between updates.
 
 This is a good fit for cron jobs, scheduled tasks, CI workflows, monitoring
 jobs, and background workers that only know the latest state.
 
-To stop a managed stream, use `DELETE /live-activity/stream/{stream_key}` on
-the same endpoint page below.
+To stop a managed stream, use
+[`DELETE /live-activity/stream/{stream_key}`](/api-reference/endpoint/live-activity-stream-end).

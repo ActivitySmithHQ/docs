@@ -1,0 +1,13 @@
+---
+title: 'End Live Activity Stream'
+openapi: 'DELETE /live-activity/stream/{stream_key}'
+---
+
+Use this endpoint when the process you are tracking is finished and you want to
+dismiss the managed Live Activity stream.
+
+- Call it with the same `stream_key` you used for stream updates.
+- You can include optional `content_state` with final values.
+- By default, iOS removes the Live Activity after two minutes.
+- Set `auto_dismiss_minutes` to choose a different dismissal time, including `0`
+  for immediate dismissal.
