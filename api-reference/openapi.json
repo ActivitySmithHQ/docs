@@ -653,7 +653,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "Start a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, and stats activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, stats, and alert activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.",
         "operationId": "startLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "PUT /live-activity/stream/{stream_key}",
@@ -889,7 +889,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "Update a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, and stats activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, stats, and alert activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.",
         "operationId": "updateLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "PUT /live-activity/stream/{stream_key}",
@@ -1059,7 +1059,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "End a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, and stats activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, and alert activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.",
         "operationId": "endLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "DELETE /live-activity/stream/{stream_key}",
@@ -1373,7 +1373,7 @@
     "schemas": {
       "ContentStateStart": {
         "type": "object",
-        "description": "Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.",
+        "description": "Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message, with optional icon and badge. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.",
         "required": ["title", "type"],
         "properties": {
           "title": { "type": "string" },
@@ -1410,26 +1410,38 @@
             "maxItems": 8,
             "items": { "$ref": "#/components/schemas/ActivityMetric" }
           },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Required for type=alert."
+          },
+          "icon": {
+            "$ref": "#/components/schemas/LiveActivityAlertIcon",
+            "description": "Optional SF Symbol icon for type=alert."
+          },
+          "badge": {
+            "$ref": "#/components/schemas/LiveActivityAlertBadge",
+            "description": "Optional badge for type=alert."
+          },
           "type": {
             "type": "string",
-            "enum": ["segmented_progress", "progress", "metrics", "stats"]
+            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert"]
           },
           "color": {
             "type": "string",
-            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
-            "description": "Optional. Accent color for the Live Activity. Defaults to blue.",
-            "default": "blue"
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities."
           },
           "step_color": {
             "type": "string",
-            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
             "description": "Optional. Overrides color for the current step. Only applies to type=segmented_progress."
           },
           "step_colors": {
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"]
+              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"]
             },
             "description": "Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step."
           }
@@ -1442,7 +1454,7 @@
       },
       "ContentStateUpdate": {
         "type": "object",
-        "description": "Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.",
+        "description": "Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message, with optional icon and badge. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.",
         "required": ["title"],
         "properties": {
           "title": { "type": "string" },
@@ -1479,27 +1491,39 @@
             "maxItems": 8,
             "items": { "$ref": "#/components/schemas/ActivityMetric" }
           },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Alert message. Use for type=alert."
+          },
+          "icon": {
+            "$ref": "#/components/schemas/LiveActivityAlertIcon",
+            "description": "Optional SF Symbol icon for type=alert."
+          },
+          "badge": {
+            "$ref": "#/components/schemas/LiveActivityAlertBadge",
+            "description": "Optional badge for type=alert."
+          },
           "type": {
             "type": "string",
-            "enum": ["segmented_progress", "progress", "metrics", "stats"],
+            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert"],
             "description": "Optional. When omitted, the API uses the existing Live Activity type."
           },
           "color": {
             "type": "string",
-            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
-            "description": "Optional. Accent color for the Live Activity. Defaults to blue.",
-            "default": "blue"
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities."
           },
           "step_color": {
             "type": "string",
-            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
             "description": "Optional. Overrides color for the current step. Only applies to type=segmented_progress."
           },
           "step_colors": {
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"]
+              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"]
             },
             "description": "Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step."
           }
@@ -1512,7 +1536,7 @@
       },
       "ContentStateEnd": {
         "type": "object",
-        "description": "End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.",
+        "description": "End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message, with optional icon and badge. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.",
         "required": ["title"],
         "properties": {
           "title": { "type": "string" },
@@ -1549,27 +1573,39 @@
             "maxItems": 8,
             "items": { "$ref": "#/components/schemas/ActivityMetric" }
           },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Alert message. Use for type=alert."
+          },
+          "icon": {
+            "$ref": "#/components/schemas/LiveActivityAlertIcon",
+            "description": "Optional SF Symbol icon for type=alert."
+          },
+          "badge": {
+            "$ref": "#/components/schemas/LiveActivityAlertBadge",
+            "description": "Optional badge for type=alert."
+          },
           "type": {
             "type": "string",
-            "enum": ["segmented_progress", "progress", "metrics", "stats"],
+            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert"],
             "description": "Optional. When omitted, the API uses the existing Live Activity type."
           },
           "color": {
             "type": "string",
-            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
-            "description": "Optional. Accent color for the Live Activity. Defaults to blue.",
-            "default": "blue"
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities."
           },
           "step_color": {
             "type": "string",
-            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
             "description": "Optional. Overrides color for the current step. Only applies to type=segmented_progress."
           },
           "step_colors": {
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"]
+              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"]
             },
             "description": "Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step."
           },
@@ -1588,7 +1624,7 @@
       },
       "StreamContentState": {
         "type": "object",
-        "description": "Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, and stats types.",
+        "description": "Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, and alert types.",
         "required": ["title"],
         "properties": {
           "title": { "type": "string" },
@@ -1620,25 +1656,24 @@
           },
           "type": {
             "type": "string",
-            "enum": ["segmented_progress", "progress", "metrics", "stats"],
+            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert"],
             "description": "Required on the first PUT or whenever the stream cannot infer the current activity type."
           },
           "color": {
             "type": "string",
-            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
-            "description": "Optional. Accent color for the Live Activity. Defaults to blue.",
-            "default": "blue"
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities."
           },
           "step_color": {
             "type": "string",
-            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
             "description": "Optional. Overrides color for the current step. Only applies to segmented_progress."
           },
           "step_colors": {
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"]
+              "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"]
             },
             "description": "Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step."
           },
@@ -1648,6 +1683,19 @@
             "minItems": 1,
             "maxItems": 8,
             "items": { "$ref": "#/components/schemas/ActivityMetric" }
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Required for type=alert."
+          },
+          "icon": {
+            "$ref": "#/components/schemas/LiveActivityAlertIcon",
+            "description": "Optional SF Symbol icon for type=alert."
+          },
+          "badge": {
+            "$ref": "#/components/schemas/LiveActivityAlertBadge",
+            "description": "Optional badge for type=alert."
           },
           "auto_dismiss_seconds": {
             "type": "integer",
@@ -1677,8 +1725,42 @@
           "unit": { "type": "string" },
           "color": {
             "type": "string",
-            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"],
+            "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
             "description": "Optional per-metric accent color for metrics and stats activities."
+          }
+        },
+        "additionalProperties": false
+      },
+      "LiveActivityColor": {
+        "type": "string",
+        "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"]
+      },
+      "LiveActivityAlertIcon": {
+        "type": "object",
+        "description": "Optional SF Symbol icon for alert Live Activities.",
+        "required": ["symbol"],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Apple SF Symbol name."
+          },
+          "color": {
+            "$ref": "#/components/schemas/LiveActivityColor",
+            "description": "Optional icon color."
+          }
+        },
+        "additionalProperties": false
+      },
+      "LiveActivityAlertBadge": {
+        "type": "object",
+        "description": "Optional badge for alert Live Activities.",
+        "required": ["title"],
+        "properties": {
+          "title": { "type": "string", "minLength": 1 },
+          "color": {
+            "$ref": "#/components/schemas/LiveActivityColor",
+            "description": "Optional badge color."
           }
         },
         "additionalProperties": false
