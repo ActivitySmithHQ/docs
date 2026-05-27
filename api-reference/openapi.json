@@ -1430,7 +1430,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities."
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
@@ -1512,7 +1512,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities."
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
@@ -1594,7 +1594,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities."
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
@@ -1662,7 +1662,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities."
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
