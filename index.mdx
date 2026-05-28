@@ -185,7 +185,7 @@ activitysmith push \
 
 ## Live Activities
 
-There are four types of Live Activities:
+There are five types of Live Activities:
 
 | Type                 | Best for                      | Required state                                                      |
 | -------------------- | ----------------------------- | ------------------------------------------------------------------- |
@@ -193,6 +193,7 @@ There are four types of Live Activities:
 | `metrics`            | Live operational stats        | `title`, `type`, and a non-empty `metrics` array                    |
 | `segmented_progress` | Jobs tracked in steps         | `title`, `type`, `number_of_steps`, `current_step`                  |
 | `progress`           | Jobs with continuous progress | `title`, `type`, and either `percentage` or `value` + `upper_limit` |
+| `alert`              | Focused status updates        | `title`, `type`, and `message`                                      |
 
 <img
   className="image"
@@ -213,6 +214,11 @@ There are four types of Live Activities:
   className="image"
   src="https://cdn.activitysmith.com/features/update-live-activity.png"
   alt="Segmented Progress Live Activity update"
+/>
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/alert-live-activity.png"
+  alt="Alert Live Activity update"
 />
 
 ### Start & Update Live Activity
@@ -237,6 +243,9 @@ including `0` for immediate dismissal.
 Live Activities support one optional `action` button shown on the Lock Screen. Use it to have a one-tap path from a long-running
 job to the place where you can act on it. The `action` field is accepted on
 stream updates and works with all Live Activity types.
+
+For `alert` Live Activities, set `content_state.color` to tint the action
+button. `icon.color` and `badge.color` only affect the icon and badge.
 
 <div style={{ display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap", margin: "16px 0" }}>
   <img

@@ -1430,7 +1430,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
@@ -1512,7 +1512,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
@@ -1594,7 +1594,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
@@ -1662,7 +1662,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
@@ -1737,7 +1737,7 @@
       },
       "LiveActivityAlertIcon": {
         "type": "object",
-        "description": "Optional SF Symbol icon for alert Live Activities.",
+        "description": "Optional SF Symbol icon for Alert Live Activities.",
         "required": ["symbol"],
         "properties": {
           "symbol": {
@@ -1754,7 +1754,7 @@
       },
       "LiveActivityAlertBadge": {
         "type": "object",
-        "description": "Optional badge for alert Live Activities.",
+        "description": "Optional badge for Alert Live Activities.",
         "required": ["title"],
         "properties": {
           "title": { "type": "string", "minLength": 1 },
