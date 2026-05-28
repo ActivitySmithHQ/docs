@@ -1385,8 +1385,8 @@
           },
           "current_step": {
             "type": "integer",
-            "minimum": 1,
-            "description": "Current step. Use for type=segmented_progress."
+            "minimum": 0,
+            "description": "Current completed step count. Use for type=segmented_progress. Set 0 when the activity has started but no segment is complete yet. Must be less than or equal to number_of_steps."
           },
           "percentage": {
             "type": "number",
@@ -1466,8 +1466,8 @@
           },
           "current_step": {
             "type": "integer",
-            "minimum": 1,
-            "description": "Current step. Use for type=segmented_progress."
+            "minimum": 0,
+            "description": "Current completed step count. Use for type=segmented_progress. Set 0 when no segment is complete yet. Must be less than or equal to number_of_steps when number_of_steps is provided."
           },
           "percentage": {
             "type": "number",
@@ -1548,8 +1548,8 @@
           },
           "current_step": {
             "type": "integer",
-            "minimum": 1,
-            "description": "Current step. Use for type=segmented_progress."
+            "minimum": 0,
+            "description": "Current completed step count. Use for type=segmented_progress. Must be less than or equal to number_of_steps when number_of_steps is provided."
           },
           "percentage": {
             "type": "number",
@@ -1636,8 +1636,8 @@
           },
           "current_step": {
             "type": "integer",
-            "minimum": 1,
-            "description": "Use for segmented_progress."
+            "minimum": 0,
+            "description": "Use for segmented_progress. Set 0 when no segment is complete yet. Must be less than or equal to number_of_steps when number_of_steps is provided."
           },
           "percentage": {
             "type": "number",
