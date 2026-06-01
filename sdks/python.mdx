@@ -85,7 +85,7 @@ What will work:
 - direct video file URL: `.mp4`, `.mov`, etc.
 - URL that responds with a proper media `Content-Type`, even if the path has no extension
 
-`media` can be combined with `redirection`, but not with `actions`.
+`media` can be combined with `redirection`, but not with `actions`. `redirection` can be an HTTPS or shortcuts:// URL.
 
 ### Actionable Push Notifications
 
@@ -95,7 +95,7 @@ What will work:
   alt="Actionable push notification with redirection and actions"
 />
 
-Push notification redirection and actions are optional and can be used to redirect the user to a specific URL when they tap the notification or to trigger a specific action when they long-press the notification. Webhooks are executed by ActivitySmith backend.
+Push notification redirection can open an HTTPS or shortcuts:// URL when someone taps the notification. For expanded notification actions, `open_url` supports HTTPS and shortcuts:// URLs. Webhooks are executed by the ActivitySmith backend and must use HTTPS.
 
 ```python Python
 activitysmith.notifications.send(
@@ -104,9 +104,9 @@ activitysmith.notifications.send(
     redirection="https://crm.example.com/customers/cus_9f3a1d",
     actions=[
         action(
-            title="Open CRM Profile",
+            title="Open CRM Shortcut",
             type="open_url",
-            url="https://crm.example.com/customers/cus_9f3a1d",
+            url="shortcuts://run-shortcut?name=Open%20CRM",
         ),
         action(
             title="Start Onboarding Workflow",
@@ -258,14 +258,6 @@ activitysmith.live_activities.stream(
 )
 ```
 
-The `icon.symbol` value is an Apple SF Symbol name. Browse the catalog with one of these tools:
-
-- [ActivitySmith app](https://apps.apple.com/us/app/activitysmith/id6752254835) - Open Settings -> SF Symbols to browse 45 hand-picked icons ready to use
-- [SF Symbols](https://developer.apple.com/sf-symbols/) - Apple's official macOS app
-- [Interactful](https://apps.apple.com/app/interactful/id1528095640) - free third-party iOS app listing all SF Symbols under Foundations -> Iconography
-
-`icon` and `badge` are optional. If you omit either one, that element is not shown in the Live Activity.
-
 ### End Live Activity
 
 Call `end_stream(...)` with the same `stream_key` to dismiss the Live Activity. You can include final values before it is removed. By default, iOS removes the Live Activity after two minutes. Set `auto_dismiss_minutes` to choose a different dismissal time, including `0` for immediate dismissal.
@@ -286,10 +278,70 @@ activitysmith.live_activities.end_stream(
 )
 ```
 
+### Icons and Badges
+
+Add more context to Live Activities with icons and badges.
+
+#### Icon
+
+Supported Live Activity types: `stats`, `metrics`, `progress`, `segmented_progress`, and `alert`.
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-with-icon.png" alt="Metrics Live Activity with an SF Symbol icon on the iPhone Lock Screen" width="680" />
+</p>
+
+```python
+activitysmith.live_activities.stream(
+    "prod-web-1",
+    content_state=content_state(
+        title="Server Health",
+        subtitle="prod-web-1",
+        type=activitysmith.live_activities.TYPE_METRICS,
+        icon=alert_icon("server.rack", color="blue"),
+        metrics=[
+            metric(label="CPU", value=18, unit="%"),
+            metric(label="MEM", value=42, unit="%"),
+        ],
+    ),
+)
+```
+
+The `icon.symbol` value is an Apple SF Symbol name. Browse the catalog with one of these tools:
+
+- [ActivitySmith app](https://apps.apple.com/us/app/activitysmith/id6752254835) - Open Settings -> SF Symbols to browse 45 hand-picked icons ready to use
+- [SF Symbols](https://developer.apple.com/sf-symbols/) - Apple's official macOS app
+- [Interactful](https://apps.apple.com/app/interactful/id1528095640) - free third-party iOS app listing all SF Symbols under Foundations -> Iconography
+
+#### Badge
+
+Badges are supported by `alert`, `progress`, and `segmented_progress` Live Activities.
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/progress-live-activity-with-badge.png" alt="Progress Live Activity with a badge on the iPhone Lock Screen" width="680" />
+</p>
+
+```python
+activitysmith.live_activities.stream(
+    "nightly-database-backup",
+    content_state=content_state(
+        title="Nightly Database Backup",
+        subtitle="verify restore",
+        type=activitysmith.live_activities.TYPE_PROGRESS,
+        badge=alert_badge("S3", color="cyan"),
+        percentage=62,
+    ),
+)
+```
+
+### Live Activity Colors
+
+Choose from these colors for the Live Activity accent, including progress bars and action buttons, or apply them to an individual icon or badge:
+
+`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`, `gray`
+
 ### Live Activity Action
 
-Live Activities can include one optional action button. Use it to open a URL from the Live Activity or trigger a backend webhook.
-For Alert Live Activities, set `content_state.color` to tint the action button. `icon.color` and `badge.color` only affect the icon and badge.
+Live Activities can include one optional action button. Use it to open an HTTPS or shortcuts:// URL from the Live Activity, or trigger a backend webhook.
 
 <p align="center">
   <img
@@ -316,7 +368,7 @@ activitysmith.live_activities.stream(
     action=action(
         title="Open Dashboard",
         type="open_url",
-        url="https://ops.example.com/servers/prod-web-1",
+        url="shortcuts://run-shortcut?name=Open%20Dashboard",
     ),
 )
 ```
