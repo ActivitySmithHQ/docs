@@ -384,7 +384,29 @@ $activitysmith->liveActivities->stream(
     action: LiveActivityAction::make(
         title: 'Open Dashboard',
         type: 'open_url',
-        url: 'shortcuts://run-shortcut?name=Open%20Dashboard',
+        url: 'https://status.example.com/servers/prod-web-1',
+    ),
+);
+```
+
+#### Run Shortcut action
+
+```php
+$activitysmith->liveActivities->stream(
+    'prod-web-1',
+    contentState: LiveActivityContentState::make(
+        title: 'Server Health',
+        subtitle: 'prod-web-1',
+        type: 'metrics',
+        metrics: [
+            LiveActivityMetric::make(label: 'CPU', value: 76, unit: '%'),
+            LiveActivityMetric::make(label: 'MEM', value: 52, unit: '%'),
+        ],
+    ),
+    action: LiveActivityAction::make(
+        title: 'Chat with Jarvis',
+        type: 'open_url',
+        url: 'shortcuts://run-shortcut?name=Jarvis',
     ),
 );
 ```

@@ -374,7 +374,27 @@ activitysmith activity stream prod-web-1 \
   --action '{
     "title": "Open Dashboard",
     "type": "open_url",
-    "url": "shortcuts://run-shortcut?name=Open%20Dashboard"
+    "url": "https://status.example.com/servers/prod-web-1"
+  }'
+```
+
+#### Run Shortcut action
+
+```bash CLI
+activitysmith activity stream prod-web-1 \
+  --content-state '{
+    "title": "Server Health",
+    "subtitle": "prod-web-1",
+    "type": "metrics",
+    "metrics": [
+      { "label": "CPU", "value": 76, "unit": "%" },
+      { "label": "MEM", "value": 52, "unit": "%" }
+    ]
+  }' \
+  --action '{
+    "title": "Chat with Jarvis",
+    "type": "open_url",
+    "url": "shortcuts://run-shortcut?name=Jarvis"
   }'
 ```
 

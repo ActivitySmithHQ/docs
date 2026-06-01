@@ -373,7 +373,29 @@ activitysmith.live_activities.stream(
     action=action(
         title="Open Dashboard",
         type="open_url",
-        url="shortcuts://run-shortcut?name=Open%20Dashboard",
+        url="https://status.example.com/servers/prod-web-1",
+    ),
+)
+```
+
+#### Run Shortcut action
+
+```python
+activitysmith.live_activities.stream(
+    "prod-web-1",
+    content_state=content_state(
+        title="Server Health",
+        subtitle="prod-web-1",
+        type="metrics",
+        metrics=[
+            metric(label="CPU", value=76, unit="%"),
+            metric(label="MEM", value=52, unit="%"),
+        ],
+    ),
+    action=action(
+        title="Chat with Jarvis",
+        type="open_url",
+        url="shortcuts://run-shortcut?name=Jarvis",
     ),
 )
 ```

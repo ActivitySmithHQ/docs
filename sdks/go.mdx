@@ -407,7 +407,29 @@ activitysmith.LiveActivities.Stream(
 		Action: &activitysmithsdk.LiveActivityActionInput{
 			Title: "Open Dashboard",
 			Type:  "open_url",
-			URL:   "shortcuts://run-shortcut?name=Open%20Dashboard",
+			URL:   "https://status.example.com/servers/prod-web-1",
+		},
+	},
+)
+```
+
+#### Run Shortcut action
+
+```go
+activitysmith.LiveActivities.Stream(
+	"prod-web-1",
+	activitysmithsdk.LiveActivityStreamInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("CPU", 76, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("MEM", 52, activitysmithsdk.MetricUnit("%")),
+		},
+		Action: &activitysmithsdk.LiveActivityActionInput{
+			Title: "Chat with Jarvis",
+			Type:  "open_url",
+			URL:   "shortcuts://run-shortcut?name=Jarvis",
 		},
 	},
 )
