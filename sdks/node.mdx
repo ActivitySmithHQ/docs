@@ -98,9 +98,14 @@ await activitysmith.notifications.send({
   redirection: "https://crm.example.com/customers/cus_9f3a1d",
   actions: [
     {
-      title: "Open CRM Shortcut",
+      title: "Open CRM",
       type: "open_url",
-      url: "shortcuts://run-shortcut?name=Open%20CRM",
+      url: "https://crm.example.com/customers/cus_9f3a1d",
+    },
+    {
+      title: "Chat with Jarvis",
+      type: "open_url",
+      url: "shortcuts://run-shortcut?name=Jarvis",
     },
     {
       title: "Start Onboarding Workflow",

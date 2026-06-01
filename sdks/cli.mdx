@@ -99,9 +99,14 @@ activitysmith push \
   --redirection "https://github.com/org/repo/actions/runs/123456789" \
   --actions '[
     {
-      "title": "Open Build Shortcut",
+      "title": "Open Build",
       "type": "open_url",
-      "url": "shortcuts://run-shortcut?name=Open%20Build"
+      "url": "https://github.com/org/repo/actions/runs/123456789"
+    },
+    {
+      "title": "Chat with Jarvis",
+      "type": "open_url",
+      "url": "shortcuts://run-shortcut?name=Jarvis"
     },
     {
       "title": "Create Incident",

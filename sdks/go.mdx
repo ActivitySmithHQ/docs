@@ -125,9 +125,14 @@ input := activitysmithsdk.PushNotificationInput{
 	Redirection: "https://crm.example.com/customers/cus_9f3a1d",
 	Actions: []activitysmithsdk.PushNotificationAction{
 		activitysmithsdk.PushAction(
-			"Open CRM Shortcut",
+			"Open CRM",
 			"open_url",
-			"shortcuts://run-shortcut?name=Open%20CRM",
+			"https://crm.example.com/customers/cus_9f3a1d",
+		),
+		activitysmithsdk.PushAction(
+			"Chat with Jarvis",
+			"open_url",
+			"shortcuts://run-shortcut?name=Jarvis",
 		),
 		activitysmithsdk.PushAction(
 			"Start Onboarding Workflow",

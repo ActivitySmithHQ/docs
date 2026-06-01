@@ -107,9 +107,14 @@ $activitysmith->notifications->send(
     redirection: 'https://crm.example.com/customers/cus_9f3a1d',
     actions: [
         PushAction::make(
-            title: 'Open CRM Shortcut',
+            title: 'Open CRM',
             type: 'open_url',
-            url: 'shortcuts://run-shortcut?name=Open%20CRM',
+            url: 'https://crm.example.com/customers/cus_9f3a1d',
+        ),
+        PushAction::make(
+            title: 'Chat with Jarvis',
+            type: 'open_url',
+            url: 'shortcuts://run-shortcut?name=Jarvis',
         ),
         PushAction::make(
             title: 'Start Onboarding Workflow',
