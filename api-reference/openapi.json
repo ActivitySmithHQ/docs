@@ -1280,17 +1280,8 @@
           "content": {
             "application/json": {
               "schema": { "$ref": "#/components/schemas/MetricValueUpdateRequest" },
-              "examples": {
-                "number": {
-                  "value": {
-                    "value": 42
-                  }
-                },
-                "string": {
-                  "value": {
-                    "value": "healthy"
-                  }
-                }
+              "example": {
+                "value": 42
               }
             }
           }
