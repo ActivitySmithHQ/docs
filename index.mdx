@@ -283,15 +283,15 @@ The `action` object accepts:
 | -------- | ------------ | ---------------------------------------------------- |
 | `title`  | yes          | Button label shown on the Live Activity.             |
 | `type`   | yes          | Either `open_url` or `webhook`.                      |
-| `url`    | yes          | For `open_url`, use an HTTPS or `shortcuts://` URL. For `webhook`, use an HTTPS endpoint. |
+| `url`    | yes          | For `open_url`, use an HTTPS URL or a `shortcuts://run-shortcut?name=...` URL. For `webhook`, use an HTTPS endpoint. |
 | `method` | webhook only | `GET` or `POST`.                                     |
 | `body`   | webhook only | Optional JSON payload sent with the webhook request. |
 
 #### open_url
 
 Use `open_url` when the button should jump the user to a dashboard or run page
-tied to the work. You can also use a `shortcuts://` URL to run an Apple
-Shortcut, for example to open an app on your iPhone.
+tied to the work. You can also use a `shortcuts://run-shortcut?name=...` URL to
+run a specific iPhone Shortcut, for example to open an app on your iPhone.
 
 ```json
 {
