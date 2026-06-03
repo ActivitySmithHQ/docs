@@ -58,8 +58,8 @@ To send a push notification, use the `push-notification` endpoint. It takes `tit
 `target.channels` accepts channel slugs (for example `["devs", "ops"]`).
 
 - `media` attaches an image, audio file, or video that users can preview or play when they expand the notification.
-- `redirection` opens an HTTPS URL or runs an Apple Shortcut with a `shortcuts://` URL on normal tap.
-- `actions` (up to 4) appear when users expand the notification. `open_url` actions support HTTPS and `shortcuts://` URLs; `webhook` actions call your backend.
+- `redirection` opens an HTTPS URL or runs a specific iPhone Shortcut with a `shortcuts://run-shortcut?name=...` URL on normal tap.
+- `actions` (up to 4) appear when users expand the notification. `open_url` actions support HTTPS URLs and `shortcuts://run-shortcut?name=...` URLs; `webhook` actions call your backend.
 - `media + redirection` is supported.
 - `media + actions` is not supported in v1.
 
@@ -274,7 +274,7 @@ button. `icon.color` and `badge.color` only affect the icon and badge.
 
 There are two action types:
 
-- `open_url`: opens an HTTPS URL or runs an Apple Shortcut with a `shortcuts://` URL.
+- `open_url`: opens an HTTPS URL or runs a specific iPhone Shortcut with a `shortcuts://run-shortcut?name=...` URL.
 - `webhook`: ActivitySmith's backend calls your HTTPS webhook with `GET` or `POST`.
 
 The `action` object accepts:
