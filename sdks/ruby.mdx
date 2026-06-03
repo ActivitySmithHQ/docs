@@ -369,7 +369,11 @@ Choose from these colors for the Live Activity accent, including progress bars a
 
 ### Live Activity Action
 
-Live Activities can include one optional action button. Use it to open an HTTPS or shortcuts:// URL from the Live Activity, or trigger a backend webhook.
+Live Activities can include one optional action button.
+
+- `open_url`: open an HTTPS URL.
+- `open_url` with a `shortcuts://` URL: run an Apple Shortcut, for example to open an app.
+- `webhook`: trigger a backend GET/POST workflow.
 
 <p align="center">
   <img
@@ -395,7 +399,7 @@ activitysmith.live_activities.stream(
       ]
     },
     action: {
-      title: "Open Dashboard",
+      title: "Dashboard",
       type: "open_url",
       url: "https://status.example.com/servers/prod-web-1"
     }
@@ -403,7 +407,7 @@ activitysmith.live_activities.stream(
 )
 ```
 
-#### Run Shortcut action
+#### Apple Shortcut action
 
 ```ruby
 activitysmith.live_activities.stream(

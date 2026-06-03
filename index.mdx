@@ -58,8 +58,8 @@ To send a push notification, use the `push-notification` endpoint. It takes `tit
 `target.channels` accepts channel slugs (for example `["devs", "ops"]`).
 
 - `media` attaches an image, audio file, or video that users can preview or play when they expand the notification.
-- `redirection` opens on normal tap.
-- `actions` (up to 4) appear when users expand the notification.
+- `redirection` opens an HTTPS URL or runs an Apple Shortcut with a `shortcuts://` URL on normal tap.
+- `actions` (up to 4) appear when users expand the notification. `open_url` actions support HTTPS and `shortcuts://` URLs; `webhook` actions call your backend.
 - `media + redirection` is supported.
 - `media + actions` is not supported in v1.
 
@@ -274,7 +274,7 @@ button. `icon.color` and `badge.color` only affect the icon and badge.
 
 There are two action types:
 
-- `open_url`: opens the provided HTTPS URL in the browser.
+- `open_url`: opens an HTTPS URL or runs an Apple Shortcut with a `shortcuts://` URL.
 - `webhook`: ActivitySmith's backend calls your HTTPS webhook with `GET` or `POST`.
 
 The `action` object accepts:
@@ -283,14 +283,15 @@ The `action` object accepts:
 | -------- | ------------ | ---------------------------------------------------- |
 | `title`  | yes          | Button label shown on the Live Activity.             |
 | `type`   | yes          | Either `open_url` or `webhook`.                      |
-| `url`    | yes          | HTTPS endpoint to open or call.                      |
+| `url`    | yes          | For `open_url`, use an HTTPS or `shortcuts://` URL. For `webhook`, use an HTTPS endpoint. |
 | `method` | webhook only | `GET` or `POST`.                                     |
 | `body`   | webhook only | Optional JSON payload sent with the webhook request. |
 
 #### open_url
 
-Use `open_url` when the button should jump the user to a dashboard, run page,
-or any browser destination tied to the work.
+Use `open_url` when the button should jump the user to a dashboard or run page
+tied to the work. You can also use a `shortcuts://` URL to run an Apple
+Shortcut, for example to open an app on your iPhone.
 
 ```json
 {
