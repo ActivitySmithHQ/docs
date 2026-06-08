@@ -257,7 +257,7 @@
       "put": {
         "tags": ["LiveActivities"],
         "summary": "Start a new Live Activity or update an existing one",
-        "description": "Use a stable stream_key for each ongoing thing you want to show as a Live Activity. Send the latest content_state whenever it changes, and ActivitySmith will keep the Live Activity in sync.",
+        "description": "Use a stable stream_key for each ongoing thing you want to show as a Live Activity. Send the latest content_state whenever it changes, and ActivitySmith will keep the Live Activity in sync. For timer streams, send duration_seconds to start or reset the timer; omit duration_seconds on later updates to preserve the existing timer window.",
         "operationId": "reconcileLiveActivityStream",
         "x-activitysmith-lifecycle": "recommended_managed",
         "x-codeSamples": [
@@ -351,6 +351,17 @@
                           "unit": "%"
                         }
                       ]
+                    }
+                  }
+                },
+                "timer": {
+                  "value": {
+                    "content_state": {
+                      "title": "Benchmark Run",
+                      "subtitle": "sampling performance",
+                      "type": "timer",
+                      "duration_seconds": 300,
+                      "color": "cyan"
                     }
                   }
                 }
@@ -653,7 +664,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "Start a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, stats, and alert activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.",
         "operationId": "startLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "PUT /live-activity/stream/{stream_key}",
@@ -767,6 +778,17 @@
                     },
                     "target": {
                       "channels": ["devs", "ops"]
+                    }
+                  }
+                },
+                "timer": {
+                  "value": {
+                    "content_state": {
+                      "title": "Benchmark Run",
+                      "subtitle": "sampling performance",
+                      "type": "timer",
+                      "duration_seconds": 300,
+                      "color": "cyan"
                     }
                   }
                 }
@@ -889,7 +911,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "Update a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, stats, and alert activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes. For timer activities, send duration_seconds only when you want to reset the timer window; omit it to keep the current timer running.",
         "operationId": "updateLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "PUT /live-activity/stream/{stream_key}",
@@ -995,6 +1017,27 @@
                       }
                     }
                   }
+                },
+                "timer_preserve_window": {
+                  "value": {
+                    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                    "content_state": {
+                      "title": "Benchmark Run",
+                      "subtitle": "checking p95 latency",
+                      "type": "timer"
+                    }
+                  }
+                },
+                "timer_reset_window": {
+                  "value": {
+                    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                    "content_state": {
+                      "title": "Benchmark Run",
+                      "subtitle": "retrying sample",
+                      "type": "timer",
+                      "duration_seconds": 180
+                    }
+                  }
                 }
               }
             }
@@ -1059,7 +1102,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "End a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, and alert activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.",
         "operationId": "endLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "DELETE /live-activity/stream/{stream_key}",
@@ -1161,6 +1204,17 @@
                       "title": "Open Workflow",
                       "type": "open_url",
                       "url": "https://github.com/acme/payments-api/actions/runs/1234567890"
+                    }
+                  }
+                },
+                "timer": {
+                  "value": {
+                    "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+                    "content_state": {
+                      "title": "Benchmark Run",
+                      "subtitle": "complete",
+                      "type": "timer",
+                      "auto_dismiss_minutes": 2
                     }
                   }
                 }
@@ -1364,7 +1418,7 @@
     "schemas": {
       "ContentStateStart": {
         "type": "object",
-        "description": "Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.",
+        "description": "Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. For timer include duration_seconds for countdowns, or set counts_down false without duration_seconds for an open-ended elapsed timer. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.",
         "required": ["title", "type"],
         "properties": {
           "title": { "type": "string" },
@@ -1394,6 +1448,21 @@
             "exclusiveMinimum": 0,
             "description": "Maximum progress value. Use with value for type=progress."
           },
+          "duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Timer duration in seconds. For type=timer countdowns, required on start when counts_down is true or omitted."
+          },
+          "counts_down": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer."
+          },
+          "is_running": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use with type=timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume."
+          },
           "metrics": {
             "type": "array",
             "description": "Use for type=metrics or type=stats.",
@@ -1408,7 +1477,7 @@
           },
           "icon": {
             "$ref": "#/components/schemas/LiveActivityAlertIcon",
-            "description": "Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats."
+            "description": "Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer."
           },
           "badge": {
             "$ref": "#/components/schemas/LiveActivityAlertBadge",
@@ -1416,12 +1485,12 @@
           },
           "type": {
             "type": "string",
-            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert"]
+            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert", "timer"]
           },
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
@@ -1445,7 +1514,7 @@
       },
       "ContentStateUpdate": {
         "type": "object",
-        "description": "Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.",
+        "description": "Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. For timer, omit duration_seconds to preserve the current timer window or send duration_seconds to reset the timer from the update request time. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.",
         "required": ["title"],
         "properties": {
           "title": { "type": "string" },
@@ -1475,6 +1544,21 @@
             "exclusiveMinimum": 0,
             "description": "Maximum progress value. Use with value for type=progress."
           },
+          "duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Timer duration in seconds. For type=timer, sending duration_seconds resets the timer window from the update request time; omit it to preserve the existing timer window."
+          },
+          "counts_down": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer."
+          },
+          "is_running": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use with type=timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume."
+          },
           "metrics": {
             "type": "array",
             "description": "Use for type=metrics or type=stats.",
@@ -1489,7 +1573,7 @@
           },
           "icon": {
             "$ref": "#/components/schemas/LiveActivityAlertIcon",
-            "description": "Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats."
+            "description": "Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer."
           },
           "badge": {
             "$ref": "#/components/schemas/LiveActivityAlertBadge",
@@ -1497,13 +1581,13 @@
           },
           "type": {
             "type": "string",
-            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert"],
+            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert", "timer"],
             "description": "Optional. When omitted, the API uses the existing Live Activity type."
           },
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
@@ -1527,7 +1611,7 @@
       },
       "ContentStateEnd": {
         "type": "object",
-        "description": "End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.",
+        "description": "End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. For timer, omit duration_seconds to preserve and freeze the latest timer state. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.",
         "required": ["title"],
         "properties": {
           "title": { "type": "string" },
@@ -1557,6 +1641,21 @@
             "exclusiveMinimum": 0,
             "description": "Maximum progress value. Use with value for type=progress."
           },
+          "duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Timer duration in seconds. For type=timer, omit duration_seconds on end to preserve and freeze the latest timer state."
+          },
+          "counts_down": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer."
+          },
+          "is_running": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use with type=timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume."
+          },
           "metrics": {
             "type": "array",
             "description": "Use for type=metrics or type=stats.",
@@ -1571,7 +1670,7 @@
           },
           "icon": {
             "$ref": "#/components/schemas/LiveActivityAlertIcon",
-            "description": "Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats."
+            "description": "Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer."
           },
           "badge": {
             "$ref": "#/components/schemas/LiveActivityAlertBadge",
@@ -1579,13 +1678,13 @@
           },
           "type": {
             "type": "string",
-            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert"],
+            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert", "timer"],
             "description": "Optional. When omitted, the API uses the existing Live Activity type."
           },
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
@@ -1615,7 +1714,7 @@
       },
       "StreamContentState": {
         "type": "object",
-        "description": "Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, and alert types.",
+        "description": "Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, alert, and timer types. For timer, send duration_seconds to start or reset a bounded timer; omit duration_seconds on later updates to preserve the existing timer window.",
         "required": ["title"],
         "properties": {
           "title": { "type": "string" },
@@ -1645,15 +1744,30 @@
             "exclusiveMinimum": 0,
             "description": "Maximum progress value. Use with value for progress."
           },
+          "duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Timer duration in seconds. For type=timer, send duration_seconds to start or reset the timer window; omit it on later stream updates to preserve the existing timer window."
+          },
+          "counts_down": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer."
+          },
+          "is_running": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use with type=timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume."
+          },
           "type": {
             "type": "string",
-            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert"],
+            "enum": ["segmented_progress", "progress", "metrics", "stats", "alert", "timer"],
             "description": "Required on the first PUT or whenever the stream cannot infer the current activity type."
           },
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included."
           },
           "step_color": {
             "type": "string",
@@ -1682,7 +1796,7 @@
           },
           "icon": {
             "$ref": "#/components/schemas/LiveActivityAlertIcon",
-            "description": "Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats."
+            "description": "Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer."
           },
           "badge": {
             "$ref": "#/components/schemas/LiveActivityAlertBadge",
