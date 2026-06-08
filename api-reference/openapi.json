@@ -358,7 +358,7 @@
                   "value": {
                     "content_state": {
                       "title": "Benchmark Run",
-                      "subtitle": "sampling performance",
+                      "subtitle": "sampling",
                       "type": "timer",
                       "duration_seconds": 300,
                       "color": "cyan"
@@ -380,7 +380,7 @@
                     "value": {
                       "success": true,
                       "operation": "started",
-                      "stream_key": "linode-vps",
+                      "stream_key": "prod-web-1",
                       "activity_id": "h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034",
                       "devices_notified": 2,
                       "timestamp": "2025-08-12T12:00:00.000Z"
@@ -390,7 +390,7 @@
                     "value": {
                       "success": true,
                       "operation": "noop",
-                      "stream_key": "linode-vps",
+                      "stream_key": "prod-web-1",
                       "activity_id": "h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034",
                       "timestamp": "2025-08-12T12:05:00.000Z"
                     }
@@ -399,7 +399,7 @@
                     "value": {
                       "success": true,
                       "operation": "paused",
-                      "stream_key": "linode-vps",
+                      "stream_key": "prod-web-1",
                       "activity_id": null,
                       "timestamp": "2025-08-12T12:10:00.000Z"
                     }
@@ -590,7 +590,7 @@
                     "value": {
                       "success": true,
                       "operation": "ended",
-                      "stream_key": "linode-vps",
+                      "stream_key": "prod-web-1",
                       "activity_id": "h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034",
                       "devices_queued": 1,
                       "timestamp": "2025-08-12T12:10:00.000Z"
@@ -600,7 +600,7 @@
                     "value": {
                       "success": true,
                       "operation": "ended",
-                      "stream_key": "linode-vps",
+                      "stream_key": "prod-web-1",
                       "activity_id": null,
                       "timestamp": "2025-08-12T12:10:00.000Z"
                     }
@@ -634,7 +634,7 @@
                   "not_found": {
                     "value": {
                       "error": "Live Activity stream not found",
-                      "message": "No Live Activity stream found for stream_key: linode-vps"
+                      "message": "No Live Activity stream found for stream_key: prod-web-1"
                     }
                   }
                 }
@@ -785,7 +785,7 @@
                   "value": {
                     "content_state": {
                       "title": "Benchmark Run",
-                      "subtitle": "sampling performance",
+                      "subtitle": "sampling",
                       "type": "timer",
                       "duration_seconds": 300,
                       "color": "cyan"

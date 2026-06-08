@@ -55,6 +55,32 @@ curl -X PUT https://activitysmith.com/api/live-activity/stream/prod-web-1 \
 Call the same endpoint again with the same `stream_key` whenever the state
 changes.
 
+## Timer Example
+
+Use `timer` when you need countdowns or timers.
+
+```bash
+curl -X PUT https://activitysmith.com/api/live-activity/stream/benchmark-run \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content_state": {
+      "title": "Benchmark Run",
+      "subtitle": "sampling",
+      "type": "timer",
+      "duration_seconds": 300,
+      "color": "cyan"
+    }
+  }'
+```
+
+For a countdown, send `duration_seconds`. You can update `title`, `subtitle`,
+`color`, or any other visible field as the work changes. Leave
+`duration_seconds` out unless you want to change the timer.
+
+To start at 00:00 and count up, set `counts_down` to `false` and leave out
+`duration_seconds`.
+
 ## End Live Activity
 
 Use `DELETE /live-activity/stream/:stream_key` when the tracked process is

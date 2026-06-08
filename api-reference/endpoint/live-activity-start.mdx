@@ -14,6 +14,7 @@ use that same ID for later update and end calls.
 - `stats`: send `title`, `type`, and a non-empty `metrics` array for up to 8 labeled values.
 - `segmented_progress`: send `title`, `type`, `number_of_steps`, and `current_step`.
 - `progress`: send `title`, `type`, and either `percentage` or `value` with `upper_limit`.
+- `timer`: send `title`, `type`, and `duration_seconds` for a countdown. To start at 00:00 and count up, set `counts_down` to `false` and leave out `duration_seconds`.
 - `action` is optional if you want the Live Activity to show one button that opens a URL or triggers a webhook.
 - `target.channels` is optional if you want to scope delivery to specific channel slugs.
 

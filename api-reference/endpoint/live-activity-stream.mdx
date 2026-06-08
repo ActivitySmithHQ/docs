@@ -10,6 +10,8 @@ you.
 - If the Live Activity does not exist yet, ActivitySmith starts it.
 - If it already exists, ActivitySmith updates it.
 - You do not need to keep local state between updates.
+- For `timer`, send `duration_seconds` for countdowns. To start at 00:00 and count up, set `counts_down` to `false` and leave out `duration_seconds`.
+- Later `timer` updates can change visible fields without sending `duration_seconds`.
 
 This is a good fit for cron jobs, scheduled tasks, CI workflows, monitoring
 jobs, and background workers that only know the latest state.

@@ -13,6 +13,7 @@ This endpoint updates an existing Live Activity by `activity_id`.
 - `stats`: send the latest `metrics` array for up to 8 labeled values.
 - `segmented_progress`: send the latest `current_step` and, if needed, an updated `number_of_steps`.
 - `progress`: send the latest `percentage`, or `value` with `upper_limit`.
+- `timer`: update visible fields such as `title`, `subtitle`, or `color`. Leave `duration_seconds` out unless you want to change the timer.
 - `action` is optional if you want to set or replace the Live Activity button.
 - `type` is optional on update if the existing Live Activity already has a type.
 
