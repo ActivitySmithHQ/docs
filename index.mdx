@@ -185,15 +185,16 @@ activitysmith push \
 
 ## Live Activities
 
-There are five types of Live Activities:
+There are six types of Live Activities:
 
-| Type                 | Best for                      | Required state                                                      |
-| -------------------- | ----------------------------- | ------------------------------------------------------------------- |
-| `stats`              | up to 8 labeled values         | `title`, `type`, and a non-empty `metrics` array                    |
-| `metrics`            | Live operational stats        | `title`, `type`, and a non-empty `metrics` array                    |
-| `segmented_progress` | Jobs tracked in steps         | `title`, `type`, `number_of_steps`, `current_step`                  |
-| `progress`           | Jobs with continuous progress | `title`, `type`, and either `percentage` or `value` + `upper_limit` |
-| `alert`              | Focused status updates        | `title`, `type`, and `message`                                      |
+| Type                 | Best for                      | Required state                                                                        |
+| -------------------- | ----------------------------- | ------------------------------------------------------------------------------------- |
+| `stats`              | up to 8 labeled values         | `title`, `type`, and a non-empty `metrics` array                                      |
+| `metrics`            | Live operational stats        | `title`, `type`, and a non-empty `metrics` array                                      |
+| `segmented_progress` | Jobs tracked in steps         | `title`, `type`, `number_of_steps`, `current_step`                                    |
+| `progress`           | Jobs with continuous progress | `title`, `type`, and either `percentage` or `value` + `upper_limit`                   |
+| `alert`              | Focused status updates        | `title`, `type`, and `message`                                                        |
+| `timer`              | Countdowns or elapsed runtime | `title`, `type`, and either `duration_seconds` or `counts_down` set to `false`        |
 
 <img
   className="image"
@@ -219,6 +220,11 @@ There are five types of Live Activities:
   className="image"
   src="https://cdn.activitysmith.com/features/alert-live-activity.png"
   alt="Alert Live Activity update"
+/>
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/timer-live-activity.png"
+  alt="Timer Live Activity update"
 />
 
 ### Start & Update Live Activity
