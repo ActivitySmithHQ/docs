@@ -257,7 +257,7 @@
       "put": {
         "tags": ["LiveActivities"],
         "summary": "Start a new Live Activity or update an existing one",
-        "description": "Use a stable stream_key for each ongoing thing you want to show as a Live Activity. Send the latest content_state whenever it changes, and ActivitySmith will keep the Live Activity in sync. For timer streams, send duration_seconds to start or reset the timer; omit duration_seconds on later updates to preserve the existing timer window.",
+        "description": "Use a stable stream_key for each ongoing thing you want to show as a Live Activity. Send the latest content_state whenever it changes, and ActivitySmith will keep the Live Activity in sync. For timer streams, send duration_seconds to start or reset the timer; omit duration_seconds on later updates to preserve the existing timer window. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.",
         "operationId": "reconcileLiveActivityStream",
         "x-activitysmith-lifecycle": "recommended_managed",
         "x-codeSamples": [
@@ -362,6 +362,34 @@
                       "type": "timer",
                       "duration_seconds": 300,
                       "color": "cyan"
+                    }
+                  }
+                },
+                "approval_secondary_actions": {
+                  "value": {
+                    "content_state": {
+                      "title": "Approval Needed",
+                      "message": "Should I send the follow-up email to Brightlane?",
+                      "type": "alert",
+                      "color": "cyan"
+                    },
+                    "action": {
+                      "title": "Send",
+                      "type": "webhook",
+                      "url": "https://example.com/hooks/approvals/send",
+                      "method": "POST",
+                      "body": {
+                        "approval_id": "appr_123"
+                      }
+                    },
+                    "secondary_action": {
+                      "title": "Deny",
+                      "type": "webhook",
+                      "url": "https://example.com/hooks/approvals/deny",
+                      "method": "POST",
+                      "body": {
+                        "approval_id": "appr_123"
+                      }
                     }
                   }
                 }
@@ -497,7 +525,7 @@
       "delete": {
         "tags": ["LiveActivities"],
         "summary": "End a stream",
-        "description": "Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.",
+        "description": "Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.",
         "operationId": "endLiveActivityStream",
         "x-codeSamples": [
           {
@@ -664,7 +692,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "Start a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.",
         "operationId": "startLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "PUT /live-activity/stream/{stream_key}",
@@ -791,6 +819,34 @@
                       "color": "cyan"
                     }
                   }
+                },
+                "approval_secondary_actions": {
+                  "value": {
+                    "content_state": {
+                      "title": "Approval Needed",
+                      "message": "Should I send the follow-up email to Brightlane?",
+                      "type": "alert",
+                      "color": "cyan"
+                    },
+                    "action": {
+                      "title": "Send",
+                      "type": "webhook",
+                      "url": "https://example.com/hooks/approvals/send",
+                      "method": "POST",
+                      "body": {
+                        "approval_id": "appr_123"
+                      }
+                    },
+                    "secondary_action": {
+                      "title": "Deny",
+                      "type": "webhook",
+                      "url": "https://example.com/hooks/approvals/deny",
+                      "method": "POST",
+                      "body": {
+                        "approval_id": "appr_123"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -911,7 +967,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "Update a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes. For timer activities, send duration_seconds only when you want to reset the timer window; omit it to keep the current timer running.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes. For timer activities, send duration_seconds only when you want to reset the timer window; omit it to keep the current timer running. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.",
         "operationId": "updateLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "PUT /live-activity/stream/{stream_key}",
@@ -1102,7 +1158,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "End a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.",
         "operationId": "endLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "DELETE /live-activity/stream/{stream_key}",
@@ -1490,7 +1546,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included."
           },
           "step_color": {
             "type": "string",
@@ -1587,7 +1643,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included."
           },
           "step_color": {
             "type": "string",
@@ -1684,7 +1740,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included."
           },
           "step_color": {
             "type": "string",
@@ -1767,7 +1823,7 @@
           "color": {
             "type": "string",
             "enum": ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"],
-            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included."
+            "description": "Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included."
           },
           "step_color": {
             "type": "string",
@@ -1973,7 +2029,7 @@
       },
       "LiveActivityAction": {
         "type": "object",
-        "description": "Optional single action button shown in the Live Activity UI.",
+        "description": "Optional action button shown in the Live Activity UI. Use action for the primary button, or secondary_action for a secondary button on alert, progress, and segmented_progress Live Activities.",
         "properties": {
           "title": {
             "type": "string",
@@ -2091,6 +2147,10 @@
         "properties": {
           "content_state": { "$ref": "#/components/schemas/ContentStateStart" },
           "action": { "$ref": "#/components/schemas/LiveActivityAction" },
+          "secondary_action": {
+            "$ref": "#/components/schemas/LiveActivityAction",
+            "description": "Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
+          },
           "alert": { "$ref": "#/components/schemas/AlertPayload" },
           "target": { "$ref": "#/components/schemas/ChannelTarget" }
         },
@@ -2120,6 +2180,10 @@
         "properties": {
           "content_state": { "$ref": "#/components/schemas/StreamContentState" },
           "action": { "$ref": "#/components/schemas/LiveActivityAction" },
+          "secondary_action": {
+            "$ref": "#/components/schemas/LiveActivityAction",
+            "description": "Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
+          },
           "alert": { "$ref": "#/components/schemas/AlertPayload" },
           "channels": {
             "type": "array",
@@ -2161,6 +2225,10 @@
         "properties": {
           "content_state": { "$ref": "#/components/schemas/StreamContentState" },
           "action": { "$ref": "#/components/schemas/LiveActivityAction" },
+          "secondary_action": {
+            "$ref": "#/components/schemas/LiveActivityAction",
+            "description": "Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
+          },
           "alert": { "$ref": "#/components/schemas/AlertPayload" }
         },
         "additionalProperties": false
@@ -2286,7 +2354,11 @@
         "properties": {
           "activity_id": { "type": "string" },
           "content_state": { "$ref": "#/components/schemas/ContentStateUpdate" },
-          "action": { "$ref": "#/components/schemas/LiveActivityAction" }
+          "action": { "$ref": "#/components/schemas/LiveActivityAction" },
+          "secondary_action": {
+            "$ref": "#/components/schemas/LiveActivityAction",
+            "description": "Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
+          }
         },
         "additionalProperties": false
       },
@@ -2310,7 +2382,11 @@
         "properties": {
           "activity_id": { "type": "string" },
           "content_state": { "$ref": "#/components/schemas/ContentStateEnd" },
-          "action": { "$ref": "#/components/schemas/LiveActivityAction" }
+          "action": { "$ref": "#/components/schemas/LiveActivityAction" },
+          "secondary_action": {
+            "$ref": "#/components/schemas/LiveActivityAction",
+            "description": "Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
+          }
         },
         "additionalProperties": false
       },
