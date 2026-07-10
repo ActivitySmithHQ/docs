@@ -21,6 +21,10 @@
       "description": "Send push notifications to paired devices."
     },
     {
+      "name": "AppIconBadges",
+      "description": "Update App Icon Badge Counts on paired devices."
+    },
+    {
       "name": "LiveActivities",
       "description": "Start, update, stream, and end Live Activities."
     },
@@ -30,6 +34,131 @@
     }
   ],
   "paths": {
+    "/badge": {
+      "post": {
+        "tags": ["AppIconBadges"],
+        "summary": "Update App Icon Badge Count",
+        "description": "Updates the App Icon Badge Count on devices matched by API key scope and optional target channels. Send `badge: 0` to clear the count. Badge updates are independent of push notifications and do not create a push notification history item.",
+        "operationId": "updateAppIconBadgeCount",
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -X POST \"https://activitysmith.com/api/badge\" \\\n  -H \"Authorization: Bearer $ACTIVITYSMITH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"badge\": 12\n  }'"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AppIconBadgeCountUpdateRequest" },
+              "examples": {
+                "set_count": {
+                  "value": {
+                    "badge": 12
+                  }
+                },
+                "clear_count": {
+                  "value": {
+                    "badge": 0
+                  }
+                },
+                "channel_targeted": {
+                  "value": {
+                    "badge": 3,
+                    "target": {
+                      "channels": ["sales", "customer-success"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "App Icon Badge Count updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AppIconBadgeCountUpdateResponse" },
+                "examples": {
+                  "default": {
+                    "value": {
+                      "success": true,
+                      "badge": 12,
+                      "devices_notified": 2,
+                      "users_notified": 1,
+                      "effective_channel_slugs": null,
+                      "timestamp": "2026-07-10T12:00:00.000Z"
+                    }
+                  },
+                  "channel_targeted": {
+                    "value": {
+                      "success": true,
+                      "badge": 3,
+                      "devices_notified": 2,
+                      "users_notified": 1,
+                      "effective_channel_slugs": ["sales", "customer-success"],
+                      "timestamp": "2026-07-10T12:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid badge value or channel targeting input)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BadRequestError" },
+                "examples": {
+                  "invalid_badge": {
+                    "value": {
+                      "error": "Invalid badge",
+                      "message": "badge must be a non-negative integer between 0 and 2147483647. Use 0 to clear the badge."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden (API key scope or channel assignment violation)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ForbiddenError" }
+              }
+            }
+          },
+          "404": {
+            "description": "No recipients found for effective channel target",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NoRecipientsError" },
+                "examples": {
+                  "no_devices": {
+                    "value": {
+                      "error": "No recipients found",
+                      "message": "No devices matched the effective channel target",
+                      "badge": 12,
+                      "effective_channel_slugs": ["sales"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RateLimitError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/push-notification": {
       "post": {
         "tags": ["PushNotifications"],
@@ -2138,6 +2267,48 @@
           "timestamp": { "type": "string", "format": "date-time" }
         },
         "required": ["success", "timestamp"],
+        "additionalProperties": false
+      },
+      "AppIconBadgeCountUpdateRequest": {
+        "type": "object",
+        "description": "App Icon Badge Count update. Send badge 0 to clear the count.",
+        "properties": {
+          "badge": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647,
+            "description": "The count to show on the ActivitySmith app icon. Send 0 to clear it."
+          },
+          "target": { "$ref": "#/components/schemas/ChannelTarget" }
+        },
+        "required": ["badge"],
+        "additionalProperties": false
+      },
+      "AppIconBadgeCountUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "badge": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "devices_notified": { "type": "integer" },
+          "users_notified": { "type": "integer" },
+          "effective_channel_slugs": {
+            "type": ["array", "null"],
+            "items": { "type": "string" }
+          },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": [
+          "success",
+          "badge",
+          "devices_notified",
+          "users_notified",
+          "effective_channel_slugs",
+          "timestamp"
+        ],
         "additionalProperties": false
       },
       "LiveActivityStartRequest": {
