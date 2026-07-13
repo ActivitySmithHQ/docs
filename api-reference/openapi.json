@@ -37,14 +37,44 @@
     "/badge": {
       "post": {
         "tags": ["AppIconBadges"],
-        "summary": "Update App Icon Badge Count",
-        "description": "Updates the App Icon Badge Count on devices matched by API key scope and optional target channels. Send `badge: 0` to clear the count. Badge updates are independent of push notifications and do not create a push notification history item.",
+        "summary": "Set App Icon Badge Count",
+        "description": "Shows a number on the ActivitySmith app icon.",
         "operationId": "updateAppIconBadgeCount",
         "x-codeSamples": [
           {
+            "lang": "javascript",
+            "label": "Node",
+            "source": "await activitysmith.badgeCount(8333);"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "activitysmith.badge_count(8333)"
+          },
+          {
+            "lang": "go",
+            "label": "Go",
+            "source": "activitysmith.BadgeCount(8333)"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "$activitysmith->badgeCount(8333);"
+          },
+          {
+            "lang": "ruby",
+            "label": "Ruby",
+            "source": "activitysmith.badge_count(8333)"
+          },
+          {
+            "lang": "bash",
+            "label": "CLI",
+            "source": "activitysmith badge 8333"
+          },
+          {
             "lang": "bash",
             "label": "cURL",
-            "source": "curl -X POST \"https://activitysmith.com/api/badge\" \\\n  -H \"Authorization: Bearer $ACTIVITYSMITH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"badge\": 12\n  }'"
+            "source": "curl -X POST \"https://activitysmith.com/api/badge\" \\\n  -H \"Authorization: Bearer $ACTIVITYSMITH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"badge\": 8333\n  }'"
           }
         ],
         "requestBody": {
@@ -55,7 +85,7 @@
               "examples": {
                 "set_count": {
                   "value": {
-                    "badge": 12
+                    "badge": 8333
                   }
                 },
                 "clear_count": {
@@ -85,7 +115,7 @@
                   "default": {
                     "value": {
                       "success": true,
-                      "badge": 12,
+                      "badge": 8333,
                       "devices_notified": 2,
                       "users_notified": 1,
                       "effective_channel_slugs": null,
@@ -107,23 +137,15 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid badge value or channel targeting input)",
+            "description": "Bad request",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/BadRequestError" },
-                "examples": {
-                  "invalid_badge": {
-                    "value": {
-                      "error": "Invalid badge",
-                      "message": "badge must be a non-negative integer between 0 and 2147483647. Use 0 to clear the badge."
-                    }
-                  }
-                }
+                "schema": { "$ref": "#/components/schemas/BadRequestError" }
               }
             }
           },
           "403": {
-            "description": "Forbidden (API key scope or channel assignment violation)",
+            "description": "Forbidden",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ForbiddenError" }
@@ -134,17 +156,7 @@
             "description": "No recipients found for effective channel target",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/NoRecipientsError" },
-                "examples": {
-                  "no_devices": {
-                    "value": {
-                      "error": "No recipients found",
-                      "message": "No devices matched the effective channel target",
-                      "badge": 12,
-                      "effective_channel_slugs": ["sales"]
-                    }
-                  }
-                }
+                "schema": { "$ref": "#/components/schemas/NoRecipientsError" }
               }
             }
           },
@@ -386,7 +398,7 @@
       "put": {
         "tags": ["LiveActivities"],
         "summary": "Start a new Live Activity or update an existing one",
-        "description": "Use a stable stream_key for each ongoing thing you want to show as a Live Activity. Send the latest content_state whenever it changes, and ActivitySmith will keep the Live Activity in sync. For timer streams, send duration_seconds to start or reset the timer; omit duration_seconds on later updates to preserve the existing timer window. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.",
+        "description": "Use a stable stream_key for each ongoing thing you want to show as a Live Activity. Send the latest content_state whenever it changes, and ActivitySmith will keep the Live Activity in sync. For timer streams, send duration_seconds to start or reset the timer; omit duration_seconds on later updates to preserve the existing timer window. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities.",
         "operationId": "reconcileLiveActivityStream",
         "x-activitysmith-lifecycle": "recommended_managed",
         "x-codeSamples": [
@@ -654,7 +666,7 @@
       "delete": {
         "tags": ["LiveActivities"],
         "summary": "End a stream",
-        "description": "Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.",
+        "description": "Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities.",
         "operationId": "endLiveActivityStream",
         "x-codeSamples": [
           {
@@ -821,7 +833,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "Start a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities.",
         "operationId": "startLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "PUT /live-activity/stream/{stream_key}",
@@ -1096,7 +1108,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "Update a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes. For timer activities, send duration_seconds only when you want to reset the timer window; omit it to keep the current timer running. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes. For timer activities, send duration_seconds only when you want to reset the timer window; omit it to keep the current timer running. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities.",
         "operationId": "updateLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "PUT /live-activity/stream/{stream_key}",
@@ -1287,7 +1299,7 @@
       "post": {
         "tags": ["LiveActivities"],
         "summary": "End a Live Activity (legacy manual lifecycle)",
-        "description": "Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.",
+        "description": "Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities.",
         "operationId": "endLiveActivity",
         "x-activitysmith-lifecycle": "legacy_manual",
         "x-activitysmith-recommended-alternative": "DELETE /live-activity/stream/{stream_key}",
@@ -2010,7 +2022,10 @@
         "properties": {
           "label": { "type": "string", "minLength": 1 },
           "value": {
-            "oneOf": [{ "type": "number", "minimum": 0 }, { "type": "string", "minLength": 1, "maxLength": 64 }]
+            "oneOf": [
+              { "type": "number", "minimum": 0 },
+              { "type": "string", "minLength": 1, "maxLength": 64 }
+            ]
           },
           "unit": { "type": "string" },
           "color": {
@@ -2219,6 +2234,40 @@
         ],
         "additionalProperties": false
       },
+      "AppIconBadgeCountUpdateRequest": {
+        "type": "object",
+        "required": ["badge"],
+        "properties": {
+          "badge": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647,
+            "description": "The count to show on the ActivitySmith app icon. Send 0 to clear it."
+          },
+          "target": { "$ref": "#/components/schemas/ChannelTarget" }
+        },
+        "additionalProperties": false
+      },
+      "AppIconBadgeCountUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "badge": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "devices_notified": { "type": "integer" },
+          "users_notified": { "type": "integer" },
+          "effective_channel_slugs": {
+            "type": ["array", "null"],
+            "items": { "type": "string" }
+          },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["success", "badge", "devices_notified", "users_notified", "effective_channel_slugs", "timestamp"],
+        "additionalProperties": false
+      },
       "PushNotificationRequest": {
         "type": "object",
         "required": ["title"],
@@ -2269,48 +2318,6 @@
         "required": ["success", "timestamp"],
         "additionalProperties": false
       },
-      "AppIconBadgeCountUpdateRequest": {
-        "type": "object",
-        "description": "App Icon Badge Count update. Send badge 0 to clear the count.",
-        "properties": {
-          "badge": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 2147483647,
-            "description": "The count to show on the ActivitySmith app icon. Send 0 to clear it."
-          },
-          "target": { "$ref": "#/components/schemas/ChannelTarget" }
-        },
-        "required": ["badge"],
-        "additionalProperties": false
-      },
-      "AppIconBadgeCountUpdateResponse": {
-        "type": "object",
-        "properties": {
-          "success": { "type": "boolean" },
-          "badge": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 2147483647
-          },
-          "devices_notified": { "type": "integer" },
-          "users_notified": { "type": "integer" },
-          "effective_channel_slugs": {
-            "type": ["array", "null"],
-            "items": { "type": "string" }
-          },
-          "timestamp": { "type": "string", "format": "date-time" }
-        },
-        "required": [
-          "success",
-          "badge",
-          "devices_notified",
-          "users_notified",
-          "effective_channel_slugs",
-          "timestamp"
-        ],
-        "additionalProperties": false
-      },
       "LiveActivityStartRequest": {
         "type": "object",
         "description": "Start a new Live Activity. The response includes activity_id for later update and end calls.",
@@ -2320,7 +2327,7 @@
           "action": { "$ref": "#/components/schemas/LiveActivityAction" },
           "secondary_action": {
             "$ref": "#/components/schemas/LiveActivityAction",
-            "description": "Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
+            "description": "Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
           },
           "alert": { "$ref": "#/components/schemas/AlertPayload" },
           "target": { "$ref": "#/components/schemas/ChannelTarget" }
@@ -2353,7 +2360,7 @@
           "action": { "$ref": "#/components/schemas/LiveActivityAction" },
           "secondary_action": {
             "$ref": "#/components/schemas/LiveActivityAction",
-            "description": "Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
+            "description": "Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
           },
           "alert": { "$ref": "#/components/schemas/AlertPayload" },
           "channels": {
@@ -2398,7 +2405,7 @@
           "action": { "$ref": "#/components/schemas/LiveActivityAction" },
           "secondary_action": {
             "$ref": "#/components/schemas/LiveActivityAction",
-            "description": "Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
+            "description": "Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
           },
           "alert": { "$ref": "#/components/schemas/AlertPayload" }
         },
@@ -2528,7 +2535,7 @@
           "action": { "$ref": "#/components/schemas/LiveActivityAction" },
           "secondary_action": {
             "$ref": "#/components/schemas/LiveActivityAction",
-            "description": "Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
+            "description": "Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
           }
         },
         "additionalProperties": false
@@ -2556,7 +2563,7 @@
           "action": { "$ref": "#/components/schemas/LiveActivityAction" },
           "secondary_action": {
             "$ref": "#/components/schemas/LiveActivityAction",
-            "description": "Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
+            "description": "Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action."
           }
         },
         "additionalProperties": false

@@ -510,29 +510,6 @@ $activitysmith->liveActivities->stream(
 );
 ```
 
-## Channels
-
-Target specific channels when sending a push notification or streaming a Live Activity.
-
-```php PHP
-$activitysmith->notifications->send(
-    title: 'New subscription 💸',
-    message: 'Customer upgraded to Pro plan',
-    channels: ['ios-builds', 'engineering'],
-);
-
-$activitysmith->liveActivities->stream(
-    'nightly-backup',
-    contentState: LiveActivityContentState::make(
-        title: 'Nightly database backup',
-        type: 'segmented_progress',
-        numberOfSteps: 3,
-        currentStep: 1,
-    ),
-    channels: ['ios-builds'],
-);
-```
-
 ## Widgets
 
 <p align="center">
@@ -555,6 +532,53 @@ String metric values work too.
 
 ```php
 $activitysmith->metrics->update('prod.status', 'healthy');
+```
+
+## App Icon Badge Count
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/badge-count.png" alt="ActivitySmith app icon with an App Icon Badge Count" width="680" />
+</p>
+
+Show the number you care about on your ActivitySmith app icon. Track MRR, a customer count, a stock price, or any other value you want to keep in view.
+
+### Set or update the badge value
+
+```php PHP
+$activitysmith->badgeCount(8333);
+```
+
+### Clear the badge
+
+Pass `0` to clear the badge.
+
+```php PHP
+$activitysmith->badgeCount(0);
+```
+
+## Channels
+
+Target specific team members or devices when sending a push notification, live activity or app icon badge count update.
+
+```php PHP
+$activitysmith->notifications->send(
+    title: 'New subscription 💸',
+    message: 'Customer upgraded to Pro plan',
+    channels: ['ios-builds', 'engineering'],
+);
+
+$activitysmith->liveActivities->stream(
+    'nightly-backup',
+    contentState: LiveActivityContentState::make(
+        title: 'Nightly database backup',
+        type: 'segmented_progress',
+        numberOfSteps: 3,
+        currentStep: 1,
+    ),
+    channels: ['ios-builds'],
+);
+
+$activitysmith->badgeCount(3, channels: ['sales', 'customer-success']);
 ```
 
 ## Error Handling

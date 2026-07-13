@@ -23,7 +23,7 @@ Use inbound webhooks when you want lock-screen visibility into a service that al
 4. Map payload fields to the title, message, and metadata you want shown.
 5. Optionally route the event to specific [channels](/channels).
 
-Each integration ships with ready-to-use presets that cover the most common events, so you can connect a source in a few clicks. Tweak any field on a preset, or start from scratch when you want full control over the title, body, action button, etc.
+Each integration ships with ready-to-use presets that cover the most common events, so you can connect a source in a few clicks. Tweak any field on a preset, or start from scratch when you want full control over the title, body, action buttons, etc.
 
 The same source service can drive multiple webhooks. For example, you can send production deploy events to a `#prod` channel as a Live Activity, and preview deploys to a `#previews` channel as a Push Notification.
 
@@ -34,7 +34,7 @@ Each webhook delivers events as one of:
 - **Push Notification**: best for short, conclusive events like a check that failed, a PR that merged, or an alert that fired.
 - **Live Activity**: best for long-running work like CI workflows or production deploys. The Live Activity stays on the lock screen while the job runs and dismisses when it finishes.
 
-You can also attach an action button to the resulting notification or activity that opens the source service (the GitHub run, the Sentry issue, the Vercel deployment, and so on). See the [action button section](/#action-button) on the quickstart for the field reference.
+You can also attach action buttons to the resulting notification or activity that open the source service (the GitHub run, the Sentry issue, the Vercel deployment, and so on) or trigger a backend webhook. See the [action buttons section](/#action-buttons) on the quickstart for the field reference.
 
 ## Channel Routing
 

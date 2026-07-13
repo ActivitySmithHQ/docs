@@ -15,7 +15,16 @@
         "groups": [
           {
             "group": "Get started",
-            "pages": ["index", "api-keys", "live-activity-stream", "inbound-webhooks", "widgets", "mcp-server", "rate-limits"]
+            "pages": [
+              "index",
+              "api-keys",
+              "live-activity-stream",
+              "inbound-webhooks",
+              "widgets",
+              "app-icon-badge-count",
+              "mcp-server",
+              "rate-limits"
+            ]
           },
           {
             "group": "Workspace",
@@ -76,6 +85,10 @@
           {
             "group": "Widgets Endpoints",
             "pages": ["api-reference/endpoint/metric-value-update"]
+          },
+          {
+            "group": "App Icon Badge Count Endpoints",
+            "pages": ["api-reference/endpoint/app-icon-badge-count"]
           },
           {
             "group": "Resources",

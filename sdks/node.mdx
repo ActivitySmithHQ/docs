@@ -307,7 +307,11 @@ Add more context to Live Activities with icons and badges.
 Supported Live Activity types: `stats`, `metrics`, `progress`, `segmented_progress`, `alert`, and `timer`.
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-with-icon.png" alt="Metrics Live Activity with an SF Symbol icon on the iPhone Lock Screen" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-with-icon.png"
+    alt="Metrics Live Activity with an SF Symbol icon on the iPhone Lock Screen"
+    width="680"
+  />
 </p>
 
 ```ts
@@ -336,7 +340,11 @@ The `icon.symbol` value is an Apple SF Symbol name. Browse the catalog with one 
 Badges are supported by `alert`, `progress`, and `segmented_progress` Live Activities.
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-with-badge.png" alt="Progress Live Activity with a badge on the iPhone Lock Screen" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity-with-badge.png"
+    alt="Progress Live Activity with a badge on the iPhone Lock Screen"
+    width="680"
+  />
 </p>
 
 ```ts
@@ -486,28 +494,6 @@ await activitysmith.liveActivities.stream("agent-approval", {
 });
 ```
 
-## Channels
-
-Target specific channels when sending a push notification or streaming a Live Activity.
-
-```js Node
-await activitysmith.notifications.send({
-  title: "New subscription 💸",
-  message: "Customer upgraded to Pro plan",
-  channels: ["ios-builds", "engineering"],
-});
-
-await activitysmith.liveActivities.stream("nightly-backup", {
-  channels: ["ios-builds"],
-  content_state: {
-    title: "Nightly database backup",
-    number_of_steps: 3,
-    current_step: 1,
-    type: "segmented_progress",
-  },
-});
-```
-
 ## Widgets
 
 <p align="center">
@@ -530,6 +516,58 @@ String metric values work too.
 
 ```ts
 await activitysmith.metrics.update("prod.status", "healthy");
+```
+
+## App Icon Badge Count
+
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/badge-count.png"
+    alt="ActivitySmith app icon with an App Icon Badge Count"
+    width="680"
+  />
+</p>
+
+Show the number you care about on your ActivitySmith app icon. Track MRR, a customer count, a stock price, or any other value you want to keep in view.
+
+### Set or update the badge value
+
+```js Node
+await activitysmith.badgeCount(8333);
+```
+
+### Clear the badge
+
+Pass `0` to clear the badge.
+
+```js Node
+await activitysmith.badgeCount(0);
+```
+
+## Channels
+
+Target specific team members or devices when sending a push notification, live activity or app icon badge count update.
+
+```js Node
+await activitysmith.notifications.send({
+  title: "New subscription 💸",
+  message: "Customer upgraded to Pro plan",
+  channels: ["ios-builds", "engineering"],
+});
+
+await activitysmith.liveActivities.stream("nightly-backup", {
+  channels: ["ios-builds"],
+  content_state: {
+    title: "Nightly database backup",
+    number_of_steps: 3,
+    current_step: 1,
+    type: "segmented_progress",
+  },
+});
+
+await activitysmith.badgeCount(3, {
+  channels: ["sales", "customer-success"],
+});
 ```
 
 ## Error Handling

@@ -40,8 +40,9 @@ Want an SDK or Integration? Let us know at [adam@activitysmith.com](mailto:adam@
 ### Features
 
 - [**Push Notifications**](#push-notifications): send push notifications to all paired devices or target specific channels.
-- [**Live Activities**](#live-activities): start, update and end a Live Activity on your lock screen or dynamic island, with optional channel targeting and one optional action button.
+- [**Live Activities**](#live-activities): start, update and end a Live Activity on your lock screen or dynamic island, with optional channel targeting and action buttons.
 - [**Widgets**](/widgets): display any value on your Lock Screen with widgets - SaaS metrics, revenue, signups, uptime, habits, or anything else you want to track.
+- [**App Icon Badge Count**](/app-icon-badge-count): show the number you care about on your ActivitySmith app icon.
 - [**Inbound Webhooks**](/inbound-webhooks): forward events from external services such as Vercel, Netlify, Railway, and more, into Push Notifications and Live Activities.
 
 ### Powerful Capabilities
@@ -187,20 +188,16 @@ activitysmith push \
 
 There are six types of Live Activities:
 
-| Type                 | Best for                      | Required state                                                                        |
-| -------------------- | ----------------------------- | ------------------------------------------------------------------------------------- |
-| `stats`              | up to 8 labeled values         | `title`, `type`, and a non-empty `metrics` array                                      |
-| `metrics`            | Live operational stats        | `title`, `type`, and a non-empty `metrics` array                                      |
-| `segmented_progress` | Jobs tracked in steps         | `title`, `type`, `number_of_steps`, `current_step`                                    |
-| `progress`           | Jobs with continuous progress | `title`, `type`, and either `percentage` or `value` + `upper_limit`                   |
-| `alert`              | Focused status updates        | `title`, `type`, and `message`                                                        |
-| `timer`              | Countdowns or elapsed runtime | `title`, `type`, and either `duration_seconds` or `counts_down` set to `false`        |
+| Type                 | Best for                      | Required state                                                                 |
+| -------------------- | ----------------------------- | ------------------------------------------------------------------------------ |
+| `stats`              | up to 8 labeled values        | `title`, `type`, and a non-empty `metrics` array                               |
+| `metrics`            | Live operational stats        | `title`, `type`, and a non-empty `metrics` array                               |
+| `segmented_progress` | Jobs tracked in steps         | `title`, `type`, `number_of_steps`, `current_step`                             |
+| `progress`           | Jobs with continuous progress | `title`, `type`, and either `percentage` or `value` + `upper_limit`            |
+| `alert`              | Focused status updates        | `title`, `type`, and `message`                                                 |
+| `timer`              | Countdowns or elapsed runtime | `title`, `type`, and either `duration_seconds` or `counts_down` set to `false` |
 
-<img
-  className="image"
-  src="https://cdn.activitysmith.com/features/stats-live-activity.png"
-  alt="Stats Live Activity"
-/>
+<img className="image" src="https://cdn.activitysmith.com/features/stats-live-activity.png" alt="Stats Live Activity" />
 <img
   className="image"
   src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
@@ -244,27 +241,16 @@ before it is removed. By default, iOS removes the Live Activity after two
 minutes. Set `auto_dismiss_minutes` to choose a different dismissal time,
 including `0` for immediate dismissal.
 
-### Action Button
+### Action Buttons
 
-Live Activities support one optional `action` button shown on the Lock Screen. Use it to have a one-tap path from a long-running
-job to the place where you can act on it. The `action` field is accepted on
-stream updates and works with all Live Activity types.
+Live Activities support an optional `action` button shown on the Lock Screen. Use it to have a one-tap path from a long-running job to the place where you can act on it. The `action` field is accepted on stream updates and works with all Live Activity types.
+
+`alert`, `progress`, and `segmented_progress` Live Activities also support `secondary_action`, which adds a second button beside the primary action. Both buttons use the same payload shape.
 
 For `alert` Live Activities, set `content_state.color` to tint the action
-button. `icon.color` and `badge.color` only affect the icon and badge.
+and secondary action buttons. `icon.color` and `badge.color` only affect the icon and badge.
 
 <div style={{ display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap", margin: "16px 0" }}>
-  <img
-    style={{
-      flex: "1 1 0",
-      minWidth: "240px",
-      maxWidth: "100%",
-      borderRadius: "12px",
-      boxShadow: "0 14px 28px rgba(0, 0, 0, 0.18)",
-    }}
-    src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1"
-    alt="Live Activity with an action button on iPhone"
-  />
   <img
     style={{
       flex: "1 1 0",
@@ -276,6 +262,17 @@ button. `icon.color` and `badge.color` only affect the icon and badge.
     src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png"
     alt="Metrics Live Activity with an action button"
   />
+  <img
+    style={{
+      flex: "1 1 0",
+      minWidth: "240px",
+      maxWidth: "100%",
+      borderRadius: "12px",
+      boxShadow: "0 14px 28px rgba(0, 0, 0, 0.18)",
+    }}
+    src="https://cdn.activitysmith.com/features/live-activity-secondary-action.png"
+    alt="Alert Live Activity with primary and secondary action buttons"
+  />
 </div>
 
 There are two action types:
@@ -283,15 +280,15 @@ There are two action types:
 - `open_url`: opens an HTTPS URL or runs a specific iPhone Shortcut with a `shortcuts://run-shortcut?name=...` URL.
 - `webhook`: ActivitySmith's backend calls your HTTPS webhook with `GET` or `POST`.
 
-The `action` object accepts:
+The `action` and `secondary_action` objects accept:
 
-| Field    | Required     | Description                                          |
-| -------- | ------------ | ---------------------------------------------------- |
-| `title`  | yes          | Button label shown on the Live Activity.             |
-| `type`   | yes          | Either `open_url` or `webhook`.                      |
+| Field    | Required     | Description                                                                                                          |
+| -------- | ------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `title`  | yes          | Button label shown on the Live Activity.                                                                             |
+| `type`   | yes          | Either `open_url` or `webhook`.                                                                                      |
 | `url`    | yes          | For `open_url`, use an HTTPS URL or a `shortcuts://run-shortcut?name=...` URL. For `webhook`, use an HTTPS endpoint. |
-| `method` | webhook only | `GET` or `POST`.                                     |
-| `body`   | webhook only | Optional JSON payload sent with the webhook request. |
+| `method` | webhook only | `GET` or `POST`.                                                                                                     |
+| `body`   | webhook only | Optional JSON payload sent with the webhook request.                                                                 |
 
 #### open_url
 
@@ -344,15 +341,60 @@ calls the URL server-side, so the user does not leave the Lock Screen.
 }
 ```
 
+#### secondary_action
+
+Use `secondary_action` when an `alert`, `progress`, or `segmented_progress` Live Activity needs a second button, for example an approval prompt with "Send" and "Deny" actions.
+
+```json
+{
+  "content_state": {
+    "title": "Approval Needed",
+    "message": "Should I send the follow-up email to Brightlane?",
+    "type": "alert",
+    "color": "green",
+    "icon": {
+      "symbol": "sparkles",
+      "color": "green"
+    },
+    "badge": {
+      "title": "Agent",
+      "color": "green"
+    }
+  },
+  "action": {
+    "title": "Send",
+    "type": "webhook",
+    "url": "https://agent.example.com/live-activity/approve",
+    "method": "POST",
+    "body": {
+      "approval_id": "approval_01JY3J7Q9S0P8M1V5PZK7DR4M2",
+      "decision": "send"
+    }
+  },
+  "secondary_action": {
+    "title": "Deny",
+    "type": "webhook",
+    "url": "https://agent.example.com/live-activity/deny",
+    "method": "POST",
+    "body": {
+      "approval_id": "approval_01JY3J7Q9S0P8M1V5PZK7DR4M2",
+      "decision": "deny"
+    }
+  }
+}
+```
+
 Notes:
 
-- Only HTTPS URLs are supported for both action types.
-- One button per Live Activity.
-- Pass `action` on an update call to set or replace the button on an active Live Activity.
+- `open_url` supports HTTPS URLs and `shortcuts://run-shortcut?name=...` URLs.
+- `webhook` URLs must use HTTPS.
+- Use `action` for the primary button.
+- Use `secondary_action` for a second button on `alert`, `progress`, and `segmented_progress` Live Activities.
+- Pass `action` or `secondary_action` on an update call to set or replace buttons on an active Live Activity.
 
 ## Channel Targeting
 
-You can scope delivery with channel slugs:
+You can use `channels` to target specific team members or devices when sending a push notification, live activity or app icon badge count update:
 
 ```json
 {

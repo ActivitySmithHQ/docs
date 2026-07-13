@@ -534,29 +534,6 @@ activitysmith.LiveActivities.Stream(
 )
 ```
 
-## Channels
-
-Target specific channels when sending a push notification or streaming a Live Activity.
-
-```go Go
-activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
-	Title:    "New subscription 💸",
-	Message:  "Customer upgraded to Pro plan",
-	Channels: []string{"ios-builds", "engineering"},
-})
-
-activitysmith.LiveActivities.Stream(
-	"nightly-backup",
-	activitysmithsdk.LiveActivityStreamInput{
-		Title:         "Nightly database backup",
-		NumberOfSteps: 3,
-		CurrentStep:   1,
-		Type:          "segmented_progress",
-		Channels:      []string{"ios-builds"},
-	},
-)
-```
-
 ## Widgets
 
 <p align="center">
@@ -585,6 +562,53 @@ _, err = activitysmith.Metrics.Update("prod.status", "healthy")
 if err != nil {
 	log.Fatal(err)
 }
+```
+
+## App Icon Badge Count
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/badge-count.png" alt="ActivitySmith app icon with an App Icon Badge Count" width="680" />
+</p>
+
+Show the number you care about on your ActivitySmith app icon. Track MRR, a customer count, a stock price, or any other value you want to keep in view.
+
+### Set or update the badge value
+
+```go Go
+activitysmith.BadgeCount(8333)
+```
+
+### Clear the badge
+
+Pass `0` to clear the badge.
+
+```go Go
+activitysmith.BadgeCount(0)
+```
+
+## Channels
+
+Target specific team members or devices when sending a push notification, live activity or app icon badge count update.
+
+```go Go
+activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
+	Title:    "New subscription 💸",
+	Message:  "Customer upgraded to Pro plan",
+	Channels: []string{"ios-builds", "engineering"},
+})
+
+activitysmith.LiveActivities.Stream(
+	"nightly-backup",
+	activitysmithsdk.LiveActivityStreamInput{
+		Title:         "Nightly database backup",
+		NumberOfSteps: 3,
+		CurrentStep:   1,
+		Type:          "segmented_progress",
+		Channels:      []string{"ios-builds"},
+	},
+)
+
+activitysmith.BadgeCount(3, "sales", "customer-success")
 ```
 
 ## Error Handling

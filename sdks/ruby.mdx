@@ -532,33 +532,6 @@ activitysmith.live_activities.stream(
 )
 ```
 
-## Channels
-
-Target specific channels when sending a push notification or streaming a Live Activity.
-
-```ruby Ruby
-activitysmith.notifications.send(
-  {
-    title: "New subscription 💸",
-    message: "Customer upgraded to Pro plan",
-    channels: ["ios-builds", "engineering"]
-  }
-)
-
-activitysmith.live_activities.stream(
-  "nightly-backup",
-  {
-    channels: ["ios-builds"],
-    content_state: {
-      title: "Nightly database backup",
-      number_of_steps: 3,
-      current_step: 1,
-      type: "segmented_progress"
-    }
-  }
-)
-```
-
 ## Widgets
 
 <p align="center">
@@ -581,6 +554,57 @@ String metric values work too.
 
 ```ruby
 activitysmith.metrics.update("prod.status", "healthy")
+```
+
+## App Icon Badge Count
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/badge-count.png" alt="ActivitySmith app icon with an App Icon Badge Count" width="680" />
+</p>
+
+Show the number you care about on your ActivitySmith app icon. Track MRR, a customer count, a stock price, or any other value you want to keep in view.
+
+### Set or update the badge value
+
+```ruby Ruby
+activitysmith.badge_count(8333)
+```
+
+### Clear the badge
+
+Pass `0` to clear the badge.
+
+```ruby Ruby
+activitysmith.badge_count(0)
+```
+
+## Channels
+
+Target specific team members or devices when sending a push notification, live activity or app icon badge count update.
+
+```ruby Ruby
+activitysmith.notifications.send(
+  {
+    title: "New subscription 💸",
+    message: "Customer upgraded to Pro plan",
+    channels: ["ios-builds", "engineering"]
+  }
+)
+
+activitysmith.live_activities.stream(
+  "nightly-backup",
+  {
+    channels: ["ios-builds"],
+    content_state: {
+      title: "Nightly database backup",
+      number_of_steps: 3,
+      current_step: 1,
+      type: "segmented_progress"
+    }
+  }
+)
+
+activitysmith.badge_count(3, channels: ["sales", "customer-success"])
 ```
 
 ## Error Handling

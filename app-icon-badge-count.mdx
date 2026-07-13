@@ -1,0 +1,115 @@
+---
+title: "App Icon Badge Count"
+description: "Set any number you care about on your ActivitySmith app icon through the ActivitySmith API. Track MRR, user count, stock price, or any other value you want to keep in view."
+og:title: "App Icon Badge Count | ActivitySmith"
+og:description: "Set any number you care about on your ActivitySmith app icon through the ActivitySmith API."
+og:image: "https://cdn.activitysmith.com/og/app-icon-badge-api.png"
+---
+
+<img
+  className="image"
+  src="https://cdn.activitysmith.com/features/badge-count.png"
+  alt="ActivitySmith app icon with an App Icon Badge Count"
+/>
+
+## How It Works
+
+- Send a badge value through the API, an SDK, or the CLI.
+- Send `0` to clear the badge.
+- Use channels to target specific team members or devices.
+
+## Set the Badge Value
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://activitysmith.com/api/badge" \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "badge": 8333
+  }'
+```
+
+```js Node
+await activitysmith.badgeCount(8333);
+```
+
+```python Python
+activitysmith.badge_count(8333)
+```
+
+```go Go
+activitysmith.BadgeCount(8333)
+```
+
+```php PHP
+$activitysmith->badgeCount(8333);
+```
+
+```ruby Ruby
+activitysmith.badge_count(8333)
+```
+
+```bash CLI
+activitysmith badge 8333
+```
+
+</CodeGroup>
+
+## Clear the Badge
+
+Set the value to `0` to hide the badge
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://activitysmith.com/api/badge" \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "badge": 0
+  }'
+```
+
+```js Node
+await activitysmith.badgeCount(0);
+```
+
+```python Python
+activitysmith.badge_count(0)
+```
+
+```go Go
+activitysmith.BadgeCount(0)
+```
+
+```php PHP
+$activitysmith->badgeCount(0);
+```
+
+```ruby Ruby
+activitysmith.badge_count(0)
+```
+
+```bash CLI
+activitysmith badge 0
+```
+
+</CodeGroup>
+
+## Target Specific Devices
+
+Use `target.channels` in API requests to target specific team members or devices
+
+```bash cURL
+curl -X POST "https://activitysmith.com/api/badge" \
+  -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "badge": 3,
+    "target": {
+      "channels": ["sales", "customer-success"]
+    }
+  }'
+```
