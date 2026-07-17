@@ -88,7 +88,7 @@ What will work:
 - direct video file URL: `.mp4`, `.mov`, etc.
 - URL that responds with a proper media `Content-Type`, even if the path has no extension
 
-`media` can be combined with `redirection`, but not with `actions`. `redirection` can be an HTTPS URL or a `shortcuts://run-shortcut?name=...` URL.
+`media` can be combined with `redirection`, but not with `actions`. `redirection` can be an HTTP or HTTPS URL or a `shortcuts://run-shortcut?name=...` URL.
 
 ### Actionable Push Notifications
 
@@ -98,7 +98,7 @@ What will work:
   alt="Actionable push notification with redirection and actions"
 />
 
-Push notification redirection can open an HTTPS URL or run a specific iPhone Shortcut with a `shortcuts://run-shortcut?name=...` URL when someone taps the notification. For expanded notification actions, `open_url` supports HTTPS URLs and `shortcuts://run-shortcut?name=...` URLs. Webhooks are executed by the ActivitySmith backend and must use HTTPS.
+Push notification redirection can open an HTTP or HTTPS URL or run a specific iPhone Shortcut with a `shortcuts://run-shortcut?name=...` URL when someone taps the notification. For expanded notification actions, `open_url` supports HTTP or HTTPS URLs and `shortcuts://run-shortcut?name=...` URLs. Webhooks are executed by the ActivitySmith backend and must use HTTPS.
 
 ```php PHP
 $activitysmith->notifications->send(
@@ -395,7 +395,7 @@ Choose from these colors for the Live Activity accent, including progress bars a
 
 Live Activities can include an action button.
 
-- `open_url`: open an HTTPS URL.
+- `open_url`: open an HTTP or HTTPS URL.
 - `open_url` with a `shortcuts://run-shortcut?name=...` URL: run a specific iPhone Shortcut, for example to open an app.
 - `webhook`: trigger a backend GET/POST workflow.
 
